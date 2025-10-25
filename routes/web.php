@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminUserController;
-use App\Models\User;
 
 // =============================
 // 🌐 HALAMAN UTAMA (PUBLIC)
@@ -27,54 +26,52 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // =============================
-// 🔒 ROUTE BERDASARKAN ROLE
+// 🔒 ROUTE ADMIN
 // =============================
-
-// 🧩 ADMIN
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        // DASHBOARD ADMIN
-        Route::get('/dashboard', function () {
-            return Inertia::render('admin/dashboard', [
-                'students' => User::where('role', 'siswa')->get([
+        // ✅ Dashboard Admin (gunakan method dari controller)
+        Route::get('/dashboard', [AdminUserController::class, 'dashboard'])->name('dashboard');
+
+        // ✅ Halaman Kelola Siswa (CRUD)
+        Route::get('/siswa/Siswa', function () {
+            return Inertia::render('admin/siswa/Siswa', [
+                'students' => \App\Models\User::where('role', 'siswa')->get([
                     'id', 'name', 'email', 'kelas', 'no_telp', 'nis',
                 ]),
-                'totalGuru' => User::where('role', 'guru')->count(),
-                'totalSiswa' => User::where('role', 'siswa')->count(),
-                // sementara 0 kalau model belum ada
-                'totalMateri' => 0,
-                'totalKuis' => 0,
             ]);
-        })->name('dashboard');
+        })->name('siswa.index');
 
-        // CRUD user + import/export Excel
+        // ✅ CRUD User (Admin)
         Route::resource('users', AdminUserController::class);
+
+        // ✅ Import / Export / Bulk Delete
         Route::post('/users/import', [AdminUserController::class, 'importExcel'])->name('users.import');
         Route::get('/users/export/{role}', [AdminUserController::class, 'exportExcel'])->name('users.export');
         Route::delete('/users/bulk-delete', [AdminUserController::class, 'bulkDelete'])->name('users.bulk-delete');
     });
 
-// 📘 GURU
+// =============================
+// 👨‍🏫 ROUTE GURU
+// =============================
 Route::middleware(['auth', 'role:guru'])
     ->prefix('guru')
     ->name('guru.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('guru/dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', fn() => Inertia::render('guru/Dashboard'))->name('dashboard');
     });
 
-// 🎓 SISWA
+// =============================
+// 🎓 ROUTE SISWA
+// =============================
 Route::middleware(['auth', 'role:siswa'])
     ->prefix('siswa')
     ->name('siswa.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('siswa/dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', fn() => Inertia::render('siswa/Dashboard'))->name('dashboard');
     });
 
 // =============================

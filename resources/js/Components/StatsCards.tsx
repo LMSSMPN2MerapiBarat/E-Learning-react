@@ -1,38 +1,77 @@
-import { Card, CardContent } from '@/Components/ui/card';
-import { Users, GraduationCap, BookOpen, BarChart3 } from 'lucide-react';
+import React from "react";
+import { Card, CardContent } from "./ui/card";
+import { Users, GraduationCap, BookOpen, School } from "lucide-react";
 
-interface StatCardProps {
-  totalSiswa: number;
+interface StatsCardsProps {
   totalGuru: number;
+  totalSiswa: number;
   totalMateri: number;
   totalKuis: number;
 }
 
-export default function StatsCards({ totalSiswa, totalGuru, totalMateri, totalKuis }: StatCardProps) {
-  const stats = [
-    { title: 'Total Siswa', value: totalSiswa, icon: Users, color: 'bg-blue-500' },
-    { title: 'Total Guru', value: totalGuru, icon: GraduationCap, color: 'bg-green-500' },
-    { title: 'Materi Tersedia', value: totalMateri, icon: BookOpen, color: 'bg-purple-500' },
-    { title: 'Kuis Aktif', value: totalKuis, icon: BarChart3, color: 'bg-orange-500' },
-  ];
-
+export default function StatsCards({
+  totalGuru,
+  totalSiswa,
+  totalMateri,
+  totalKuis,
+}: StatsCardsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      {stats.map((stat) => (
-        <Card key={stat.title}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">{stat.title}</p>
-                <p className="text-3xl mt-2 font-semibold">{stat.value}</p>
-              </div>
-              <div className={`${stat.color} p-3 rounded-lg`}>
-                <stat.icon className="w-6 h-6 text-white" />
-              </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Siswa</p>
+              <p className="text-3xl mt-2">{totalSiswa}</p>
             </div>
-          </CardContent>
-        </Card>
-      ))}
+            <div className="bg-blue-500 p-3 rounded-lg">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Guru</p>
+              <p className="text-3xl mt-2">{totalGuru}</p>
+            </div>
+            <div className="bg-green-500 p-3 rounded-lg">
+              <GraduationCap className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Materi</p>
+              <p className="text-3xl mt-2">{totalMateri}</p>
+            </div>
+            <div className="bg-purple-500 p-3 rounded-lg">
+              <BookOpen className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Kuis</p>
+              <p className="text-3xl mt-2">{totalKuis}</p>
+            </div>
+            <div className="bg-orange-500 p-3 rounded-lg">
+              <School className="w-6 h-6 text-white" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
