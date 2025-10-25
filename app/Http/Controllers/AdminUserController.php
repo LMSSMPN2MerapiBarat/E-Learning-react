@@ -76,6 +76,7 @@ class AdminUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
+            'nip' => 'nullable|string|max:20',
             'nis' => 'nullable|string|max:20',
             'kelas' => 'nullable|string|max:20',
             'no_telp' => 'nullable|string|max:20',
@@ -86,6 +87,7 @@ class AdminUserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
+            'nip' => $validated['nip'] ?? null,
             'nis' => $validated['nis'] ?? null,
             'kelas' => $validated['kelas'] ?? null,
             'no_telp' => $validated['no_telp'] ?? null,
@@ -155,7 +157,7 @@ class AdminUserController extends Controller
         $ids = $request->input('ids', []);
 
         if (empty($ids)) {
-            return response()->json(['message' => 'Tidak ada data yang dipilih.'], 400);
+            return back()->with('error', 'Tidak ada data yang dipilih.');
         }
 
         $users = User::whereIn('id', $ids)->get();
@@ -167,10 +169,17 @@ class AdminUserController extends Controller
             $user->delete();
         }
 
-        return response()->json([
-            'message' => count($ids) . ' pengguna berhasil dihapus.'
-        ]);
+        // ✅ Jika request berasal dari Inertia (AJAX), balas JSON.
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => count($ids) . ' pengguna berhasil dihapus.'
+            ]);
+        }
+
+        // ✅ Jika request biasa (non-Inertia), redirect seperti biasa.
+        return redirect()->back()->with('success', count($ids) . ' pengguna berhasil dihapus.');
     }
+
 
     /**
      * 📥 Import Excel
