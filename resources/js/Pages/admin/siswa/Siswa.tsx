@@ -36,27 +36,34 @@ export default function SiswaPage() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
 
-  const handleDelete = (id: number) => {
-    if (!confirm("Yakin hapus siswa ini?")) return;
-    router.delete(`/admin/users/${id}`, {
-      onSuccess: () => {
-        setStudentsList((prev) => prev.filter((s) => s.id !== id));
+  // 🔥 Auto reload data siswa dari backend
+  const reloadStudents = () => {
+    router.reload({
+      only: ["students"],
+      onSuccess: (page) => {
+        const newStudents = (page.props as any).students || [];
+        setStudentsList(newStudents);
       },
     });
   };
 
-  const handleAddSuccess = (newStudent?: any) => {
-    if (newStudent) setStudentsList((prev) => [...prev, newStudent]);
-    setIsAddOpen(false);
+  const handleDelete = (id: number) => {
+    if (!confirm("Yakin hapus siswa ini?")) return;
+    router.delete(`/admin/users/${id}`, {
+      onSuccess: () => {
+        reloadStudents(); // ✅ reload otomatis setelah hapus
+      },
+    });
   };
 
-  const handleEditSuccess = (updatedStudent?: any) => {
-    if (updatedStudent) {
-      setStudentsList((prev) =>
-        prev.map((s) => (s.id === updatedStudent.id ? updatedStudent : s))
-      );
-    }
+  const handleAddSuccess = () => {
+    setIsAddOpen(false);
+    reloadStudents(); // ✅ reload otomatis setelah tambah
+  };
+
+  const handleEditSuccess = () => {
     setIsEditOpen(false);
+    reloadStudents(); // ✅ reload otomatis setelah edit
   };
 
   return (
@@ -66,10 +73,8 @@ export default function SiswaPage() {
       <Card className="shadow-sm bg-white">
         <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <CardTitle>Data Siswa</CardTitle>
-            <CardDescription>
-              Kelola data siswa dan informasi pribadi
-            </CardDescription>
+            <CardTitle className="font-normal text-xl">Data Siswa</CardTitle>
+            <CardDescription>Kelola data siswa dan informasi pribadi</CardDescription>
           </div>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
@@ -103,11 +108,11 @@ export default function SiswaPage() {
                 {studentsList.length > 0 ? (
                   studentsList.map((student) => (
                     <TableRow key={student.id}>
-                      <TableCell>{student.nis}</TableCell>
+                      <TableCell>{student.nis || "-"}</TableCell>
                       <TableCell>{student.name}</TableCell>
                       <TableCell>{student.email}</TableCell>
-                      <TableCell>{student.kelas}</TableCell>
-                      <TableCell>{student.no_telp}</TableCell>
+                      <TableCell>{student.kelas || "-"}</TableCell>
+                      <TableCell>{student.no_telp || "-"}</TableCell>
                       <TableCell className="text-right space-x-2">
                         <Button
                           variant="outline"

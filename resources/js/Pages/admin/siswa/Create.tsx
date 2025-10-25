@@ -1,11 +1,11 @@
-import { useForm, router } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 
 interface CreateSiswaProps {
-  onSuccess?: () => void;
+  onSuccess?: (newStudent?: any) => void;
 }
 
 export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
@@ -21,12 +21,14 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     post('/admin/users', {
-      onSuccess: () => {
+      onSuccess: (page) => {
+        const newStudent = (page.props as any)?.newStudent;
+        if (onSuccess) onSuccess(newStudent);
         reset();
-        if (onSuccess) onSuccess();
-        router.reload({ only: ['students'] });
       },
+      onError: (err) => console.error(err),
     });
   };
 

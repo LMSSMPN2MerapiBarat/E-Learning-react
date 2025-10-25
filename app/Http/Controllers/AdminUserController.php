@@ -73,32 +73,29 @@ class AdminUserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users,email',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'role'     => 'required|in:admin,guru,siswa',
+            'nis' => 'nullable|string|max:20',
+            'kelas' => 'nullable|string|max:20',
+            'no_telp' => 'nullable|string|max:20',
+            'role' => 'required|string',
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
-            'nip'      => $request->nip,
-            'nis'      => $request->nis,
-            'kelas'    => $request->kelas,
-            'no_telp'  => $request->no_telp,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'nis' => $validated['nis'] ?? null,
+            'kelas' => $validated['kelas'] ?? null,
+            'no_telp' => $validated['no_telp'] ?? null,
+            'role' => $validated['role'],
         ]);
 
-        if ($user->role === 'guru' && $request->filled('mata_pelajaran')) {
-            $user->mataPelajaran()->sync($request->mata_pelajaran);
-        }
-
-        return redirect()
-            ->route('admin.users.index', ['role' => $user->role])
-            ->with('success', ucfirst($user->role) . ' berhasil ditambahkan.');
+        return redirect()->back()->with('newStudent', $user);
     }
+
 
     /**
      * ✏️ Form edit pengguna
