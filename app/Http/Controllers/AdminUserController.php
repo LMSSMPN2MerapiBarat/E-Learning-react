@@ -32,14 +32,14 @@ class AdminUserController extends Controller
     }
 
     /**
- * 📊 Dashboard Admin — Menampilkan statistik dan daftar siswa
- */
+     * 📊 Dashboard Admin — Menampilkan statistik dan daftar siswa
+     */
     public function dashboard()
     {
         $totalGuru = User::where('role', 'guru')->count();
         $totalSiswa = User::where('role', 'siswa')->count();
-        $totalMateri = 0; // nanti bisa ganti dengan count(Materi::count())
-        $totalKuis = 0;   // nanti bisa ganti dengan count(Kuis::count())
+        $totalMateri = 0;
+        $totalKuis = 0;
 
         $students = User::where('role', 'siswa')
             ->select('id', 'name', 'nis', 'kelas', 'email', 'no_telp')
@@ -53,7 +53,6 @@ class AdminUserController extends Controller
             'students' => $students,
         ]);
     }
-
 
     /**
      * ➕ Form tambah pengguna baru
@@ -96,25 +95,6 @@ class AdminUserController extends Controller
         return redirect()->back()->with('newStudent', $user);
     }
 
-
-    /**
-     * ✏️ Form edit pengguna
-     */
-    public function edit(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        $role = $request->query('role', $user->role);
-
-        return Inertia::render('Admin/Users/Edit', [
-            'user' => $user,
-            'role' => $role,
-            'mataPelajarans' => $role === 'guru' ? MataPelajaran::all() : [],
-            'selectedMapel' => $role === 'guru'
-                ? $user->mataPelajaran()->pluck('mata_pelajaran_id')->toArray()
-                : [],
-        ]);
-    }
-
     /**
      * 🔁 Update data pengguna
      */
@@ -140,9 +120,15 @@ class AdminUserController extends Controller
             $user->mataPelajaran()->sync($request->mata_pelajaran ?? []);
         }
 
-        return redirect()
-            ->route('admin.users.index', ['role' => $user->role])
-            ->with('success', 'Data ' . ucfirst($user->role) . ' berhasil diperbarui.');
+        // 🔥 Return JSON agar frontend bisa langsung update data tanpa reload
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Data siswa berhasil diperbarui.',
+                'user' => $user,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
     }
 
     /**

@@ -34,24 +34,23 @@ export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaPro
 
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
-    // ✅ pastikan dikirim sebagai objek biasa (plain object)
-    const payload = { ...form };
+  const payload = { ...form, role: 'siswa' }; 
 
-    router.put(`/admin/users/${student.id}`, payload as Record<string, any>, {
-      onSuccess: () => {
-        setLoading(false);
-        onSuccess({ ...student, ...form }); // gabungkan data baru dengan lama
-      },
-      onError: (errors) => {
-        console.error(errors);
-        setLoading(false);
-      },
-    });
-  };
+  router.put(`/admin/users/${student.id}`, payload, {
+    onSuccess: () => {
+      setLoading(false);
+      onSuccess({ ...student, ...form });
+    },
+    onError: (errors) => {
+      console.error(errors);
+      setLoading(false);
+    },
+  });
+};
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg shadow-sm">
