@@ -24,36 +24,52 @@ export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaPro
     return <p className="text-gray-500 text-sm">Memuat data siswa...</p>;
   }
 
-  const [form, setForm] = useState<Omit<StudentData, 'id'>>({
+  const [form, setForm] = useState({
     name: student.name || '',
     email: student.email || '',
     kelas: student.kelas || '',
     no_telp: student.no_telp || '',
     nis: student.nis || '',
+    password: '', // ✅ field baru untuk password opsional
   });
 
   const [loading, setLoading] = useState(false);
 
- const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const payload = { ...form, role: 'siswa' }; 
+    // ✅ Siapkan payload dinamis: password hanya dikirim jika diisi
+    const payload: Record<string, any> = {
+      name: form.name,
+      email: form.email,
+      kelas: form.kelas,
+      no_telp: form.no_telp,
+      nis: form.nis,
+      role: 'siswa',
+    };
 
-  router.put(`/admin/users/${student.id}`, payload, {
-    onSuccess: () => {
-      setLoading(false);
-      onSuccess({ ...student, ...form });
-    },
-    onError: (errors) => {
-      console.error(errors);
-      setLoading(false);
-    },
-  });
-};
+    if (form.password.trim() !== '') {
+      payload.password = form.password;
+    }
+
+    router.put(`/admin/users/${student.id}`, payload, {
+      onSuccess: () => {
+        setLoading(false);
+        onSuccess({ ...student, ...form });
+      },
+      onError: (errors) => {
+        console.error(errors);
+        setLoading(false);
+      },
+    });
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white rounded-lg shadow-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 p-4 bg-white rounded-lg shadow-sm"
+    >
       <div>
         <Label htmlFor="name">Nama</Label>
         <Input
@@ -100,6 +116,18 @@ export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaPro
           id="no_telp"
           value={form.no_telp}
           onChange={(e) => setForm({ ...form, no_telp: e.target.value })}
+        />
+      </div>
+
+      {/* ✅ Field baru untuk password opsional */}
+      <div>
+        <Label htmlFor="password">Password (opsional)</Label>
+        <Input
+          id="password"
+          type="password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          placeholder="Kosongkan jika tidak ingin mengubah password"
         />
       </div>
 
