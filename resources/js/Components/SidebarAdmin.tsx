@@ -21,7 +21,7 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
     { name: "Kelola Guru", icon: GraduationCap, href: "/admin/guru/Guru" },
     { name: "Kelola Siswa", icon: Users, href: "/admin/siswa/Siswa" },
-    { name: "Kelola Kelas", icon: LibraryBig, href: "/admin/kelas" },
+    { name: "Kelola Kelas", icon: LibraryBig, href: "/admin/kelas/Kelas" },
     { name: "Kelola Mata Pelajaran", icon: BookOpen, href: "/admin/mapel" },
   ];
 

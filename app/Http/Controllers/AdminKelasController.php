@@ -3,110 +3,81 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kelas;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AdminKelasController extends Controller
 {
     public function index()
     {
-        $kelas = Kelas::with(['guru', 'siswa'])->get();
-        return view('admin.kelas.index', compact('kelas'));
+        $kelas = Kelas::withCount('siswa')->get();
+
+        return Inertia::render('admin/Kelas/Kelas', [
+            'kelas' => $kelas,
+        ]);
     }
 
     public function create()
     {
-        $guru = User::where('role', 'guru')->get();
-        $siswa = User::where('role', 'siswa')->get();
-        return view('admin.kelas.create', compact('guru', 'siswa'));
+        return Inertia::render('admin/Kelas/Create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_kelas' => 'required|string|max:255',
-            'guru_ids' => 'array|nullable',
-            'siswa_ids' => 'array|nullable',
+            'tingkat' => 'required|string|max:50',
+            'nama_kelas' => 'required|string|max:50',
+            'tahun_ajaran' => 'required|string|max:20',
+            'deskripsi' => 'nullable|string',
         ]);
 
-        $kelas = Kelas::create([
-            'nama_kelas' => $validated['nama_kelas'],
-        ]);
+        Kelas::create($validated);
 
-        if (!empty($request->guru_ids)) {
-            $kelas->guru()->attach($request->guru_ids);
-        }
-
-        if (!empty($request->siswa_ids)) {
-            $kelas->siswa()->attach($request->siswa_ids);
-        }
-
-        return redirect()->route('admin.kelas.index')
-                         ->with('success', 'Kelas berhasil ditambahkan.');
+        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
         $kelas = Kelas::findOrFail($id);
-        $guru = User::where('role', 'guru')->get();
-        $siswa = User::where('role', 'siswa')->get();
 
-        return view('admin.kelas.edit', compact('kelas', 'guru', 'siswa'));
+        return Inertia::render('admin/Kelas/Edit', [
+            'kelas' => $kelas,
+        ]);
     }
 
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'nama_kelas' => 'required|string|max:255',
-            'guru_ids' => 'array|nullable',
-            'siswa_ids' => 'array|nullable',
+            'tingkat' => 'required|string|max:50',
+            'nama_kelas' => 'required|string|max:50',
+            'tahun_ajaran' => 'required|string|max:20',
+            'deskripsi' => 'nullable|string',
         ]);
 
         $kelas = Kelas::findOrFail($id);
-        $kelas->update(['nama_kelas' => $validated['nama_kelas']]);
+        $kelas->update($validated);
 
-        $kelas->guru()->sync($request->guru_ids ?? []);
-        $kelas->siswa()->sync($request->siswa_ids ?? []);
-
-        return redirect()->route('admin.kelas.index')
-                         ->with('success', 'Kelas berhasil diperbarui.');
+        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $kelas = Kelas::findOrFail($id);
-        $kelas->guru()->detach();
-        $kelas->siswa()->detach();
         $kelas->delete();
 
-        return redirect()->route('admin.kelas.index')
-                         ->with('success', 'Kelas berhasil dihapus.');
+        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }
 
     public function bulkDelete(Request $request)
     {
-        // pastikan menerima JSON array
         $ids = $request->input('ids', []);
+        Kelas::whereIn('id', $ids)->delete();
 
-        if (empty($ids) || !is_array($ids)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tidak ada data yang dipilih untuk dihapus.'
-            ], 400);
-        }
+        return redirect()->route('admin.kelas.index')->with('success', 'Beberapa kelas berhasil dihapus.');
+    }
 
-        try {
-            Kelas::whereIn('id', $ids)->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Beberapa kelas berhasil dihapus.'
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
-        }
+    public function list()
+    {
+        return response()->json(Kelas::select('id', 'tingkat', 'nama_kelas', 'tahun_ajaran')->get());
     }
 }

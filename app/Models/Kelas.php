@@ -9,20 +9,21 @@ class Kelas extends Model
 {
     use HasFactory;
 
-    protected $table = 'kelas';
-    protected $fillable = ['nama_kelas', 'deskripsi'];
+    protected $fillable = ['tingkat', 'nama_kelas', 'tahun_ajaran', 'deskripsi'];
 
-    // Relasi: satu kelas punya banyak guru
     public function guru()
     {
-        return $this->belongsToMany(User::class, 'guru_kelas', 'kelas_id', 'user_id')
-                    ->where('role', 'guru');
+        return $this->belongsToMany(User::class, 'guru_kelas', 'kelas_id', 'user_id');
     }
 
-    // Relasi: satu kelas punya banyak siswa
     public function siswa()
     {
-        return $this->belongsToMany(User::class, 'kelas_siswa', 'kelas_id', 'user_id')
-                    ->where('role', 'siswa');
+        return $this->belongsToMany(User::class, 'kelas_siswa', 'kelas_id', 'user_id');
+    }
+
+    // Accessor jumlah siswa
+    public function getJumlahSiswaAttribute()
+    {
+        return $this->siswa()->count();
     }
 }

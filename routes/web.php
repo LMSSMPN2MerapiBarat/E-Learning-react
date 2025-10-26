@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminKelasController;
 use App\Models\User;
+use App\Models\Kelas;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +41,7 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+
         // ✅ Dashboard Admin
         Route::get('/dashboard', [AdminUserController::class, 'dashboard'])->name('dashboard');
 
@@ -68,10 +71,28 @@ Route::middleware(['auth', 'role:admin'])
             ]);
         })->name('guru.index');
 
-        // CRUD untuk guru
-        // Route::post('/gurus', [AdminUserController::class, 'storeGuru'])->name('gurus.store');
-        // Route::put('/gurus/{id}', [AdminUserController::class, 'updateGuru'])->name('gurus.update');
-        // Route::delete('/gurus/{id}', [AdminUserController::class, 'destroyGuru'])->name('gurus.destroy');
+        /*
+        |--------------------------------------------------------------------------
+        | 🏫 KELOLA KELAS
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('kelas')->name('kelas.')->group(function () {
+            Route::get('/Kelas', [AdminKelasController::class, 'index'])->name('index');
+            Route::get('/Create', [AdminKelasController::class, 'create'])->name('create');
+            Route::post('/', [AdminKelasController::class, 'store'])->name('store');
+
+            // ✅ Bulk Delete HARUS sebelum route {id}
+            Route::delete('/bulk-delete', [AdminKelasController::class, 'bulkDelete'])
+                ->name('bulk-delete');
+
+            // ✅ Route dengan parameter ID dibatasi hanya angka
+            Route::get('/{id}/Edit', [AdminKelasController::class, 'edit'])
+                ->whereNumber('id')->name('edit');
+            Route::put('/{id}', [AdminKelasController::class, 'update'])
+                ->whereNumber('id')->name('update');
+            Route::delete('/{id}', [AdminKelasController::class, 'destroy'])
+                ->whereNumber('id')->name('destroy');
+        });
 
         /*
         |--------------------------------------------------------------------------
@@ -80,14 +101,19 @@ Route::middleware(['auth', 'role:admin'])
         */
         Route::resource('users', AdminUserController::class);
 
-        // ✅ Import / Export / Bulk Delete
+        // ✅ Import / Export / Bulk Delete User
         Route::post('/users/import', [AdminUserController::class, 'importExcel'])->name('users.import');
         Route::get('/users/export/{role}', [AdminUserController::class, 'exportExcel'])->name('users.export');
-
-        // ✅ Bulk Delete via POST (bisa untuk guru dan siswa)
         Route::post('/users/bulk-delete', [AdminUserController::class, 'bulkDelete'])->name('users.bulk-delete');
-        // Route::post('/students/bulk-delete', [AdminUserController::class, 'bulkDelete'])->name('students.bulk-delete');
-        // Route::post('/gurus/bulk-delete', [AdminUserController::class, 'bulkDelete'])->name('gurus.bulk-delete');
+
+        /*
+        |--------------------------------------------------------------------------
+        | 📘 API UNTUK DROPDOWN KELAS (DIPAKAI DI CreateSiswa.tsx)
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/kelas/list', function () {
+            return Kelas::select('id', 'tingkat', 'nama_kelas', 'tahun_ajaran')->get();
+        })->name('kelas.list');
     });
 
 /*
