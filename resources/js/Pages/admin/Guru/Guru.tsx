@@ -1,127 +1,56 @@
 import React, { useState } from "react";
 import { Head, usePage, router } from "@inertiajs/react";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Search, Upload, Download } from "lucide-react";
+import { Plus, Upload, Download, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/Components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/Components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select";
-import { Input } from "@/Components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/Components/ui/alert-dialog";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/Components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
 import CreateGuru from "./Create";
 import EditGuru from "./Edit";
 import AdminLayout from "@/Layouts/AdminLayout";
+import GuruTable from "@/Components/ComponentsGuru/GuruTable";
+import GuruDialogs from "@/Components/ComponentsGuru/GuruDialogs";
 
 export default function GuruPage() {
   const { props }: any = usePage();
   const initialGurus: any[] = props.gurus || [];
-  const [guruList, setGuruList] = useState<any[]>(initialGurus);
+
+  const [guruList, setGuruList] = useState(initialGurus);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedGuru, setSelectedGuru] = useState<any>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
-  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false); // ✅ Tambahan untuk bulk delete
+  const [bulkDeleteConfirm, setBulkDeleteConfirm] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSubject, setSelectedSubject] = useState("all");
   const [isLoading, setIsLoading] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
-  // 🔁 Reload data guru
   const reloadGurus = () => {
     router.reload({
       only: ["gurus"],
       onSuccess: (page) => {
-        const newGurus = (page.props as any).gurus || [];
-        setGuruList(newGurus);
+        setGuruList((page.props as any).gurus || []);
         setSelectedIds([]);
       },
     });
   };
 
-  // 🗑️ Hapus satu guru
-  const handleDelete = () => {
-    if (!deleteConfirm) return;
-    router.delete(`/admin/users/${deleteConfirm}`, {
-      onSuccess: () => {
-        toast.success("🗑️ Data guru berhasil dihapus!");
-        setDeleteConfirm(null);
-        reloadGurus();
-      },
-      onError: () => toast.error("❌ Gagal menghapus data guru."),
-    });
-  };
-
-  // 🗑️ Konfirmasi & hapus banyak guru
-  const handleBulkDelete = () => {
-    if (selectedIds.length === 0) {
-      toast.error("Pilih data guru yang ingin dihapus.");
-      return;
-    }
-    setBulkDeleteConfirm(true); // ✅ Tampilkan dialog konfirmasi
-  };
-
-  const confirmBulkDelete = () => {
-    setBulkDeleteConfirm(false);
-    router.post(
-      "/admin/users/bulk-delete",
-      { ids: selectedIds },
-      {
-        onStart: () => toast.loading("Menghapus data guru..."),
-        onSuccess: () => {
-          toast.success("🗑️ Data guru berhasil dihapus!");
-          setSelectedIds([]);
-          reloadGurus();
-        },
-        onError: () => toast.error("❌ Gagal menghapus beberapa data."),
-      }
-    );
-  };
-
-  // ✅ Callback sukses tambah & edit
+  // ✅ Tambah, edit, hapus
   const handleAddSuccess = () => {
     toast.success("✅ Guru berhasil ditambahkan!");
     setIsAddOpen(false);
     reloadGurus();
   };
-
   const handleEditSuccess = () => {
     toast.success("✏️ Data guru berhasil diperbarui!");
     setIsEditOpen(false);
     reloadGurus();
   };
 
-  // 📤 Import Excel
+  // 📤 Import
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setIsLoading(true);
     const toastId = toast.loading("📤 Mengimpor data guru...");
 
@@ -140,7 +69,7 @@ export default function GuruPage() {
     });
   };
 
-  // 📦 Export Excel
+  // 📦 Export
   const handleExport = () => {
     setIsLoading(true);
     const toastId = toast.loading("📦 Mengekspor data guru...");
@@ -151,64 +80,34 @@ export default function GuruPage() {
     }, 1500);
   };
 
-  // 🔍 Filter pencarian & mapel
-  const filteredGurus = guruList.filter((guru) => {
-    const matchSearch =
-      guru.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guru.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guru.nip?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchSubject =
-      selectedSubject === "all" ||
-      guru.mapel?.toLowerCase() === selectedSubject.toLowerCase();
-    return matchSearch && matchSubject;
-  });
-
-  // ✅ Checkbox seleksi
-  const toggleSelectAll = () => {
-    if (selectedIds.length === filteredGurus.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filteredGurus.map((g) => g.id));
-    }
-  };
-
-  const toggleSelect = (id: number) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
   return (
     <AdminLayout>
       <Head title="Kelola Guru" />
 
-      <Card className="shadow-sm bg-white">
+      {(isBulkDeleting || isLoading) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center space-y-3 animate-fade-in">
+            <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+            <p className="text-gray-700 font-medium">
+              {isBulkDeleting ? "Menghapus data guru..." : "Sedang memproses data..."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <Card>
         <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <CardTitle className="font-normal text-xl">Data Guru</CardTitle>
-            <CardDescription>
-              Kelola data guru dan informasi pengajaran
-            </CardDescription>
+            <CardDescription>Kelola data guru dan informasi pengajaran</CardDescription>
           </div>
 
-          {/* 🧩 Tombol Aksi */}
           <div className="flex items-center gap-2">
-            <input
-              id="importFile"
-              type="file"
-              accept=".xlsx,.xls"
-              className="hidden"
-              onChange={handleImport}
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => document.getElementById("importFile")?.click()}
-              disabled={isLoading}
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              {isLoading ? "Mengimpor..." : "Import Excel"}
+            <input id="importFile" type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImport} />
+            <Button variant="outline" size="sm" onClick={() => document.getElementById("importFile")?.click()}>
+              <Upload className="w-4 h-4 mr-2" /> Import Excel
             </Button>
+
             <Button variant="outline" size="sm" onClick={handleExport}>
               <Download className="w-4 h-4 mr-2" /> Export Excel
             </Button>
@@ -217,10 +116,10 @@ export default function GuruPage() {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={handleBulkDelete}
+                onClick={() => setBulkDeleteConfirm(true)}
+                disabled={isBulkDeleting}
               >
-                <Trash2 className="w-4 h-4 mr-2" /> Hapus Terpilih (
-                {selectedIds.length})
+                <Trash2 className="w-4 h-4 mr-2" /> Hapus Terpilih ({selectedIds.length})
               </Button>
             )}
 
@@ -241,167 +140,30 @@ export default function GuruPage() {
         </CardHeader>
 
         <CardContent>
-          {/* 🔍 Filter Bar */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Cari nama, email, atau NIP guru..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder="Filter Mapel" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Mapel</SelectItem>
-                <SelectItem value="Matematika">Matematika</SelectItem>
-                <SelectItem value="IPA">IPA</SelectItem>
-                <SelectItem value="IPS">IPS</SelectItem>
-                <SelectItem value="Bahasa Indonesia">Bahasa Indonesia</SelectItem>
-                <SelectItem value="Bahasa Inggris">Bahasa Inggris</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* 📋 Tabel Guru */}
-          <div className="border rounded-lg overflow-x-auto bg-white">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="p-3">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedIds.length === filteredGurus.length &&
-                        filteredGurus.length > 0
-                      }
-                      onChange={toggleSelectAll}
-                    />
-                  </th>
-                  <th className="p-3 text-left">Nama</th>
-                  <th className="p-3 text-left">NIP</th>
-                  <th className="p-3 text-left">Email</th>
-                  <th className="p-3 text-left">Mata Pelajaran</th>
-                  <th className="p-3 text-left">No. Telepon</th>
-                  <th className="p-3 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredGurus.length > 0 ? (
-                  filteredGurus.map((guru) => (
-                    <tr key={guru.id} className="border-t">
-                      <td className="p-3">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.includes(guru.id)}
-                          onChange={() => toggleSelect(guru.id)}
-                        />
-                      </td>
-                      <td className="p-3">{guru.name}</td>
-                      <td className="p-3">{guru.nip || "-"}</td>
-                      <td className="p-3">{guru.email}</td>
-                      <td className="p-3">{guru.mapel || "-"}</td>
-                      <td className="p-3">{guru.no_telp || "-"}</td>
-                      <td className="p-3 text-right space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedGuru(guru);
-                            setIsEditOpen(true);
-                          }}
-                        >
-                          <Pencil className="w-4 h-4 text-blue-600" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setDeleteConfirm(guru.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-600" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="text-center py-6 text-gray-500">
-                      Tidak ada data guru yang cocok.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <GuruTable
+            guruList={guruList}
+            setSelectedGuru={setSelectedGuru}
+            setIsEditOpen={setIsEditOpen}
+            setDeleteConfirm={setDeleteConfirm}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+          />
         </CardContent>
       </Card>
 
-      {/* ✏️ Dialog Edit Guru */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Data Guru</DialogTitle>
-          </DialogHeader>
-          {selectedGuru && (
-            <EditGuru
-              guru={selectedGuru}
-              onSuccess={handleEditSuccess}
-              onCancel={() => setIsEditOpen(false)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* ⚠️ Konfirmasi Hapus Satu */}
-      <AlertDialog
-        open={!!deleteConfirm}
-        onOpenChange={() => setDeleteConfirm(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Hapus Data Guru</AlertDialogTitle>
-            <AlertDialogDescription>
-              Apakah kamu yakin ingin menghapus data guru ini? Tindakan ini tidak
-              bisa dibatalkan.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Ya, Hapus
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* ⚠️ Konfirmasi Bulk Delete */}
-      <AlertDialog open={bulkDeleteConfirm} onOpenChange={setBulkDeleteConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Hapus {selectedIds.length} Guru</AlertDialogTitle>
-            <AlertDialogDescription>
-              Apakah kamu yakin ingin menghapus {selectedIds.length} data guru
-              yang dipilih? Tindakan ini tidak bisa dibatalkan.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmBulkDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Ya, Hapus Semua
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <GuruDialogs
+        isEditOpen={isEditOpen}
+        setIsEditOpen={setIsEditOpen}
+        selectedGuru={selectedGuru}
+        handleEditSuccess={handleEditSuccess}
+        deleteConfirm={deleteConfirm}
+        setDeleteConfirm={setDeleteConfirm}
+        bulkDeleteConfirm={bulkDeleteConfirm}
+        setBulkDeleteConfirm={setBulkDeleteConfirm}
+        selectedIds={selectedIds}
+        reloadGurus={reloadGurus}
+        setIsBulkDeleting={setIsBulkDeleting}
+      />
     </AdminLayout>
   );
 }
