@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Components/ui/select";
 
 export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
   const { data, setData, post, reset, processing, errors } = useForm({
@@ -12,16 +19,25 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
     email: "",
     password: "",
     no_telp: "",
-    role: "guru", // wajib dikirim
+    mapel_ids: [] as number[],
   });
+
+  const [mapels, setMapels] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/admin/mapel/list")
+      .then((res) => res.json())
+      .then((data) => setMapels(data))
+      .catch(() => toast.error("Gagal memuat daftar mapel."));
+  }, []);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    post("/admin/users", {
+    post("/admin/guru", {
       onSuccess: () => {
         toast.success("Guru berhasil ditambahkan!");
         reset();
-        onSuccess(); // tutup modal + reload data
+        onSuccess();
       },
       onError: () => toast.error("Gagal menambahkan guru."),
     });
@@ -47,7 +63,6 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           value={data.nip}
           onChange={(e) => setData("nip", e.target.value)}
         />
-        {errors.nip && <p className="text-red-500 text-sm">{errors.nip}</p>}
       </div>
 
       <div>
@@ -58,7 +73,6 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           value={data.email}
           onChange={(e) => setData("email", e.target.value)}
         />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
       </div>
 
       <div>
@@ -69,9 +83,6 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           value={data.password}
           onChange={(e) => setData("password", e.target.value)}
         />
-        {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password}</p>
-        )}
       </div>
 
       <div>
@@ -82,8 +93,36 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           value={data.no_telp}
           onChange={(e) => setData("no_telp", e.target.value)}
         />
-        {errors.no_telp && (
-          <p className="text-red-500 text-sm">{errors.no_telp}</p>
+      </div>
+
+      <div>
+        <Label>Mata Pelajaran (bisa lebih dari satu)</Label>
+        <Select
+          onValueChange={(val) => {
+            const id = parseInt(val);
+            setData(
+              "mapel_ids",
+              data.mapel_ids.includes(id)
+                ? data.mapel_ids.filter((m) => m !== id)
+                : [...data.mapel_ids, id]
+            );
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Pilih mata pelajaran" />
+          </SelectTrigger>
+          <SelectContent>
+            {mapels.map((m) => (
+              <SelectItem key={m.id} value={String(m.id)}>
+                {m.nama_mapel}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {data.mapel_ids.length > 0 && (
+          <p className="text-sm text-gray-600 mt-1">
+            Dipilih: {data.mapel_ids.length} mapel
+          </p>
         )}
       </div>
 

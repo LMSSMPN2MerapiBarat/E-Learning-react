@@ -1,46 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select";
 import { Loader2 } from "lucide-react";
 
-export default function EditGuru({
-  guru,
-  onSuccess,
-  onCancel,
-}: {
-  guru: any;
+// 🧩 Type definitions
+type GuruType = {
+  id: number;
+  name: string;
+  email: string;
+  nip?: string;
+  no_telp?: string;
+  mapel_ids?: number[];
+};
+
+type Mapel = {
+  id: number;
+  nama_mapel: string;
+};
+
+interface EditGuruProps {
+  guru: GuruType;
   onSuccess: () => void;
   onCancel: () => void;
-}) {
-  const [form, setForm] = useState({
+}
+
+export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
+  const [form, setForm] = useState<GuruType>({
+    id: guru.id,
     name: guru.name || "",
     email: guru.email || "",
-    mapel: guru.mapel || "",
-    no_telp: guru.no_telp || "",
     nip: guru.nip || "",
-    role: "guru",
+    no_telp: guru.no_telp || "",
+    mapel_ids: guru.mapel_ids || [],
   });
+
   const [loading, setLoading] = useState(false);
+  const [mapels, setMapels] = useState<Mapel[]>([]);
+
+  // 🔄 Ambil data mapel dari backend
+  useEffect(() => {
+    fetch("/admin/mapel/list")
+      .then((res) => res.json())
+      .then((data: Mapel[]) => setMapels(data))
+      .catch(() => toast.error("Gagal memuat daftar mapel."));
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleMapelSelect = (id: number) => {
+    const selected = form.mapel_ids?.includes(id)
+      ? form.mapel_ids.filter((m) => m !== id)
+      : [...(form.mapel_ids || []), id];
+
+    setForm({ ...form, mapel_ids: selected });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    router.put(`/admin/users/${guru.id}`, form, {
+    router.put(`/admin/guru/${guru.id}`, form, {
       preserveScroll: true,
       onSuccess: () => {
         toast.success("✅ Data guru berhasil diperbarui!");
@@ -65,8 +89,8 @@ export default function EditGuru({
         <Label>NIP</Label>
         <Input name="nip" value={form.nip} onChange={handleChange} required />
       </div>
+
       <div>
-        
         <Label>Email</Label>
         <Input
           type="email"
@@ -78,25 +102,6 @@ export default function EditGuru({
       </div>
 
       <div>
-        <Label>Mata Pelajaran</Label>
-        <Select
-          value={form.mapel}
-          onValueChange={(val) => setForm({ ...form, mapel: val })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Pilih mata pelajaran" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Matematika">Matematika</SelectItem>
-            <SelectItem value="IPA">IPA</SelectItem>
-            <SelectItem value="IPS">IPS</SelectItem>
-            <SelectItem value="Bahasa Indonesia">Bahasa Indonesia</SelectItem>
-            <SelectItem value="Bahasa Inggris">Bahasa Inggris</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
         <Label>No. Telepon</Label>
         <Input
           name="no_telp"
@@ -104,6 +109,32 @@ export default function EditGuru({
           onChange={handleChange}
           required
         />
+      </div>
+
+      <div>
+        <Label>Mata Pelajaran (bisa pilih lebih dari satu)</Label>
+        <div className="flex flex-wrap gap-2 border p-2 rounded-md">
+          {mapels.map((m: Mapel) => (
+            <button
+              type="button"
+              key={m.id}
+              onClick={() => handleMapelSelect(m.id)}
+              className={`px-3 py-1 rounded-md border ${
+                form.mapel_ids?.includes(m.id)
+                  ? "bg-blue-600 text-white border-blue-700"
+                  : "bg-gray-100 hover:bg-gray-200"
+              }`}
+            >
+              {m.nama_mapel}
+            </button>
+          ))}
+        </div>
+
+        {form.mapel_ids && form.mapel_ids.length > 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            Dipilih: {form.mapel_ids.length} mapel
+          </p>
+        )}
       </div>
 
       <div className="flex justify-end space-x-2 pt-2">

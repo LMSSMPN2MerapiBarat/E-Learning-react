@@ -11,14 +11,16 @@ class Kelas extends Model
 
     protected $fillable = ['tingkat', 'kelas', 'tahun_ajaran', 'deskripsi'];
 
+    // Relasi siswa normal: Siswa(user) memiliki kelas_id
+    public function siswa()
+    {
+        return $this->hasMany(Siswa::class);
+    }
+
+    // Masih biarkan relasi many-to-many ke User (jika ada kebutuhan lama)
     public function guru()
     {
         return $this->belongsToMany(User::class, 'guru_kelas', 'kelas_id', 'user_id')->withTimestamps();
-    }
-
-    public function siswa()
-    {
-        return $this->belongsToMany(User::class, 'kelas_siswa', 'kelas_id', 'user_id')->withTimestamps();
     }
 
     public function getJumlahSiswaAttribute()

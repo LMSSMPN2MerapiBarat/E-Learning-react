@@ -32,9 +32,11 @@ export default function GuruDialogs({
   reloadGurus,
   setIsBulkDeleting,
 }: any) {
+  // Hapus satu guru
   const handleDelete = () => {
     if (!deleteConfirm) return;
-    router.delete(`/admin/users/${deleteConfirm}`, {
+    router.delete(`/admin/guru/${deleteConfirm}`, {
+      preserveScroll: true,
       onSuccess: () => {
         toast.success("🗑️ Data guru berhasil dihapus!");
         setDeleteConfirm(null);
@@ -44,27 +46,27 @@ export default function GuruDialogs({
     });
   };
 
+  // Hapus banyak guru
   const confirmBulkDelete = () => {
     setBulkDeleteConfirm(false);
     setIsBulkDeleting(true);
     const toastId = toast.loading("🗑️ Menghapus data guru...");
 
-    router.post(
-      "/admin/users/bulk-delete",
-      { ids: selectedIds },
-      {
-        onSuccess: () => {
-          toast.success("✅ Data guru berhasil dihapus!", { id: toastId });
-          reloadGurus();
-        },
-        onError: () => toast.error("❌ Gagal menghapus beberapa data.", { id: toastId }),
-        onFinish: () => setTimeout(() => setIsBulkDeleting(false), 700),
-      }
-    );
+    router.delete("/admin/guru/bulk-delete", {
+      data: { ids: selectedIds },
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success("✅ Beberapa guru berhasil dihapus!", { id: toastId });
+        reloadGurus();
+      },
+      onError: () => toast.error("❌ Gagal menghapus beberapa data.", { id: toastId }),
+      onFinish: () => setTimeout(() => setIsBulkDeleting(false), 700),
+    });
   };
 
   return (
     <>
+      {/* Dialog Edit */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent>
           <DialogHeader>
@@ -80,7 +82,7 @@ export default function GuruDialogs({
         </DialogContent>
       </Dialog>
 
-      {/* Hapus satu */}
+      {/* Dialog Hapus Satu */}
       <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -101,13 +103,13 @@ export default function GuruDialogs({
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Bulk delete */}
+      {/* Dialog Bulk Delete */}
       <AlertDialog open={bulkDeleteConfirm} onOpenChange={setBulkDeleteConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Hapus {selectedIds.length} Guru</AlertDialogTitle>
             <AlertDialogDescription>
-              Apakah kamu yakin ingin menghapus {selectedIds.length} data guru yang dipilih?  
+              Apakah kamu yakin ingin menghapus {selectedIds.length} data guru yang dipilih?
               Tindakan ini tidak bisa dibatalkan.
             </AlertDialogDescription>
           </AlertDialogHeader>

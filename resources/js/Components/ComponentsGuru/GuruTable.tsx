@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/Components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/Components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/Components/ui/select";
 import { Button } from "@/Components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
@@ -16,22 +22,30 @@ export default function GuruTable({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
 
-  const filteredGurus = guruList.filter((guru: any) => {
-    const matchSearch =
-      guru.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guru.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guru.nip?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchSubject =
-      selectedSubject === "all" ||
-      guru.mapel?.toLowerCase() === selectedSubject.toLowerCase();
-    return matchSearch && matchSubject;
-  });
+  // ✅ Pastikan guruList selalu array agar tidak error
+  const filteredGurus = Array.isArray(guruList)
+    ? guruList.filter((guru: any) => {
+        const matchSearch =
+          guru.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          guru.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          guru.nip?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchSubject =
+          selectedSubject === "all" ||
+          guru.mapel?.toLowerCase().includes(selectedSubject.toLowerCase());
+        return matchSearch && matchSubject;
+      })
+    : [];
 
+  // ✅ Toggle semua checkbox
   const toggleSelectAll = () => {
-    if (selectedIds.length === filteredGurus.length) setSelectedIds([]);
-    else setSelectedIds(filteredGurus.map((g: any) => g.id));
+    if (selectedIds.length === filteredGurus.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredGurus.map((g: any) => g.id));
+    }
   };
 
+  // ✅ Toggle satu checkbox
   const toggleSelect = (id: number) => {
     setSelectedIds((prev: number[]) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -40,6 +54,7 @@ export default function GuruTable({
 
   return (
     <>
+      {/* 🔍 Pencarian dan Filter */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -57,23 +72,28 @@ export default function GuruTable({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Semua Mapel</SelectItem>
-            <SelectItem value="Matematika">Matematika</SelectItem>
-            <SelectItem value="IPA">IPA</SelectItem>
-            <SelectItem value="IPS">IPS</SelectItem>
-            <SelectItem value="Bahasa Indonesia">Bahasa Indonesia</SelectItem>
-            <SelectItem value="Bahasa Inggris">Bahasa Inggris</SelectItem>
+            <SelectItem value="matematika">Matematika</SelectItem>
+            <SelectItem value="ipa">IPA</SelectItem>
+            <SelectItem value="ips">IPS</SelectItem>
+            <SelectItem value="bahasa indonesia">Bahasa Indonesia</SelectItem>
+            <SelectItem value="bahasa inggris">Bahasa Inggris</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
+      {/* 📋 Tabel Guru */}
       <div className="border rounded-lg overflow-x-auto bg-white">
         <table className="w-full text-sm">
           <thead className="bg-gray-50">
             <tr>
-              <th className="p-3">
+              <th className="p-3 w-[40px] text-center">
                 <input
                   type="checkbox"
-                  checked={selectedIds.length === filteredGurus.length && filteredGurus.length > 0}
+                  className="w-4 h-4 accent-blue-600 cursor-pointer"
+                  checked={
+                    filteredGurus.length > 0 &&
+                    selectedIds.length === filteredGurus.length
+                  }
                   onChange={toggleSelectAll}
                 />
               </th>
@@ -88,10 +108,11 @@ export default function GuruTable({
           <tbody>
             {filteredGurus.length > 0 ? (
               filteredGurus.map((guru: any) => (
-                <tr key={guru.id} className="border-t">
-                  <td className="p-3">
+                <tr key={guru.id} className="border-t hover:bg-gray-50">
+                  <td className="p-3 text-center">
                     <input
                       type="checkbox"
+                      className="w-4 h-4 accent-blue-600 cursor-pointer"
                       checked={selectedIds.includes(guru.id)}
                       onChange={() => toggleSelect(guru.id)}
                     />

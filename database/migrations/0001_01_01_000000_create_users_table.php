@@ -5,9 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Jalankan migrasi.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -16,11 +13,6 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('role', ['admin', 'guru', 'siswa'])->default('siswa');
-            $table->string('nip')->nullable(); // untuk guru
-            $table->string('nis')->nullable(); // untuk siswa
-            $table->string('mapel')->nullable(); // untuk guru
-            $table->string('kelas')->nullable(); // untuk siswa
-            $table->string('no_telp')->nullable();
             $table->timestamps();
         });
 
@@ -40,13 +32,10 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Batalkan migrasi.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

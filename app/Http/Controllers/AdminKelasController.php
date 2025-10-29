@@ -25,15 +25,14 @@ class AdminKelasController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'tingkat' => 'required|string|max:50',
-            'kelas' => 'required|string|max:50',
-            'tahun_ajaran' => 'required|string|max:20',
-            'deskripsi' => 'nullable|string',
+            'tingkat'       => 'required|string|max:50',
+            'kelas'         => 'required|string|max:50',
+            'tahun_ajaran'  => 'required|string|max:20',
+            'deskripsi'     => 'nullable|string',
         ]);
 
         Kelas::create($validated);
 
-        // agar Inertia reload otomatis tanpa error
         return redirect()->back()->with('success', 'Kelas berhasil ditambahkan.');
     }
 
@@ -49,10 +48,10 @@ class AdminKelasController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'tingkat' => 'required|string|max:50',
-            'kelas' => 'required|string|max:50',
-            'tahun_ajaran' => 'required|string|max:20',
-            'deskripsi' => 'nullable|string',
+            'tingkat'       => 'required|string|max:50',
+            'kelas'         => 'required|string|max:50',
+            'tahun_ajaran'  => 'required|string|max:20',
+            'deskripsi'     => 'nullable|string',
         ]);
 
         $kelas = Kelas::findOrFail($id);
@@ -78,7 +77,7 @@ class AdminKelasController extends Controller
     }
 
     /**
-     * 📘 Dipakai untuk dropdown di Create/Edit Siswa
+     * Dipakai untuk dropdown di Create/Edit Siswa
      */
     public function list()
     {

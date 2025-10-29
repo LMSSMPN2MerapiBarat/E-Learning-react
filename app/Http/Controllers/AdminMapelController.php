@@ -10,7 +10,7 @@ class AdminMapelController extends Controller
 {
     public function index()
     {
-        $mapels = MataPelajaran::all();
+        $mapels = MataPelajaran::withCount('gurus')->get();
 
         return Inertia::render('admin/Mapel/Mapel', [
             'mapels' => $mapels,
@@ -57,8 +57,7 @@ class AdminMapelController extends Controller
     {
         $mapel->delete();
 
-        return redirect()->route('admin.mapel.index')
-                         ->with('success', 'Mata pelajaran berhasil dihapus!');
+        return back()->with('success', 'Mata pelajaran berhasil dihapus!');
     }
 
     public function bulkDelete(Request $request)
@@ -66,17 +65,18 @@ class AdminMapelController extends Controller
         $ids = $request->input('ids', []);
 
         if (empty($ids)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tidak ada data yang dipilih untuk dihapus.',
-            ], 400);
+            return back()->with('error', 'Tidak ada data yang dipilih untuk dihapus.');
         }
 
         MataPelajaran::whereIn('id', $ids)->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Beberapa mata pelajaran berhasil dihapus.',
-        ]);
+        // ✅ gunakan redirect agar Inertia tidak error JSON
+        return back()->with('success', 'Beberapa mata pelajaran berhasil dihapus!');
+    }
+
+    // 📘 untuk dropdown di form tambah guru
+    public function list()
+    {
+        return response()->json(MataPelajaran::select('id', 'nama_mapel')->get());
     }
 }
