@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useForm, router } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -11,13 +11,12 @@ import { toast } from "sonner";
 export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     tingkat: "",
-    nama_kelas: "",
+    kelas: "",
     tahun_ajaran: "",
   });
 
   const [prefix, setPrefix] = useState("");
 
-  // Otomatis ubah prefix nama_kelas sesuai tingkat
   useEffect(() => {
     if (data.tingkat === "Kelas 7") setPrefix("VII-");
     else if (data.tingkat === "Kelas 8") setPrefix("VIII-");
@@ -25,7 +24,6 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
     else setPrefix("");
   }, [data.tingkat]);
 
-  // Isi default tahun ajaran
   useEffect(() => {
     const tahun = new Date().getFullYear();
     setData("tahun_ajaran", `${tahun}/${tahun + 1}`);
@@ -46,7 +44,6 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
   return (
     <>
       <Head title="Tambah Kelas" />
-
       <div className="flex justify-center mt-8">
         <Card className="w-full max-w-lg shadow-md">
           <CardHeader>
@@ -57,7 +54,6 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Dropdown Tingkat */}
               <div>
                 <Label htmlFor="tingkat">Tingkat</Label>
                 <select
@@ -77,30 +73,23 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
                 )}
               </div>
 
-              {/* Nama Kelas */}
               <div>
-                <Label htmlFor="nama_kelas">Nama Kelas</Label>
+                <Label htmlFor="kelas">Nama Kelas</Label>
                 <Input
-                  id="nama_kelas"
+                  id="kelas"
                   type="text"
                   placeholder="contoh: VII-A"
-                  value={`${prefix}${data.nama_kelas.replace(prefix, "")}`}
+                  value={`${prefix}${data.kelas.replace(prefix, "")}`}
                   onChange={(e) =>
-                    setData(
-                      "nama_kelas",
-                      `${prefix}${e.target.value.replace(prefix, "")}`
-                    )
+                    setData("kelas", `${prefix}${e.target.value.replace(prefix, "")}`)
                   }
                   required
                 />
-                {errors.nama_kelas && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.nama_kelas}
-                  </p>
+                {errors.kelas && (
+                  <p className="text-sm text-red-500 mt-1">{errors.kelas}</p>
                 )}
               </div>
 
-              {/* Tahun Ajaran */}
               <div>
                 <Label htmlFor="tahun_ajaran">Tahun Ajaran</Label>
                 <Input
@@ -117,7 +106,6 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
                 )}
               </div>
 
-              {/* Tombol Simpan */}
               <div className="flex justify-end">
                 <Button type="submit" disabled={processing}>
                   {processing ? (

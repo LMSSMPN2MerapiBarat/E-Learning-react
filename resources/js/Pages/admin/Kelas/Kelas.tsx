@@ -194,46 +194,47 @@ export default function KelasPage() {
                 </tr>
               </thead>
               <tbody>
-                {kelasList.map((kelas) => (
-                  <tr key={kelas.id} className="border-t">
-                    <td className="p-2 text-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(kelas.id)}
-                        onChange={(e) =>
-                          setSelectedIds(
-                            e.target.checked
-                              ? [...selectedIds, kelas.id]
-                              : selectedIds.filter((id) => id !== kelas.id)
-                          )
-                        }
-                      />
-                    </td>
-                    <td className="p-2">{kelas.tingkat}</td>
-                    <td className="p-2">{kelas.nama_kelas}</td>
-                    <td className="p-2">{kelas.tahun_ajaran}</td>
-                    <td className="p-2 text-center">{kelas.siswa_count ?? 0}</td>
-                    <td className="p-2 flex justify-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedKelas(kelas);
-                          setIsEditOpen(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => setDeleteConfirm(kelas.id)}
-                      >
-                        Hapus
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+  {kelasList.map((kelas) => (
+    <tr key={kelas.id} className="border-t">
+      <td className="p-2 text-center">
+        <input
+          type="checkbox"
+          checked={selectedIds.includes(kelas.id)}
+          onChange={(e) =>
+            setSelectedIds(
+              e.target.checked
+                ? [...selectedIds, kelas.id]
+                : selectedIds.filter((id) => id !== kelas.id)
+            )
+          }
+        />
+      </td>
+      <td className="p-2">{kelas.tingkat}</td>
+      {/* ✅ Ganti nama_kelas jadi kelas */}
+      <td className="p-2">{kelas.kelas}</td>
+      <td className="p-2">{kelas.tahun_ajaran}</td>
+      <td className="p-2 text-center">{kelas.siswa_count ?? 0}</td>
+      <td className="p-2 flex justify-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setSelectedKelas(kelas);
+            setIsEditOpen(true);
+          }}
+        >
+          Edit
+        </Button>
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={() => setDeleteConfirm(kelas.id)}
+        >
+          Hapus
+        </Button>
+      </td>
+    </tr>
+  ))}
               </tbody>
             </table>
           </div>

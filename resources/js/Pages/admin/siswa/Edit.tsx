@@ -14,7 +14,7 @@ import {
 interface Kelas {
   id: number;
   tingkat: string;
-  nama_kelas: string;
+  kelas: string;
   tahun_ajaran: string;
 }
 
@@ -39,13 +39,9 @@ export default function EditSiswa({
   onSuccess,
   onCancel,
 }: EditSiswaProps) {
-  if (!student) {
-    return <p className="text-gray-500 text-sm">Memuat data siswa...</p>;
-  }
+  if (!student) return null;
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
-
-  // ✅ Sinkronkan kelas_id awal agar dropdown langsung menampilkan pilihan sebelumnya
   const [form, setForm] = useState({
     name: student.name || "",
     email: student.email || "",
@@ -54,7 +50,6 @@ export default function EditSiswa({
     nis: student.nis || "",
     password: "",
   });
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -86,10 +81,7 @@ export default function EditSiswa({
         setLoading(false);
         onSuccess({ ...student, ...form });
       },
-      onError: (errors) => {
-        console.error(errors);
-        setLoading(false);
-      },
+      onError: () => setLoading(false),
     });
   };
 
@@ -120,30 +112,24 @@ export default function EditSiswa({
       <div>
         <Label>Kelas</Label>
         <Select
-          value={form.kelas_id} // ✅ menampilkan pilihan kelas sebelumnya
+          value={form.kelas_id}
           onValueChange={(v) => setForm({ ...form, kelas_id: v })}
         >
           <SelectTrigger>
             <SelectValue
               placeholder={
                 form.kelas_id
-                  ? kelasList.find((k) => String(k.id) === form.kelas_id)?.nama_kelas
+                  ? kelasList.find((k) => String(k.id) === form.kelas_id)?.kelas
                   : "Pilih kelas"
               }
             />
           </SelectTrigger>
           <SelectContent>
-            {kelasList.length > 0 ? (
-              kelasList.map((k) => (
-                <SelectItem key={k.id} value={String(k.id)}>
-                  {k.tingkat} - {k.nama_kelas} ({k.tahun_ajaran})
-                </SelectItem>
-              ))
-            ) : (
-              <SelectItem value="none" disabled>
-                Tidak ada kelas
+            {kelasList.map((k) => (
+              <SelectItem key={k.id} value={String(k.id)}>
+                {k.tingkat} - {k.kelas} ({k.tahun_ajaran})
               </SelectItem>
-            )}
+            ))}
           </SelectContent>
         </Select>
       </div>

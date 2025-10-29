@@ -152,7 +152,7 @@ export default function DashboardOverview() {
         <Card>
           <CardContent className="p-6 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600">Total Materi</p>
+              <p className="text-sm text-gray-600">Total Kelas</p>
               <p className="text-3xl mt-2">{totalMateri}</p>
             </div>
             <div className="bg-purple-500 p-3 rounded-lg">
@@ -164,7 +164,7 @@ export default function DashboardOverview() {
         <Card>
           <CardContent className="p-6 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600">Total Kuis</p>
+              <p className="text-sm text-gray-600">Total Mata Pelajaran</p>
               <p className="text-3xl mt-2">{totalKuis}</p>
             </div>
             <div className="bg-orange-500 p-3 rounded-lg">

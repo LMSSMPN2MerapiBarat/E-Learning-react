@@ -24,15 +24,14 @@ class AdminUserController extends Controller
         $role = $request->query('role');
 
         $users = User::when($role, fn($q) => $q->where('role', $role))
-            ->with(['kelas:id,nama_kelas'])
+            ->with(['kelas:id,kelas'])
             ->latest()
             ->paginate(10);
 
-        // Hindari overwrite nama relasi 'kelas'. Tambahkan field turunan.
         $users->getCollection()->transform(function ($user) {
             if ($user->role === 'siswa') {
-                $kelas = $user->kelas ? $user->kelas->first() : null;
-                $user->kelas_nama = $kelas->nama_kelas ?? '-';
+                $kelas = $user->kelas?->first();
+                $user->kelas_nama = $kelas->kelas ?? $user->kelas ?? '-';
                 $user->kelas_id = $kelas->id ?? null;
             } else {
                 $user->kelas_nama = '-';
@@ -51,35 +50,37 @@ class AdminUserController extends Controller
      * 📊 Dashboard Admin — Menampilkan statistik dan daftar siswa
      */
     public function dashboard()
-    {
-        $totalGuru = User::where('role', 'guru')->count();
-        $totalSiswa = User::where('role', 'siswa')->count();
-        $totalMateri = 0;
-        $totalKuis = 0;
+{
+    $totalGuru = User::where('role', 'guru')->count();
+    $totalSiswa = User::where('role', 'siswa')->count();
 
-        $students = User::where('role', 'siswa')
-            ->with(['kelas:id,nama_kelas'])
-            ->get()
-            ->map(function ($u) {
-                $kelas = $u->kelas ? $u->kelas->first() : null;
-                return [
-                    'id'      => $u->id,
-                    'name'    => $u->name,
-                    'nis'     => $u->nis,
-                    'kelas'   => $kelas ? $kelas->nama_kelas : '-',
-                    'email'   => $u->email,
-                    'no_telp' => $u->no_telp,
-                ];
-            });
+    $students = User::where('role', 'siswa')
+        ->with(['kelas:id,kelas'])
+        ->get()
+        ->map(function ($u) {
+            // Coba ambil dari relasi dulu, fallback ke kolom `users.kelas`
+            $kelasModel = is_iterable($u->kelas) ? collect($u->kelas)->first() : null;
+            $namaKelas = $kelasModel->kelas ?? $u->kelas ?? '-';
 
-        return Inertia::render('admin/dashboard', [
-            'totalGuru'   => $totalGuru,
-            'totalSiswa'  => $totalSiswa,
-            'totalMateri' => $totalMateri,
-            'totalKuis'   => $totalKuis,
-            'students'    => $students,
-        ]);
-    }
+            return [
+                'id'      => $u->id,
+                'name'    => $u->name,
+                'nis'     => $u->nis,
+                'kelas'   => $namaKelas,
+                'email'   => $u->email,
+                'no_telp' => $u->no_telp,
+            ];
+        });
+
+    return Inertia::render('admin/dashboard', [
+        'totalGuru'   => $totalGuru,
+        'totalSiswa'  => $totalSiswa,
+        'totalMateri' => 0,
+        'totalKuis'   => 0,
+        'students'    => $students,
+    ]);
+}
+
 
     /**
      * ➕ Form tambah pengguna baru
@@ -121,13 +122,13 @@ class AdminUserController extends Controller
             'role'     => $validated['role'],
         ]);
 
-        // Jika siswa, attach ke pivot kelas_siswa
         if ($user->role === 'siswa' && !empty($validated['kelas_id'])) {
             $user->kelas()->attach($validated['kelas_id']);
+            $namaKelas = Kelas::find($validated['kelas_id'])->kelas ?? null;
+            $user->update(['kelas' => $namaKelas]); // ✅ isi kolom users.kelas
         }
 
-        // Kembalikan student baru ke props Inertia (dipakai CreateSiswa.tsx)
-        return redirect()->back()->with('newStudent', $user);
+        return redirect()->back()->with('success', 'Siswa berhasil ditambahkan!');
     }
 
     /**
@@ -137,7 +138,7 @@ class AdminUserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'name'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email,' . $id,
             'role'     => 'required|in:admin,guru,siswa',
@@ -145,35 +146,19 @@ class AdminUserController extends Controller
         ]);
 
         $data = $request->only(['name', 'email', 'role', 'nip', 'nis', 'no_telp']);
-
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
-
         $user->update($data);
 
-        // Guru: sinkron relasi mapel HANYA jika diberikan sebagai array mata_pelajaran
-        if ($user->role === 'guru') {
-            $mataPelajaran = $request->input('mata_pelajaran');
-            if (is_array($mataPelajaran)) {
-                $user->mataPelajaran()->sync($mataPelajaran);
-            }
-        }
-
-        // Siswa: sinkron relasi kelas HANYA jika field kelas_id ADA di request
         if ($user->role === 'siswa' && $request->has('kelas_id')) {
             $kelasId = $request->input('kelas_id');
             $user->kelas()->sync($kelasId ? [$kelasId] : []);
+            $namaKelas = $kelasId ? Kelas::find($kelasId)->kelas : null;
+            $user->update(['kelas' => $namaKelas]); // ✅ isi kolom users.kelas
         }
 
-        if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'Data pengguna berhasil diperbarui.',
-                'user'    => $user,
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Data siswa berhasil diperbarui!');
     }
 
     /**
@@ -182,17 +167,9 @@ class AdminUserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-
-        if ($user->role === 'guru') {
-            $user->mataPelajaran()->detach();
-        }
-
-        if ($user->role === 'siswa') {
-            $user->kelas()->detach();
-        }
-
+        if ($user->role === 'guru') $user->mataPelajaran()->detach();
+        if ($user->role === 'siswa') $user->kelas()->detach();
         $user->delete();
-
         return back()->with('success', ucfirst($user->role) . ' berhasil dihapus.');
     }
 

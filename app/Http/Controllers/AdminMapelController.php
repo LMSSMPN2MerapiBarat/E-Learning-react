@@ -4,18 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AdminMapelController extends Controller
 {
     public function index()
     {
         $mapels = MataPelajaran::all();
-        return view('admin.mapel.index', compact('mapels'));
+
+        return Inertia::render('admin/Mapel/Mapel', [
+            'mapels' => $mapels,
+        ]);
     }
 
     public function create()
     {
-        return view('admin.mapel.create');
+        return Inertia::render('admin/Mapel/Create');
     }
 
     public function store(Request $request)
@@ -32,7 +36,9 @@ class AdminMapelController extends Controller
 
     public function edit(MataPelajaran $mapel)
     {
-        return view('admin.mapel.edit', compact('mapel'));
+        return Inertia::render('admin/Mapel/Edit', [
+            'mapel' => $mapel,
+        ]);
     }
 
     public function update(Request $request, MataPelajaran $mapel)

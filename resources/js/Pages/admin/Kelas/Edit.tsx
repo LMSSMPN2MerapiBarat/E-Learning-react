@@ -3,7 +3,13 @@ import { router } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/Components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/Components/ui/select";
 import { Loader2 } from "lucide-react";
 
 export default function EditKelas({
@@ -17,18 +23,18 @@ export default function EditKelas({
 }) {
   const [form, setForm] = useState({
     tingkat: kelas.tingkat,
-    nama_kelas: kelas.nama_kelas,
+    kelas: kelas.kelas,
     tahun_ajaran: kelas.tahun_ajaran,
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (form.tingkat === "Kelas 7" && !form.nama_kelas.startsWith("VII-"))
-      setForm({ ...form, nama_kelas: "VII-" });
-    if (form.tingkat === "Kelas 8" && !form.nama_kelas.startsWith("VIII-"))
-      setForm({ ...form, nama_kelas: "VIII-" });
-    if (form.tingkat === "Kelas 9" && !form.nama_kelas.startsWith("IX-"))
-      setForm({ ...form, nama_kelas: "IX-" });
+    if (form.tingkat === "Kelas 7" && !form.kelas.startsWith("VII-"))
+      setForm({ ...form, kelas: "VII-" });
+    if (form.tingkat === "Kelas 8" && !form.kelas.startsWith("VIII-"))
+      setForm({ ...form, kelas: "VIII-" });
+    if (form.tingkat === "Kelas 9" && !form.kelas.startsWith("IX-"))
+      setForm({ ...form, kelas: "IX-" });
   }, [form.tingkat]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -65,8 +71,8 @@ export default function EditKelas({
       <div>
         <Label>Nama Kelas</Label>
         <Input
-          value={form.nama_kelas}
-          onChange={(e) => setForm({ ...form, nama_kelas: e.target.value })}
+          value={form.kelas}
+          onChange={(e) => setForm({ ...form, kelas: e.target.value })}
         />
       </div>
 

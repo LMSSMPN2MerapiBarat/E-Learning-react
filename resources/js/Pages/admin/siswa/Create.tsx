@@ -14,7 +14,7 @@ import {
 interface Kelas {
   id: number;
   tingkat: string;
-  nama_kelas: string;
+  kelas: string;
   tahun_ajaran: string;
 }
 
@@ -23,7 +23,7 @@ interface CreateSiswaProps {
 }
 
 export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
-  const { data, setData, post, processing, reset, errors } = useForm({
+  const { data, setData, post, processing, reset } = useForm({
     name: "",
     email: "",
     password: "",
@@ -51,7 +51,6 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
         if (onSuccess) onSuccess(newStudent);
         reset();
       },
-      onError: (err) => console.error(err),
     });
   };
 
@@ -63,7 +62,6 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           value={data.name}
           onChange={(e) => setData("name", e.target.value)}
         />
-        {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
       </div>
 
       <div>
@@ -73,7 +71,6 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           value={data.email}
           onChange={(e) => setData("email", e.target.value)}
         />
-        {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
       </div>
 
       <div>
@@ -83,9 +80,6 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           value={data.password}
           onChange={(e) => setData("password", e.target.value)}
         />
-        {errors.password && (
-          <p className="text-sm text-red-600">{errors.password}</p>
-        )}
       </div>
 
       <div>
@@ -106,17 +100,11 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
             <SelectValue placeholder="Pilih kelas" />
           </SelectTrigger>
           <SelectContent>
-            {kelasList.length > 0 ? (
-              kelasList.map((k) => (
-                <SelectItem key={k.id} value={String(k.id)}>
-                  {k.tingkat} - {k.nama_kelas} ({k.tahun_ajaran})
-                </SelectItem>
-              ))
-            ) : (
-              <SelectItem value="none" disabled>
-                Tidak ada kelas
+            {kelasList.map((k) => (
+              <SelectItem key={k.id} value={String(k.id)}>
+                {k.tingkat} - {k.kelas} ({k.tahun_ajaran})
               </SelectItem>
-            )}
+            ))}
           </SelectContent>
         </Select>
       </div>

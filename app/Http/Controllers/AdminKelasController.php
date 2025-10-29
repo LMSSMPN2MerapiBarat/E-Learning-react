@@ -26,14 +26,15 @@ class AdminKelasController extends Controller
     {
         $validated = $request->validate([
             'tingkat' => 'required|string|max:50',
-            'nama_kelas' => 'required|string|max:50',
+            'kelas' => 'required|string|max:50',
             'tahun_ajaran' => 'required|string|max:20',
             'deskripsi' => 'nullable|string',
         ]);
 
         Kelas::create($validated);
 
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
+        // agar Inertia reload otomatis tanpa error
+        return redirect()->back()->with('success', 'Kelas berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -49,7 +50,7 @@ class AdminKelasController extends Controller
     {
         $validated = $request->validate([
             'tingkat' => 'required|string|max:50',
-            'nama_kelas' => 'required|string|max:50',
+            'kelas' => 'required|string|max:50',
             'tahun_ajaran' => 'required|string|max:20',
             'deskripsi' => 'nullable|string',
         ]);
@@ -57,7 +58,7 @@ class AdminKelasController extends Controller
         $kelas = Kelas::findOrFail($id);
         $kelas->update($validated);
 
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Kelas berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -65,7 +66,7 @@ class AdminKelasController extends Controller
         $kelas = Kelas::findOrFail($id);
         $kelas->delete();
 
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
+        return redirect()->back()->with('success', 'Kelas berhasil dihapus.');
     }
 
     public function bulkDelete(Request $request)
@@ -73,16 +74,16 @@ class AdminKelasController extends Controller
         $ids = $request->input('ids', []);
         Kelas::whereIn('id', $ids)->delete();
 
-        return redirect()->route('admin.kelas.index')->with('success', 'Beberapa kelas berhasil dihapus.');
+        return redirect()->back()->with('success', 'Beberapa kelas berhasil dihapus.');
     }
 
     /**
-     * Dipakai oleh frontend untuk dropdown kelas (Create/Edit Siswa)
+     * 📘 Dipakai untuk dropdown di Create/Edit Siswa
      */
     public function list()
     {
         return response()->json(
-            Kelas::select('id', 'tingkat', 'nama_kelas', 'tahun_ajaran')->get()
+            Kelas::select('id', 'tingkat', 'kelas', 'tahun_ajaran')->get()
         );
     }
 }

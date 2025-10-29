@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('kelas', function (Blueprint $table) {
             $table->id();
-            $table->string('tingkat'); // Tambahkan tingkat
-            $table->string('nama_kelas');
+            $table->string('tingkat');
+            $table->string('kelas'); // ✅ diganti dari nama_kelas ke kelas
             $table->string('tahun_ajaran');
             $table->string('deskripsi')->nullable();
             $table->timestamps();
@@ -19,14 +19,14 @@ return new class extends Migration
 
         Schema::create('guru_kelas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // guru
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
             $table->timestamps();
         });
 
         Schema::create('kelas_siswa', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // siswa
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
             $table->timestamps();
         });
