@@ -13,15 +13,16 @@ class Kelas extends Model
 
     public function guru()
     {
-        return $this->belongsToMany(User::class, 'guru_kelas', 'kelas_id', 'user_id');
+        return $this->belongsToMany(User::class, 'guru_kelas', 'kelas_id', 'user_id')
+                    ->withTimestamps();
     }
 
     public function siswa()
     {
-        return $this->belongsToMany(User::class, 'kelas_siswa', 'kelas_id', 'user_id');
+        return $this->belongsToMany(User::class, 'kelas_siswa', 'kelas_id', 'user_id')
+                    ->withTimestamps();
     }
 
-    // Accessor jumlah siswa
     public function getJumlahSiswaAttribute()
     {
         return $this->siswa()->count();

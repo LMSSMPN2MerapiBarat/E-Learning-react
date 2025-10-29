@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
-import { router } from '@inertiajs/react';
-import { Button } from '@/Components/ui/button';
-import { Input } from '@/Components/ui/input';
-import { Label } from '@/Components/ui/label';
+import React, { useEffect, useState } from "react";
+import { router } from "@inertiajs/react";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/Components/ui/select";
+
+interface Kelas {
+  id: number;
+  tingkat: string;
+  nama_kelas: string;
+  tahun_ajaran: string;
+}
 
 interface StudentData {
   id: number;
   name: string;
   email: string;
-  kelas: string;
+  kelas_id?: string;
+  kelas?: string;
   no_telp: string;
   nis: string;
 }
@@ -19,37 +34,50 @@ interface EditSiswaProps {
   onCancel: () => void;
 }
 
-export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaProps) {
+export default function EditSiswa({
+  student,
+  onSuccess,
+  onCancel,
+}: EditSiswaProps) {
   if (!student) {
     return <p className="text-gray-500 text-sm">Memuat data siswa...</p>;
   }
 
+  const [kelasList, setKelasList] = useState<Kelas[]>([]);
+
+  // ✅ Sinkronkan kelas_id awal agar dropdown langsung menampilkan pilihan sebelumnya
   const [form, setForm] = useState({
-    name: student.name || '',
-    email: student.email || '',
-    kelas: student.kelas || '',
-    no_telp: student.no_telp || '',
-    nis: student.nis || '',
-    password: '', // ✅ field baru untuk password opsional
+    name: student.name || "",
+    email: student.email || "",
+    kelas_id: student.kelas_id ? String(student.kelas_id) : "",
+    no_telp: student.no_telp || "",
+    nis: student.nis || "",
+    password: "",
   });
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/admin/kelas/list")
+      .then((res) => res.json())
+      .then((data) => setKelasList(data))
+      .catch((err) => console.error("Gagal memuat kelas:", err));
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    // ✅ Siapkan payload dinamis: password hanya dikirim jika diisi
     const payload: Record<string, any> = {
       name: form.name,
       email: form.email,
-      kelas: form.kelas,
+      kelas_id: form.kelas_id || null,
       no_telp: form.no_telp,
       nis: form.nis,
-      role: 'siswa',
+      role: "siswa",
     };
 
-    if (form.password.trim() !== '') {
+    if (form.password.trim() !== "") {
       payload.password = form.password;
     }
 
@@ -71,9 +99,8 @@ export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaPro
       className="space-y-4 p-4 bg-white rounded-lg shadow-sm"
     >
       <div>
-        <Label htmlFor="name">Nama</Label>
+        <Label>Nama</Label>
         <Input
-          id="name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           required
@@ -81,9 +108,8 @@ export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaPro
       </div>
 
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label>Email</Label>
         <Input
-          id="email"
           type="email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -92,38 +118,55 @@ export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaPro
       </div>
 
       <div>
-        <Label htmlFor="kelas">Kelas</Label>
-        <Input
-          id="kelas"
-          value={form.kelas}
-          onChange={(e) => setForm({ ...form, kelas: e.target.value })}
-        />
+        <Label>Kelas</Label>
+        <Select
+          value={form.kelas_id} // ✅ menampilkan pilihan kelas sebelumnya
+          onValueChange={(v) => setForm({ ...form, kelas_id: v })}
+        >
+          <SelectTrigger>
+            <SelectValue
+              placeholder={
+                form.kelas_id
+                  ? kelasList.find((k) => String(k.id) === form.kelas_id)?.nama_kelas
+                  : "Pilih kelas"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            {kelasList.length > 0 ? (
+              kelasList.map((k) => (
+                <SelectItem key={k.id} value={String(k.id)}>
+                  {k.tingkat} - {k.nama_kelas} ({k.tahun_ajaran})
+                </SelectItem>
+              ))
+            ) : (
+              <SelectItem value="none" disabled>
+                Tidak ada kelas
+              </SelectItem>
+            )}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
-        <Label htmlFor="nis">NIS</Label>
+        <Label>NIS</Label>
         <Input
-          id="nis"
           value={form.nis}
           onChange={(e) => setForm({ ...form, nis: e.target.value })}
-          required
         />
       </div>
 
       <div>
-        <Label htmlFor="no_telp">No. Telepon</Label>
+        <Label>No. Telepon</Label>
         <Input
-          id="no_telp"
           value={form.no_telp}
           onChange={(e) => setForm({ ...form, no_telp: e.target.value })}
         />
       </div>
 
-      {/* ✅ Field baru untuk password opsional */}
       <div>
-        <Label htmlFor="password">Password (opsional)</Label>
+        <Label>Password (opsional)</Label>
         <Input
-          id="password"
           type="password"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -136,7 +179,7 @@ export default function EditSiswa({ student, onSuccess, onCancel }: EditSiswaPro
           Batal
         </Button>
         <Button type="submit" disabled={loading}>
-          {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+          {loading ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>
     </form>

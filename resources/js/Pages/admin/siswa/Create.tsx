@@ -29,14 +29,13 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
     password: "",
     role: "siswa",
     nis: "",
-    kelas: "",
+    kelas_id: "",
     no_telp: "",
   });
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
 
   useEffect(() => {
-    // Ambil data kelas dari backend
     fetch("/admin/kelas/list")
       .then((res) => res.json())
       .then((data) => setKelasList(data))
@@ -64,9 +63,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           value={data.name}
           onChange={(e) => setData("name", e.target.value)}
         />
-        {errors.name && (
-          <p className="text-sm text-red-600">{errors.name}</p>
-        )}
+        {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
       </div>
 
       <div>
@@ -76,9 +73,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           value={data.email}
           onChange={(e) => setData("email", e.target.value)}
         />
-        {errors.email && (
-          <p className="text-sm text-red-600">{errors.email}</p>
-        )}
+        {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
       </div>
 
       <div>
@@ -104,8 +99,8 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
       <div>
         <Label>Kelas</Label>
         <Select
-          value={data.kelas}
-          onValueChange={(v) => setData("kelas", v)}
+          value={data.kelas_id}
+          onValueChange={(v) => setData("kelas_id", v)}
         >
           <SelectTrigger>
             <SelectValue placeholder="Pilih kelas" />
@@ -113,10 +108,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           <SelectContent>
             {kelasList.length > 0 ? (
               kelasList.map((k) => (
-                <SelectItem
-                  key={k.id}
-                  value={String(k.nama_kelas)}
-                >
+                <SelectItem key={k.id} value={String(k.id)}>
                   {k.tingkat} - {k.nama_kelas} ({k.tahun_ajaran})
                 </SelectItem>
               ))

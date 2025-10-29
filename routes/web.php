@@ -7,7 +7,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminKelasController;
 use App\Models\User;
-use App\Models\Kelas;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +15,10 @@ use App\Models\Kelas;
 */
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'canLogin'      => Route::has('login'),
+        'canRegister'   => Route::has('register'),
+        'laravelVersion'=> Application::VERSION,
+        'phpVersion'    => PHP_VERSION,
     ]);
 });
 
@@ -51,12 +50,31 @@ Route::middleware(['auth', 'role:admin'])
         |--------------------------------------------------------------------------
         */
         Route::get('/siswa/Siswa', function () {
-            return Inertia::render('admin/siswa/Siswa', [
-                'students' => User::where('role', 'siswa')->get([
-                    'id', 'name', 'email', 'kelas', 'no_telp', 'nis',
-                ]),
-            ]);
-        })->name('siswa.index');
+    $students = \App\Models\User::where('role', 'siswa')
+        ->with(['kelas:id,nama_kelas'])
+        ->get()
+        ->map(function ($u) {
+            // Jika relasi belum dimuat atau null, jadikan Collection kosong
+            $kelasCollection = $u->getRelation('kelas') ?? collect();
+            // Ambil kelas pertama (jika siswa hanya punya 1 kelas)
+            $kelas = $kelasCollection->first();
+
+            return [
+                'id'       => $u->id,
+                'name'     => $u->name,
+                'email'    => $u->email,
+                'nis'      => $u->nis,
+                'no_telp'  => $u->no_telp,
+                'kelas'    => $kelas?->nama_kelas ?? '-', // nama kelas
+                'kelas_id' => $kelas?->id ?? null,        // ID kelas
+            ];
+        });
+
+    return Inertia::render('admin/siswa/Siswa', [
+        'students' => $students,
+    ]);
+})->name('siswa.index');
+
 
         /*
         |--------------------------------------------------------------------------
@@ -65,6 +83,7 @@ Route::middleware(['auth', 'role:admin'])
         */
         Route::get('/guru/Guru', function () {
             return Inertia::render('admin/Guru/Guru', [
+                // Sementara masih pakai kolom legacy, karena halaman Guru masih migrasi
                 'gurus' => User::where('role', 'guru')->get([
                     'id', 'name', 'nip', 'email', 'mapel', 'no_telp',
                 ]),
@@ -92,6 +111,9 @@ Route::middleware(['auth', 'role:admin'])
                 ->whereNumber('id')->name('update');
             Route::delete('/{id}', [AdminKelasController::class, 'destroy'])
                 ->whereNumber('id')->name('destroy');
+
+            // 📘 API untuk dropdown kelas (dipakai di Create/Edit Siswa)
+            Route::get('/list', [AdminKelasController::class, 'list'])->name('list');
         });
 
         /*
@@ -105,15 +127,6 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/users/import', [AdminUserController::class, 'importExcel'])->name('users.import');
         Route::get('/users/export/{role}', [AdminUserController::class, 'exportExcel'])->name('users.export');
         Route::post('/users/bulk-delete', [AdminUserController::class, 'bulkDelete'])->name('users.bulk-delete');
-
-        /*
-        |--------------------------------------------------------------------------
-        | 📘 API UNTUK DROPDOWN KELAS (DIPAKAI DI CreateSiswa.tsx)
-        |--------------------------------------------------------------------------
-        */
-        Route::get('/kelas/list', function () {
-            return Kelas::select('id', 'tingkat', 'nama_kelas', 'tahun_ajaran')->get();
-        })->name('kelas.list');
     });
 
 /*

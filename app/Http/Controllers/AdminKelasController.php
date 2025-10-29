@@ -76,8 +76,13 @@ class AdminKelasController extends Controller
         return redirect()->route('admin.kelas.index')->with('success', 'Beberapa kelas berhasil dihapus.');
     }
 
+    /**
+     * Dipakai oleh frontend untuk dropdown kelas (Create/Edit Siswa)
+     */
     public function list()
     {
-        return response()->json(Kelas::select('id', 'tingkat', 'nama_kelas', 'tahun_ajaran')->get());
+        return response()->json(
+            Kelas::select('id', 'tingkat', 'nama_kelas', 'tahun_ajaran')->get()
+        );
     }
 }
