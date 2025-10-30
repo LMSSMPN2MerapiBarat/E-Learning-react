@@ -1,4 +1,5 @@
 import { usePage } from "@inertiajs/react";
+import type { PageProps as InertiaPageProps } from "@inertiajs/core";
 import TeacherLayout from "@/Layouts/TeacherLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
@@ -113,10 +114,11 @@ const statCards = [
   },
 ];
 
+type GuruDashboardPageProps = InertiaPageProps & DashboardProps;
+
 export default function GuruDashboard() {
-  const { props } = usePage();
   const { stats, mataPelajaran, recentMateri, recentQuizzes } =
-    props as DashboardProps;
+    usePage<GuruDashboardPageProps>().props;
 
   return (
     <TeacherLayout title="Dashboard Guru">
