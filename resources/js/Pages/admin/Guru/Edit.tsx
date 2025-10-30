@@ -14,11 +14,18 @@ type GuruType = {
   nip?: string;
   no_telp?: string;
   mapel_ids?: number[];
+  kelas_ids?: number[];
 };
 
 type Mapel = {
   id: number;
   nama_mapel: string;
+};
+
+type Kelas = {
+  id: number;
+  tingkat?: string;
+  kelas?: string;
 };
 
 interface EditGuruProps {
@@ -35,10 +42,12 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
     nip: guru.nip || "",
     no_telp: guru.no_telp || "",
     mapel_ids: guru.mapel_ids || [],
+    kelas_ids: guru.kelas_ids || [],
   });
 
   const [loading, setLoading] = useState(false);
   const [mapels, setMapels] = useState<Mapel[]>([]);
+  const [kelasList, setKelasList] = useState<Kelas[]>([]);
 
   // 🔄 Ambil data mapel dari backend
   useEffect(() => {
@@ -46,6 +55,11 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
       .then((res) => res.json())
       .then((data: Mapel[]) => setMapels(data))
       .catch(() => toast.error("Gagal memuat daftar mapel."));
+
+    fetch("/admin/kelas/list")
+      .then((res) => res.json())
+      .then((data: Kelas[]) => setKelasList(data))
+      .catch(() => toast.error("Gagal memuat daftar kelas."));
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +72,14 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
       : [...(form.mapel_ids || []), id];
 
     setForm({ ...form, mapel_ids: selected });
+  };
+
+  const handleKelasSelect = (id: number) => {
+    const selected = form.kelas_ids?.includes(id)
+      ? form.kelas_ids.filter((kelasId) => kelasId !== id)
+      : [...(form.kelas_ids || []), id];
+
+    setForm({ ...form, kelas_ids: selected });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -133,6 +155,41 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
         {form.mapel_ids && form.mapel_ids.length > 0 && (
           <p className="text-sm text-gray-500 mt-1">
             Dipilih: {form.mapel_ids.length} mapel
+          </p>
+        )}
+      </div>
+
+      <div>
+        <Label>Kelas yang Diajar</Label>
+        <div className="flex flex-wrap gap-2 border p-2 rounded-md">
+          {kelasList.map((kelas: Kelas) => {
+            const namaKelas =
+              `${kelas.tingkat ?? ""} ${kelas.kelas ?? ""}`.trim() || kelas.kelas || "Tanpa Nama";
+            const isSelected = form.kelas_ids?.includes(kelas.id);
+
+            return (
+              <button
+                type="button"
+                key={kelas.id}
+                onClick={() => handleKelasSelect(kelas.id)}
+                className={`px-3 py-1 rounded-md border text-sm transition ${
+                  isSelected
+                    ? "bg-blue-600 text-white border-blue-700"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                {namaKelas}
+              </button>
+            );
+          })}
+          {kelasList.length === 0 && (
+            <p className="text-sm text-gray-500">Tidak ada data kelas.</p>
+          )}
+        </div>
+
+        {form.kelas_ids && form.kelas_ids.length > 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            Dipilih: {form.kelas_ids.length} kelas
           </p>
         )}
       </div>

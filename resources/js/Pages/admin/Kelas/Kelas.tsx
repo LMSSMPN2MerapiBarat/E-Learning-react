@@ -190,6 +190,7 @@ export default function KelasPage() {
                   <th className="p-2 text-left">Nama Kelas</th>
                   <th className="p-2 text-left">Tahun Ajaran</th>
                   <th className="p-2 text-left">Jumlah Siswa</th>
+                  <th className="p-2 text-left">Jumlah Pengajar</th>
                   <th className="p-2 text-center">Aksi</th>
                 </tr>
               </thead>
@@ -214,6 +215,7 @@ export default function KelasPage() {
       <td className="p-2">{kelas.kelas}</td>
       <td className="p-2">{kelas.tahun_ajaran}</td>
       <td className="p-2 text-center">{kelas.siswa_count ?? 0}</td>
+      <td className="p-2 text-center">{kelas.guru_count ?? 0}</td>
       <td className="p-2 flex justify-center gap-2">
         <Button
           variant="outline"

@@ -27,4 +27,19 @@ class Kelas extends Model
     {
         return $this->siswa()->count();
     }
+
+    public function materis()
+    {
+        return $this->hasMany(Materi::class);
+    }
+
+    public function quizzes()
+    {
+        return $this->belongsToMany(
+            Quiz::class,
+            'quiz_kelas',
+            'kelas_id',
+            'quiz_id'
+        )->withTimestamps();
+    }
 }

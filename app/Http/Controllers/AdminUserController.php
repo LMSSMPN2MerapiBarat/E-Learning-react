@@ -64,23 +64,98 @@ class AdminUserController extends Controller
         $totalGuru  = User::where('role', 'guru')->count();
         $totalSiswa = User::where('role', 'siswa')->count();
 
-        $students = Siswa::with(['user', 'kelas'])->get()->map(function ($s) {
-            return [
-                'id'      => $s->user->id,
-                'name'    => $s->user->name,
-                'nis'     => $s->nis,
-                'kelas'   => $s->kelas?->kelas ?? '-',
-                'email'   => $s->user->email,
-                'no_telp' => $s->no_telp,
-            ];
-        });
+        $students = Siswa::with(['user', 'kelas'])
+            ->get()
+            ->map(function ($s) {
+                return [
+                    'id'      => $s->user?->id ?? $s->id,
+                    'name'    => $s->user?->name,
+                    'nis'     => $s->nis,
+                    'kelas'   => $s->kelas?->kelas,
+                    'email'   => $s->user?->email,
+                    'no_telp' => $s->no_telp,
+                ];
+            })
+            ->values();
+
+        $gurus = Guru::with(['user', 'mataPelajaran', 'kelas'])
+            ->get()
+            ->map(function ($g) {
+                $mapelNames = $g->mataPelajaran
+                    ->pluck('nama_mapel')
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                $mapel = $mapelNames->isNotEmpty()
+                    ? $mapelNames->implode(', ')
+                    : ($g->mapel ?? null);
+
+                $kelasNames = $g->kelas
+                    ->map(function ($kelas) {
+                        $nama = trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? ''));
+                        return $nama !== '' ? $nama : ($kelas->kelas ?? null);
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                return [
+                    'id'    => $g->id,
+                    'name'  => $g->user?->name,
+                    'email' => $g->user?->email,
+                    'mapel' => $mapel,
+                    'kelas' => $kelasNames->implode(', '),
+                ];
+            })
+            ->values();
+
+        $kelas = Kelas::with('guru')
+            ->get()
+            ->map(function ($k) {
+                $waliKelas = $k->guru->first();
+
+                $namaKelas = trim(($k->tingkat ?? '') . ' ' . ($k->kelas ?? ''));
+
+                return [
+                    'id'              => $k->id,
+                    'nama'            => $namaKelas !== '' ? $namaKelas : ($k->kelas ?? null),
+                    'wali'            => $waliKelas?->name,
+                    'jumlah_pengajar' => $k->guru->count(),
+                ];
+            })
+            ->values();
+
+        $mapels = MataPelajaran::with('gurus.user')
+            ->get()
+            ->map(function ($m) {
+                $guruNames = $m->gurus
+                    ->map(fn($guru) => $guru->user?->name)
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                $guruList = $guruNames->isNotEmpty()
+                    ? $guruNames->implode(', ')
+                    : null;
+
+                return [
+                    'id'   => $m->id,
+                    'nama' => $m->nama_mapel,
+                    'guru' => $guruList,
+                ];
+            })
+            ->values();
 
         return Inertia::render('admin/dashboard', [
             'totalGuru'   => $totalGuru,
             'totalSiswa'  => $totalSiswa,
-            'totalMateri' => 0,
-            'totalKuis'   => 0,
+            'totalMateri' => $kelas->count(),
+            'totalKuis'   => $mapels->count(),
             'students'    => $students,
+            'gurus'       => $gurus,
+            'kelas'       => $kelas,
+            'mapels'      => $mapels,
         ]);
     }
 

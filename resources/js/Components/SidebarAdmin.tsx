@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import {
   LayoutDashboard,
   Users,
@@ -24,6 +24,10 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
     { name: "Kelola Siswa", icon: Users, href: "/admin/siswa/Siswa" },
     { name: "Kelola Kelas", icon: LibraryBig, href: "/admin/kelas/Kelas" },
   ];
+
+  const handleLogout = () => {
+    router.post("/logout");
+  };
 
   return (
     <div
@@ -100,7 +104,11 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
 
       {/* Tombol Logout */}
       <div className="absolute bottom-4 w-full px-4">
-        <button className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
+        >
           <LogOut className="w-5 h-5 mr-3" /> Logout
         </button>
       </div>

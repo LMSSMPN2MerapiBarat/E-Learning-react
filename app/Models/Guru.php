@@ -25,4 +25,26 @@ class Guru extends Model
             'mata_pelajaran_id'
         )->withTimestamps();
     }
+
+    public function kelas()
+    {
+        return $this->belongsToMany(
+            Kelas::class,
+            'guru_kelas',
+            'user_id',
+            'kelas_id',
+            'user_id',
+            'id'
+        )->withTimestamps();
+    }
+
+    public function materis()
+    {
+        return $this->hasMany(Materi::class);
+    }
+
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
 }

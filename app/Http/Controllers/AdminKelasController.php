@@ -10,7 +10,7 @@ class AdminKelasController extends Controller
 {
     public function index()
     {
-        $kelas = Kelas::withCount('siswa')->get();
+        $kelas = Kelas::withCount(['siswa', 'guru'])->get();
 
         return Inertia::render('admin/Kelas/Kelas', [
             'kelas' => $kelas,

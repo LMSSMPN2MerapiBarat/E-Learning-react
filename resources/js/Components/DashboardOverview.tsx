@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { PageProps as InertiaPageProps } from "@inertiajs/core";
 import {
@@ -29,11 +29,32 @@ import { Button } from "./ui/button";
 
 interface Student {
   id: number;
-  name: string;
-  email: string;
-  kelas?: string;
-  no_telp?: string;
-  nis?: string;
+  name?: string | null;
+  email?: string | null;
+  kelas?: string | null;
+  no_telp?: string | null;
+  nis?: string | null;
+}
+
+interface Guru {
+  id: number;
+  name?: string | null;
+  email?: string | null;
+  mapel?: string | null;
+  kelas?: string | null;
+}
+
+interface KelasItem {
+  id: number;
+  nama?: string | null;
+  wali?: string | null;
+  jumlah_pengajar?: number | null;
+}
+
+interface Mapel {
+  id: number;
+  nama?: string | null;
+  guru?: string | null;
 }
 
 interface PageProps extends InertiaPageProps {
@@ -46,6 +67,9 @@ interface PageProps extends InertiaPageProps {
     };
   };
   students: Student[];
+  gurus: Guru[];
+  kelas: KelasItem[];
+  mapels: Mapel[];
   totalGuru: number;
   totalSiswa: number;
   totalMateri: number;
@@ -55,6 +79,9 @@ interface PageProps extends InertiaPageProps {
 export default function DashboardOverview() {
   const {
     students = [],
+    gurus = [],
+    kelas = [],
+    mapels = [],
     totalGuru = 0,
     totalSiswa = 0,
     totalMateri = 0,
@@ -66,54 +93,71 @@ export default function DashboardOverview() {
   const [searchKelas, setSearchKelas] = useState("");
   const [searchMapel, setSearchMapel] = useState("");
 
-  const guruData = [
-    { id: 1, name: "Bapak Ahmad", email: "ahmad@smpn2mb.sch.id", mapel: "Matematika" },
-    { id: 2, name: "Ibu Rina", email: "rina@smpn2mb.sch.id", mapel: "Bahasa Indonesia" },
-    { id: 3, name: "Bapak Budi", email: "budi@smpn2mb.sch.id", mapel: "IPA" },
-  ];
-
-  const kelasData = [
-    { id: 1, nama: "VII A", wali: "Bapak Ahmad" },
-    { id: 2, nama: "VIII B", wali: "Ibu Rina" },
-  ];
-
-  const mapelData = [
-    { id: 1, nama: "Matematika", guru: "Bapak Ahmad" },
-    { id: 2, nama: "Bahasa Indonesia", guru: "Ibu Rina" },
-    { id: 3, nama: "IPA", guru: "Bapak Budi" },
-  ];
-
   // === FILTERING ===
-  const filteredStudents = students.filter(
-    (s) =>
-      s.name.toLowerCase().includes(searchStudents.toLowerCase()) ||
-      s.nis?.includes(searchStudents) ||
-      s.kelas?.toLowerCase().includes(searchStudents.toLowerCase())
-  );
-  const filteredGuru = guruData.filter(
-    (g) =>
-      g.name.toLowerCase().includes(searchGuru.toLowerCase()) ||
-      g.mapel.toLowerCase().includes(searchGuru.toLowerCase())
-  );
-  const filteredKelas = kelasData.filter((k) =>
-    k.nama.toLowerCase().includes(searchKelas.toLowerCase())
-  );
-  const filteredMapel = mapelData.filter((m) =>
-    m.nama.toLowerCase().includes(searchMapel.toLowerCase())
-  );
+  const normalize = (value: string | number | null | undefined) =>
+    String(value ?? "").toLowerCase();
+
+  const studentQuery = searchStudents.trim().toLowerCase();
+  const filteredStudents = studentQuery
+    ? students.filter(
+        (s) =>
+          normalize(s.name).includes(studentQuery) ||
+          normalize(s.nis).includes(studentQuery) ||
+          normalize(s.kelas).includes(studentQuery)
+      )
+    : students;
+
+  const guruQuery = searchGuru.trim().toLowerCase();
+  const filteredGuru = guruQuery
+    ? gurus.filter(
+        (g) =>
+          normalize(g.name).includes(guruQuery) ||
+          normalize(g.mapel).includes(guruQuery) ||
+          normalize(g.email).includes(guruQuery) ||
+          normalize(g.kelas).includes(guruQuery)
+      )
+    : gurus;
+
+  const kelasQuery = searchKelas.trim().toLowerCase();
+  const filteredKelas = kelasQuery
+    ? kelas.filter(
+        (k) =>
+          normalize(k.nama).includes(kelasQuery) ||
+          normalize(k.wali).includes(kelasQuery)
+      )
+    : kelas;
+
+  const mapelQuery = searchMapel.trim().toLowerCase();
+  const filteredMapel = mapelQuery
+    ? mapels.filter(
+        (m) =>
+          normalize(m.nama).includes(mapelQuery) ||
+          normalize(m.guru).includes(mapelQuery)
+      )
+    : mapels;
 
   // === PAGINATION HANDLER ===
-  const usePagination = (data: any[], perPage = 10) => {
+  const usePagination = <T,>(items: T[], perPage = 10) => {
     const [page, setPage] = useState(1);
-    const totalPages = Math.ceil(data.length / perPage);
-    const start = (page - 1) * perPage;
-    const end = start + perPage;
-    const paginated = data.slice(start, end);
+    const totalPages = Math.max(1, Math.ceil(items.length / perPage));
+    const safePage = Math.min(page, totalPages);
+    const start = (safePage - 1) * perPage;
+    const paginated = items.slice(start, start + perPage);
 
-    const next = () => page < totalPages && setPage(page + 1);
-    const prev = () => page > 1 && setPage(page - 1);
+    useEffect(() => {
+      if (page > totalPages) {
+        setPage(totalPages);
+      }
+    }, [page, totalPages]);
 
-    return { page, totalPages, data: paginated, next, prev };
+    useEffect(() => {
+      setPage(1);
+    }, [items.length, perPage]);
+
+    const next = () => setPage((prev) => Math.min(prev + 1, totalPages));
+    const prev = () => setPage((prev) => Math.max(prev - 1, 1));
+
+    return { page: safePage, totalPages, data: paginated, next, prev };
   };
 
   const siswaPagination = usePagination(filteredStudents);
@@ -217,11 +261,11 @@ export default function DashboardOverview() {
                   <TableBody>
                     {siswaPagination.data.map((s) => (
                       <TableRow key={s.id}>
-                        <TableCell>{s.nis}</TableCell>
-                        <TableCell>{s.name}</TableCell>
-                        <TableCell>{s.email}</TableCell>
-                        <TableCell>{s.kelas || "-"}</TableCell>
-                        <TableCell>{s.no_telp || "-"}</TableCell>
+                        <TableCell>{s.nis ?? "-"}</TableCell>
+                        <TableCell>{s.name ?? "-"}</TableCell>
+                        <TableCell>{s.email ?? "-"}</TableCell>
+                        <TableCell>{s.kelas ?? "-"}</TableCell>
+                        <TableCell>{s.no_telp ?? "-"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -266,14 +310,16 @@ export default function DashboardOverview() {
                       <TableHead>Nama</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Mata Pelajaran</TableHead>
+                      <TableHead>Kelas Diajar</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {guruPagination.data.map((g) => (
                       <TableRow key={g.id}>
-                        <TableCell>{g.name}</TableCell>
-                        <TableCell>{g.email}</TableCell>
-                        <TableCell>{g.mapel}</TableCell>
+                        <TableCell>{g.name ?? "-"}</TableCell>
+                        <TableCell>{g.email ?? "-"}</TableCell>
+                        <TableCell>{g.mapel ?? "-"}</TableCell>
+                        <TableCell>{g.kelas ?? "-"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -315,13 +361,15 @@ export default function DashboardOverview() {
                     <TableRow>
                       <TableHead>Nama Kelas</TableHead>
                       <TableHead>Wali Kelas</TableHead>
+                      <TableHead>Jumlah Pengajar</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {kelasPagination.data.map((k) => (
                       <TableRow key={k.id}>
-                        <TableCell>{k.nama}</TableCell>
-                        <TableCell>{k.wali}</TableCell>
+                        <TableCell>{k.nama ?? "-"}</TableCell>
+                        <TableCell>{k.wali ?? "-"}</TableCell>
+                        <TableCell>{k.jumlah_pengajar ?? 0}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -368,8 +416,8 @@ export default function DashboardOverview() {
                   <TableBody>
                     {mapelPagination.data.map((m) => (
                       <TableRow key={m.id}>
-                        <TableCell>{m.nama}</TableCell>
-                        <TableCell>{m.guru}</TableCell>
+                        <TableCell>{m.nama ?? "-"}</TableCell>
+                        <TableCell>{m.guru ?? "-"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

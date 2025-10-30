@@ -20,15 +20,22 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
     password: "",
     no_telp: "",
     mapel_ids: [] as number[],
+    kelas_ids: [] as number[],
   });
 
   const [mapels, setMapels] = useState<any[]>([]);
+  const [kelasList, setKelasList] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("/admin/mapel/list")
       .then((res) => res.json())
       .then((data) => setMapels(data))
       .catch(() => toast.error("Gagal memuat daftar mapel."));
+
+    fetch("/admin/kelas/list")
+      .then((res) => res.json())
+      .then((data) => setKelasList(data))
+      .catch(() => toast.error("Gagal memuat daftar kelas."));
   }, []);
 
   const submit = (e: React.FormEvent) => {
@@ -122,6 +129,47 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
         {data.mapel_ids.length > 0 && (
           <p className="text-sm text-gray-600 mt-1">
             Dipilih: {data.mapel_ids.length} mapel
+          </p>
+        )}
+      </div>
+
+      <div>
+        <Label>Kelas yang Diajar</Label>
+        <div className="flex flex-wrap gap-2 border rounded-md p-2">
+          {kelasList.length === 0 && (
+            <p className="text-sm text-gray-500">Tidak ada data kelas.</p>
+          )}
+          {kelasList.map((kelas: any) => {
+            const kelasId = kelas.id;
+            const namaKelas = `${kelas.tingkat ?? ""} ${kelas.kelas ?? ""}`.trim() || kelas.kelas;
+            const isSelected = data.kelas_ids.includes(kelasId);
+
+            return (
+              <button
+                key={kelasId}
+                type="button"
+                onClick={() =>
+                  setData(
+                    "kelas_ids",
+                    isSelected
+                      ? data.kelas_ids.filter((id) => id !== kelasId)
+                      : [...data.kelas_ids, kelasId]
+                  )
+                }
+                className={`px-3 py-1 rounded-md border text-sm transition ${
+                  isSelected
+                    ? "bg-blue-600 text-white border-blue-700"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                {namaKelas || "Tanpa Nama"}
+              </button>
+            );
+          })}
+        </div>
+        {data.kelas_ids.length > 0 && (
+          <p className="text-sm text-gray-600 mt-1">
+            Dipilih: {data.kelas_ids.length} kelas
           </p>
         )}
       </div>

@@ -13,15 +13,32 @@ class AdminGuruController extends Controller
 {
     public function index()
     {
-        $gurus = Guru::with(['user', 'mataPelajaran'])
+        $gurus = Guru::with(['user', 'mataPelajaran', 'kelas'])
             ->get()
             ->map(function ($g) {
+                $mapelList = $g->mataPelajaran
+                    ->pluck('nama_mapel')
+                    ->filter()
+                    ->values();
+
+                $kelasList = $g->kelas
+                    ->map(function ($kelas) {
+                        $nama = trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? ''));
+                        return $nama !== '' ? $nama : ($kelas->kelas ?? null);
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values();
+
                 return [
                     'id'       => $g->id,
                     'name'     => $g->user->name,
                     'email'    => $g->user->email,
                     'nip'      => $g->nip,
-                    'mapel'    => $g->mataPelajaran->pluck('nama_mapel')->join(', '),
+                    'mapel'    => $mapelList->implode(', '),
+                    'mapel_ids' => $g->mataPelajaran->pluck('id')->all(),
+                    'kelas'    => $kelasList->implode(', '),
+                    'kelas_ids' => $g->kelas->pluck('id')->all(),
                     'no_telp'  => $g->no_telp,
                 ];
             });
@@ -43,6 +60,9 @@ class AdminGuruController extends Controller
             'nip'       => 'nullable|string|max:20',
             'mapel_ids' => 'nullable|array',
             'no_telp'   => 'nullable|string|max:20',
+            'kelas_ids' => 'nullable|array',
+            'kelas_ids.*' => 'exists:kelas,id',
+            'mapel_ids.*' => 'exists:mata_pelajarans,id',
         ]);
 
         $user = User::create([
@@ -58,9 +78,8 @@ class AdminGuruController extends Controller
             'no_telp' => $validated['no_telp'] ?? null,
         ]);
 
-        if (!empty($validated['mapel_ids'])) {
-            $guru->mataPelajaran()->sync($validated['mapel_ids']);
-        }
+        $guru->mataPelajaran()->sync($validated['mapel_ids'] ?? []);
+        $guru->kelas()->sync($validated['kelas_ids'] ?? []);
 
         return back()->with('success', 'Guru berhasil ditambahkan!');
     }
@@ -73,6 +92,9 @@ class AdminGuruController extends Controller
             'nip'       => 'nullable|string|max:20',
             'no_telp'   => 'nullable|string|max:20',
             'mapel_ids' => 'nullable|array',
+            'mapel_ids.*' => 'exists:mata_pelajarans,id',
+            'kelas_ids' => 'nullable|array',
+            'kelas_ids.*' => 'exists:kelas,id',
         ]);
 
         $guru->user->update([
@@ -86,6 +108,7 @@ class AdminGuruController extends Controller
         ]);
 
         $guru->mataPelajaran()->sync($validated['mapel_ids'] ?? []);
+        $guru->kelas()->sync($validated['kelas_ids'] ?? []);
 
         return back()->with('success', 'Data guru berhasil diperbarui!');
     }
