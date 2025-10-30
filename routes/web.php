@@ -9,6 +9,9 @@ use App\Http\Controllers\AdminKelasController;
 use App\Http\Controllers\AdminMapelController;
 use App\Http\Controllers\AdminGuruController;
 use App\Http\Controllers\AdminSiswaController;
+use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
+use App\Http\Controllers\Guru\MateriController as GuruMateriController;
+use App\Http\Controllers\Guru\QuizController as GuruQuizController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -115,5 +118,28 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+/*
+|--------------------------------------------------------------------------
+| GURU ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:guru'])
+    ->prefix('guru')
+    ->name('guru.')
+    ->group(function () {
+        Route::get('/dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/materi', [GuruMateriController::class, 'index'])->name('materi.index');
+        Route::post('/materi', [GuruMateriController::class, 'store'])->name('materi.store');
+        Route::put('/materi/{materi}', [GuruMateriController::class, 'update'])->name('materi.update');
+        Route::delete('/materi/{materi}', [GuruMateriController::class, 'destroy'])->name('materi.destroy');
+        Route::get('/materi/{materi}/download', [GuruMateriController::class, 'download'])->name('materi.download');
+
+        Route::get('/kuis', [GuruQuizController::class, 'index'])->name('kuis.index');
+        Route::post('/kuis', [GuruQuizController::class, 'store'])->name('kuis.store');
+        Route::put('/kuis/{quiz}', [GuruQuizController::class, 'update'])->name('kuis.update');
+        Route::delete('/kuis/{quiz}', [GuruQuizController::class, 'destroy'])->name('kuis.destroy');
+    });
 
 require __DIR__ . '/auth.php';
