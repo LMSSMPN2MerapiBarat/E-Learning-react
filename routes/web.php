@@ -12,6 +12,9 @@ use App\Http\Controllers\AdminSiswaController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\MateriController as GuruMateriController;
 use App\Http\Controllers\Guru\QuizController as GuruQuizController;
+use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
+use App\Http\Controllers\Siswa\MateriController as SiswaMateriController;
+use App\Http\Controllers\Siswa\QuizAttemptController as SiswaQuizAttemptController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -140,6 +143,24 @@ Route::middleware(['auth', 'role:guru'])
         Route::post('/kuis', [GuruQuizController::class, 'store'])->name('kuis.store');
         Route::put('/kuis/{quiz}', [GuruQuizController::class, 'update'])->name('kuis.update');
         Route::delete('/kuis/{quiz}', [GuruQuizController::class, 'destroy'])->name('kuis.destroy');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| SISWA ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:siswa'])
+    ->prefix('siswa')
+    ->name('siswa.')
+    ->group(function () {
+        Route::get('/dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/materi', [SiswaDashboardController::class, 'materials'])->name('materials');
+        Route::get('/kuis', [SiswaDashboardController::class, 'quizzes'])->name('quizzes');
+        Route::get('/nilai', [SiswaDashboardController::class, 'grades'])->name('grades');
+        Route::get('/materi/{materi}/preview', [SiswaMateriController::class, 'preview'])->name('materials.preview');
+        Route::get('/materi/{materi}/download', [SiswaMateriController::class, 'download'])->name('materials.download');
+        Route::post('/quizzes/{quiz}/attempts', [SiswaQuizAttemptController::class, 'store'])->name('quizzes.attempts.store');
     });
 
 require __DIR__ . '/auth.php';
