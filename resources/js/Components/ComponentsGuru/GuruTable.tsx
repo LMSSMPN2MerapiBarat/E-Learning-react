@@ -28,7 +28,8 @@ export default function GuruTable({
         const matchSearch =
           guru.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           guru.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          guru.nip?.toLowerCase().includes(searchTerm.toLowerCase());
+          guru.nip?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          guru.kelas?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchSubject =
           selectedSubject === "all" ||
           guru.mapel?.toLowerCase().includes(selectedSubject.toLowerCase());
@@ -101,6 +102,7 @@ export default function GuruTable({
               <th className="p-3 text-left">NIP</th>
               <th className="p-3 text-left">Email</th>
               <th className="p-3 text-left">Mata Pelajaran</th>
+              <th className="p-3 text-left">Kelas Diajar</th>
               <th className="p-3 text-left">No. Telepon</th>
               <th className="p-3 text-right">Aksi</th>
             </tr>
@@ -121,6 +123,7 @@ export default function GuruTable({
                   <td className="p-3">{guru.nip || "-"}</td>
                   <td className="p-3">{guru.email}</td>
                   <td className="p-3">{guru.mapel || "-"}</td>
+                  <td className="p-3">{guru.kelas || "-"}</td>
                   <td className="p-3">{guru.no_telp || "-"}</td>
                   <td className="p-3 text-right space-x-2">
                     <Button
@@ -145,7 +148,7 @@ export default function GuruTable({
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="text-center py-6 text-gray-500">
+                <td colSpan={8} className="text-center py-6 text-gray-500">
                   Tidak ada data guru yang cocok.
                 </td>
               </tr>
