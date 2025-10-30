@@ -8,8 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import CreateGuru from "./Create";
 import EditGuru from "./Edit";
 import AdminLayout from "@/Layouts/AdminLayout";
-import GuruTable from "@/Components/ComponentsAdmin/ComponentsGuru/GuruTable";
-import GuruDialogs from "@/Components/ComponentsAdmin/ComponentsGuru/GuruDialogs";
+import GuruTable from "@/Pages/admin/components/ComponentsGuru/GuruTable";
+import GuruDialogs from "@/Pages/admin/components/ComponentsGuru/GuruDialogs";
 
 export default function GuruPage() {
   const { props }: any = usePage();
