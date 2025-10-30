@@ -1,0 +1,114 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Badge } from "@/Components/ui/badge";
+import { Button } from "@/Components/ui/button";
+import { Clock, FileQuestion, User, CheckCircle } from "lucide-react";
+import type { QuizAttemptLite, QuizItem } from "../types";
+
+interface StudentQuizListProps {
+  quizzes: QuizItem[];
+  onStartQuiz: (quiz: QuizItem) => void;
+}
+
+export default function StudentQuizList({
+  quizzes,
+  onStartQuiz,
+}: StudentQuizListProps) {
+  return (
+    <Card className="border shadow-sm">
+      <CardHeader>
+        <CardTitle>Kuis Untuk Kelas Anda</CardTitle>
+        <CardDescription>
+          Pilih kuis yang tersedia dan kerjakan langsung dari halaman ini.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {quizzes.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="py-12 text-center text-sm text-gray-500">
+              <FileQuestion className="mx-auto mb-3 h-10 w-10 text-gray-400" />
+              Belum ada kuis yang tersedia.
+            </CardContent>
+          </Card>
+        ) : (
+          quizzes.map((quiz) => (
+            <Card
+              key={quiz.id}
+              className="border-l-4 border-l-emerald-500 shadow-sm transition hover:border-l-emerald-600 hover:shadow-md"
+            >
+              <CardContent className="flex flex-col gap-3 p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {quiz.title}
+                    </h3>
+                    {quiz.description && (
+                      <p className="mt-1 text-sm text-gray-600">
+                        {quiz.description}
+                      </p>
+                    )}
+                  </div>
+                  <Badge className="border-green-200 bg-green-100 text-green-700">
+                    Published
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                  {quiz.subject && (
+                    <Badge variant="outline">{quiz.subject}</Badge>
+                  )}
+                  <Badge variant="outline">
+                    <Clock className="mr-1 h-3 w-3" />
+                    {quiz.duration} menit
+                  </Badge>
+                  <Badge variant="outline">
+                    <FileQuestion className="mr-1 h-3 w-3" />
+                    {quiz.totalQuestions} soal
+                  </Badge>
+                  {quiz.teacher && (
+                    <span className="flex items-center gap-1">
+                      <User className="h-3 w-3" />
+                      {quiz.teacher}
+                    </span>
+                  )}
+                </div>
+                {quiz.classNames.length > 0 && (
+                  <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+                    {quiz.classNames.map((name) => (
+                      <Badge key={name} variant="secondary">
+                        Kelas {name}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                {quiz.latestAttempt && (
+                  <LatestAttemptBadge attempt={quiz.latestAttempt} />
+                )}
+                <Button
+                  onClick={() => onStartQuiz(quiz)}
+                  disabled={quiz.questions.length === 0}
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  {quiz.questions.length === 0
+                    ? "Belum ada soal"
+                    : quiz.latestAttempt
+                    ? "Kerjakan Lagi"
+                    : "Mulai Kuis"}
+                </Button>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function LatestAttemptBadge({ attempt }: { attempt: QuizAttemptLite }) {
+  return (
+    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
+      <p className="font-medium">Nilai Terakhir: {attempt.score}</p>
+      <p className="text-xs text-emerald-600">
+        {attempt.correctAnswers} dari {attempt.totalQuestions} jawaban benar
+      </p>
+    </div>
+  );
+}

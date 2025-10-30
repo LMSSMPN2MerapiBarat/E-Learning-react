@@ -1,0 +1,70 @@
+import { Card, CardContent } from "@/Components/ui/card";
+import { BookOpen, FileQuestion, FileText, Users } from "lucide-react";
+import type { StatsPayload } from "../types";
+import { motion } from "motion/react";
+
+const STAT_CONFIG = [
+  {
+    key: "materialCount" as const,
+    label: "Materi Tersedia",
+    icon: BookOpen,
+    accent: "bg-blue-100 text-blue-600",
+  },
+  {
+    key: "quizCount" as const,
+    label: "Kuis Aktif",
+    icon: FileQuestion,
+    accent: "bg-green-100 text-green-600",
+  },
+  {
+    key: "recentMaterialCount" as const,
+    label: "Materi Baru (7 Hari)",
+    icon: FileText,
+    accent: "bg-purple-100 text-purple-600",
+  },
+  {
+    key: "classmateCount" as const,
+    label: "Teman Sekelas",
+    icon: Users,
+    accent: "bg-orange-100 text-orange-600",
+  },
+] satisfies Array<{
+  key: keyof StatsPayload;
+  label: string;
+  icon: typeof BookOpen;
+  accent: string;
+}>;
+
+interface StudentStatsGridProps {
+  stats: StatsPayload;
+}
+
+export default function StudentStatsGrid({ stats }: StudentStatsGridProps) {
+  return (
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {STAT_CONFIG.map(({ key, label, icon: Icon, accent }, index) => (
+        <motion.div
+          key={key}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.05 }}
+        >
+          <Card className="relative overflow-hidden border shadow-sm">
+            <div className="absolute -right-8 -top-8 h-24 w-24 rounded-3xl bg-gradient-to-br from-blue-400/10 to-blue-600/10" />
+            <CardContent className="relative flex items-center justify-between p-6">
+              <div>
+                <p className="text-sm text-gray-600">{label}</p>
+                <p className="mt-2 text-3xl font-semibold text-gray-900">
+                  {stats[key]}
+                </p>
+              </div>
+              <div className={`rounded-lg p-3 ${accent}`}>
+                <Icon className="h-6 w-6" />
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
