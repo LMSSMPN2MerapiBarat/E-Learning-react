@@ -155,7 +155,7 @@ export default function CreateMateri({
         <Input
           id="file"
           type="file"
-          accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar"
+          accept=".pdf,.doc,.docx,.ppt,.pptx,.pps,.ppsx,.txt,.zip,.rar,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
           onChange={handleFileChange}
         />
         {errors.file && (

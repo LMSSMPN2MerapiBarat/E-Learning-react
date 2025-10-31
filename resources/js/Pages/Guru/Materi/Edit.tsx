@@ -168,7 +168,7 @@ export default function EditMateri({
         <Input
           id="file_edit"
           type="file"
-          accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.rar"
+          accept=".pdf,.doc,.docx,.ppt,.pptx,.pps,.ppsx,.txt,.zip,.rar,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
           onChange={handleFileChange}
         />
         {materi.file_name && (

@@ -29,6 +29,8 @@ export const getFileTypeColor = (extension: string) => {
       return "bg-blue-100 text-blue-800";
     case "ppt":
     case "pptx":
+    case "pps":
+    case "ppsx":
       return "bg-orange-100 text-orange-800";
     case "xls":
     case "xlsx":
