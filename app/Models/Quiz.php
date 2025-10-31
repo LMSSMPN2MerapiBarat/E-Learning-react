@@ -16,10 +16,14 @@ class Quiz extends Model
         'deskripsi',
         'durasi',
         'status',
+        'available_from',
+        'available_until',
     ];
 
     protected $casts = [
         'durasi' => 'integer',
+        'available_from' => 'datetime',
+        'available_until' => 'datetime',
     ];
 
     public function guru()

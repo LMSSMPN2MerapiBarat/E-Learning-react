@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\QuizOption;
 use App\Models\QuizQuestion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -39,6 +40,8 @@ class QuizController extends Controller
                         'id'   => $quiz->mata_pelajaran_id,
                         'nama' => $quiz->mataPelajaran->nama_mapel,
                     ] : null,
+                    'available_from' => $quiz->available_from?->toIso8601String(),
+                    'available_until' => $quiz->available_until?->toIso8601String(),
                     'kelas'       => $quiz->kelas->map(function ($kelas) {
                         $nama = trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? ''));
                         return [
@@ -98,6 +101,8 @@ class QuizController extends Controller
             'mata_pelajaran_id'  => 'nullable|exists:mata_pelajarans,id',
             'duration'           => 'required|integer|min:1|max:600',
             'status'             => 'required|in:draft,published',
+            'available_from'     => 'nullable|date',
+            'available_until'    => 'nullable|date|after:available_from',
             'kelas_ids'          => 'required|array|min:1',
             'kelas_ids.*'        => 'exists:kelas,id',
             'questions'          => 'required|array|min:1',
@@ -121,6 +126,12 @@ class QuizController extends Controller
                 'deskripsi'         => $validated['description'] ?? null,
                 'durasi'            => $validated['duration'],
                 'status'            => $validated['status'],
+                'available_from'    => isset($validated['available_from'])
+                    ? Carbon::parse($validated['available_from'])
+                    : null,
+                'available_until'   => isset($validated['available_until'])
+                    ? Carbon::parse($validated['available_until'])
+                    : null,
             ]);
 
             $quiz->kelas()->sync($validated['kelas_ids']);
@@ -161,6 +172,8 @@ class QuizController extends Controller
             'mata_pelajaran_id'  => 'nullable|exists:mata_pelajarans,id',
             'duration'           => 'required|integer|min:1|max:600',
             'status'             => 'required|in:draft,published',
+            'available_from'     => 'nullable|date',
+            'available_until'    => 'nullable|date|after:available_from',
             'kelas_ids'          => 'required|array|min:1',
             'kelas_ids.*'        => 'exists:kelas,id',
             'questions'          => 'required|array|min:1',
@@ -183,6 +196,12 @@ class QuizController extends Controller
                 'deskripsi'         => $validated['description'] ?? null,
                 'durasi'            => $validated['duration'],
                 'status'            => $validated['status'],
+                'available_from'    => isset($validated['available_from'])
+                    ? Carbon::parse($validated['available_from'])
+                    : null,
+                'available_until'   => isset($validated['available_until'])
+                    ? Carbon::parse($validated['available_until'])
+                    : null,
             ]);
 
             $quiz->kelas()->sync($validated['kelas_ids']);

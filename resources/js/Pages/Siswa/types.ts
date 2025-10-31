@@ -63,6 +63,9 @@ export interface QuizItem {
   questions: QuizQuestion[];
   totalQuestions: number;
   createdAt?: string | null;
+  availableFrom?: string | null;
+  availableUntil?: string | null;
+  isAvailable?: boolean;
   latestAttempt?: QuizAttemptLite | null;
 }
 

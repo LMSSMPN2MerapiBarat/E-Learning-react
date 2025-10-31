@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
-import { Clock, FileQuestion, User, CheckCircle } from "lucide-react";
+import { CalendarClock, CheckCircle, Clock, FileQuestion, User } from "lucide-react";
 import type { QuizAttemptLite, QuizItem } from "../types";
 
 interface StudentQuizListProps {
@@ -13,6 +13,29 @@ export default function StudentQuizList({
   quizzes,
   onStartQuiz,
 }: StudentQuizListProps) {
+  const formatSchedule = (quiz: QuizItem) => {
+    if (!quiz.availableFrom && !quiz.availableUntil) {
+      return null;
+    }
+
+    const formatter = new Intl.DateTimeFormat("id-ID", {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+
+    if (quiz.availableFrom && quiz.availableUntil) {
+      return `${formatter.format(new Date(quiz.availableFrom))} - ${formatter.format(
+        new Date(quiz.availableUntil),
+      )}`;
+    }
+
+    if (quiz.availableFrom) {
+      return `Mulai ${formatter.format(new Date(quiz.availableFrom))}`;
+    }
+
+    return `Sampai ${formatter.format(new Date(quiz.availableUntil as string))}`;
+  };
+
   return (
     <Card className="border shadow-sm">
       <CardHeader>
@@ -30,11 +53,23 @@ export default function StudentQuizList({
             </CardContent>
           </Card>
         ) : (
-          quizzes.map((quiz) => (
-            <Card
-              key={quiz.id}
-              className="border-l-4 border-l-emerald-500 shadow-sm transition hover:border-l-emerald-600 hover:shadow-md"
-            >
+          quizzes.map((quiz) => {
+            const scheduleLabel = formatSchedule(quiz);
+            const now = Date.now();
+            const isUpcoming =
+              quiz.availableFrom !== undefined &&
+              quiz.availableFrom !== null &&
+              new Date(quiz.availableFrom).getTime() > now;
+            const isExpired =
+              quiz.availableUntil !== undefined &&
+              quiz.availableUntil !== null &&
+              new Date(quiz.availableUntil).getTime() < now;
+
+            return (
+              <Card
+                key={quiz.id}
+                className="border-l-4 border-l-emerald-500 shadow-sm transition hover:border-l-emerald-600 hover:shadow-md"
+              >
               <CardContent className="flex flex-col gap-3 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -84,18 +119,38 @@ export default function StudentQuizList({
                 )}
                 <Button
                   onClick={() => onStartQuiz(quiz)}
-                  disabled={quiz.questions.length === 0}
+                  disabled={
+                    quiz.questions.length === 0 ||
+                    (quiz.isAvailable !== undefined && !quiz.isAvailable)
+                  }
                 >
                   <CheckCircle className="mr-2 h-4 w-4" />
                   {quiz.questions.length === 0
                     ? "Belum ada soal"
+                    : quiz.isAvailable === false && isExpired
+                    ? "Sudah berakhir"
+                    : quiz.isAvailable === false
+                    ? "Belum tersedia"
                     : quiz.latestAttempt
                     ? "Kerjakan Lagi"
                     : "Mulai Kuis"}
                 </Button>
+                {scheduleLabel && (
+                  <div className="rounded-lg border border-blue-100 bg-blue-50 p-3 text-xs text-blue-700">
+                    <p className="flex items-center gap-2">
+                      <CalendarClock className="h-3.5 w-3.5" />
+                      {quiz.isAvailable === false && isUpcoming
+                        ? `Kuis akan tersedia pada jadwal berikut: ${scheduleLabel}`
+                        : quiz.isAvailable === false && isExpired
+                        ? `Kuis sudah berakhir pada jadwal berikut: ${scheduleLabel}`
+                        : `Jadwal ketersediaan: ${scheduleLabel}`}
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          ))
+            );
+          })
         )}
       </CardContent>
     </Card>

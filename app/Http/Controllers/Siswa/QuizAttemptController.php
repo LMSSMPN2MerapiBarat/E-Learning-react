@@ -26,6 +26,14 @@ class QuizAttemptController extends Controller
             abort(403, 'Anda tidak terdaftar pada kelas kuis ini.');
         }
 
+        $now = now();
+        if (
+            ($quiz->available_from && $now->lt($quiz->available_from)) ||
+            ($quiz->available_until && $now->gt($quiz->available_until))
+        ) {
+            abort(403, 'Kuis tidak tersedia pada waktu ini.');
+        }
+
         if ($quiz->questions->isEmpty()) {
             throw ValidationException::withMessages([
                 'quiz' => 'Kuis belum memiliki soal.',

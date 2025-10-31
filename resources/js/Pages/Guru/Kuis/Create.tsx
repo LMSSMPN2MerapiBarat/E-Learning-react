@@ -32,6 +32,8 @@ export default function CreateQuiz({
     status: "draft",
     kelas_ids: [],
     questions: [],
+    available_from: null,
+    available_until: null,
   });
 
   const { data, setData, processing, errors } = form;
@@ -94,6 +96,15 @@ export default function CreateQuiz({
       toast.error(
         "Lengkapi pertanyaan dan semua opsi jawaban sebelum menyimpan.",
       );
+      return;
+    }
+
+    if (
+      data.available_from &&
+      data.available_until &&
+      new Date(data.available_from) >= new Date(data.available_until)
+    ) {
+      toast.error("Waktu selesai harus lebih lama dari waktu mulai.");
       return;
     }
 

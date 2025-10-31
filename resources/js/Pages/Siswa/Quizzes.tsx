@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "@/Components/ui/alert";
 import StudentQuizList from "./components/StudentQuizList";
 import QuizAttemptDialog from "./components/QuizAttemptDialog";
 import type { QuizAttemptLite, QuizItem, SiswaPageProps } from "./types";
+import { toast } from "sonner";
 
 export default function Quizzes() {
   const { props } = usePage<SiswaPageProps>();
@@ -18,7 +19,23 @@ export default function Quizzes() {
   }, [quizzes]);
 
   const startQuiz = (quiz: QuizItem) => {
-    if (quiz.questions.length === 0) return;
+    if (quiz.questions.length === 0) {
+      toast.error("Kuis belum memiliki soal untuk dikerjakan.");
+      return;
+    }
+    if (quiz.isAvailable === false) {
+      const now = Date.now();
+      const isExpired =
+        quiz.availableUntil !== undefined &&
+        quiz.availableUntil !== null &&
+        new Date(quiz.availableUntil).getTime() < now;
+      toast.error(
+        isExpired
+          ? "Kuis ini sudah melewati batas waktu pengerjaan."
+          : "Kuis belum tersedia pada waktu ini.",
+      );
+      return;
+    }
     setActiveQuiz(quiz);
   };
 

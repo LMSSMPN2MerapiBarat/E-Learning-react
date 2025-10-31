@@ -20,6 +20,8 @@ interface QuizData {
   status: "draft" | "published";
   kelas_ids?: number[] | null;
   questions: QuizQuestionForm[];
+  available_from?: string | null;
+  available_until?: string | null;
 }
 
 interface EditQuizForm extends QuizBaseForm {
@@ -33,6 +35,29 @@ interface EditQuizProps {
   onSuccess: () => void;
   onCancel: () => void;
 }
+
+const formatToDateTimeLocal = (value?: string | null): string | null => {
+  if (!value) return null;
+
+  // Handle already formatted value (yyyy-MM-ddTHH:mm)
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) {
+    return value;
+  }
+
+  const parsed = new Date(value);
+  if (!Number.isNaN(parsed.getTime())) {
+    const year = parsed.getFullYear();
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  // Fallback for formats like "2024-01-01 08:00:00"
+  const fallback = value.replace(" ", "T").slice(0, 16);
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(fallback) ? fallback : null;
+};
 
 const normalizeQuestions = (
   questions: Array<Partial<QuizQuestionForm>> | undefined,
@@ -65,12 +90,14 @@ export default function EditQuiz({
     kelas_ids: quiz.kelas_ids ?? [],
     questions: normalizeQuestions(quiz.questions),
     _method: "PUT",
+    available_from: formatToDateTimeLocal(quiz.available_from),
+    available_until: formatToDateTimeLocal(quiz.available_until),
   });
 
   const { data, setData, post, processing, errors } = form;
 
   useEffect(() => {
-    form.setData(() => ({
+    form.setData({
       title: quiz.judul,
       description: quiz.deskripsi ?? "",
       mata_pelajaran_id: quiz.mata_pelajaran_id ?? null,
@@ -78,8 +105,10 @@ export default function EditQuiz({
       status: quiz.status,
       kelas_ids: quiz.kelas_ids ?? [],
       questions: normalizeQuestions(quiz.questions),
-      _method: "PUT",
-    }));
+      _method: "PUT" as const,
+      available_from: formatToDateTimeLocal(quiz.available_from),
+      available_until: formatToDateTimeLocal(quiz.available_until),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quiz.id]);
 
@@ -144,6 +173,15 @@ export default function EditQuiz({
       toast.error(
         "Lengkapi pertanyaan dan semua opsi jawaban sebelum menyimpan.",
       );
+      return;
+    }
+
+    if (
+      data.available_from &&
+      data.available_until &&
+      new Date(data.available_from) >= new Date(data.available_until)
+    ) {
+      toast.error("Waktu selesai harus lebih lama dari waktu mulai.");
       return;
     }
 

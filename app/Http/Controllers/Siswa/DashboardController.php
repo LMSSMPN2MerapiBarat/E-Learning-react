@@ -155,9 +155,13 @@ class DashboardController extends Controller
             ->groupBy('quiz_id')
             ->map(fn($group) => $group->sortByDesc(fn($attempt) => $attempt->submitted_at ?? $attempt->created_at)->first());
 
+        $now = now();
+
         $quizzes = $quizCollection
-            ->map(function ($quiz) use ($formatKelasLabel, $latestAttemptPerQuiz) {
+            ->map(function ($quiz) use ($formatKelasLabel, $latestAttemptPerQuiz, $now) {
                 $latestAttempt = $latestAttemptPerQuiz->get($quiz->id);
+                $isAvailable = ($quiz->available_from === null || $quiz->available_from->lte($now))
+                    && ($quiz->available_until === null || $quiz->available_until->gte($now));
 
                 return [
                     'id' => $quiz->id,
@@ -198,6 +202,9 @@ class DashboardController extends Controller
                         ->all(),
                     'totalQuestions' => $quiz->questions->count(),
                     'createdAt' => $quiz->created_at?->toIso8601String(),
+                    'availableFrom' => $quiz->available_from?->toIso8601String(),
+                    'availableUntil' => $quiz->available_until?->toIso8601String(),
+                    'isAvailable' => $isAvailable,
                     'latestAttempt' => $latestAttempt ? [
                         'id' => $latestAttempt->id,
                         'score' => $latestAttempt->score,
