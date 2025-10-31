@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SidebarAdmin from "@/Components/SidebarAdmin";
 import { Menu } from "lucide-react";
 
@@ -9,27 +9,53 @@ export default function AdminLayout({
   children: React.ReactNode;
   title?: string;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    const handleResize = () => {
+      setSidebarOpen(mediaQuery.matches);
+    };
+
+    handleResize();
+    mediaQuery.addEventListener("change", handleResize);
+
+    return () => mediaQuery.removeEventListener("change", handleResize);
+  }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="relative flex min-h-screen bg-gray-50">
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <SidebarAdmin sidebarOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <SidebarAdmin
+        sidebarOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       {/* Main content */}
       <div
-        className={`flex flex-col flex-1 transition-all duration-300 ${
-          sidebarOpen ? "ml-64" : "ml-0"
+        className={`flex min-h-screen flex-1 flex-col transition-[padding] duration-300 ${
+          sidebarOpen ? "lg:pl-64" : "lg:pl-0"
         }`}
       >
         {/* Header */}
-        <header className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-sm">
+        <header className="flex items-center justify-between border-b bg-white px-4 py-3 shadow-sm sm:px-6 sm:py-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="text-gray-600 hover:text-gray-800"
+              aria-label="Toggle sidebar"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="h-6 w-6" />
             </button>
             <div>
               <h1 className="text-lg font-semibold">{title}</h1>
@@ -39,7 +65,7 @@ export default function AdminLayout({
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
