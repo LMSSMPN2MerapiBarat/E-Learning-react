@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ProfileController;
@@ -26,7 +27,20 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = Auth::user();
+
+    if (! $user) {
+        return redirect()->route('login');
+    }
+
+    return match ($user->role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'guru'  => redirect()->route('guru.dashboard'),
+        'siswa' => redirect()->route('siswa.dashboard'),
+        default => redirect()->route('login')->withErrors([
+            'role' => 'Role tidak dikenali.',
+        ]),
+    };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 /*
