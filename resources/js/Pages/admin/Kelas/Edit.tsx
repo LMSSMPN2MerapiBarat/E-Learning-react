@@ -11,6 +11,16 @@ import {
   SelectValue,
 } from "@/Components/ui/select";
 import { Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 export default function EditKelas({
   kelas,
@@ -27,6 +37,7 @@ export default function EditKelas({
     tahun_ajaran: kelas.tahun_ajaran,
   });
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (form.tingkat === "Kelas 7" && !form.kelas.startsWith("VII-"))
@@ -39,6 +50,11 @@ export default function EditKelas({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
+
+  const confirmSubmit = () => {
+    setConfirmOpen(false);
     setLoading(true);
     router.put(`/admin/kelas/${kelas.id}`, form, {
       onSuccess: () => {
@@ -99,6 +115,24 @@ export default function EditKelas({
           )}
         </Button>
       </div>
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi penyimpanan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah data sudah benar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSubmit} disabled={loading}>
+              Ya, benar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   );
 }

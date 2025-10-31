@@ -10,6 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 interface Kelas {
   id: number;
@@ -34,6 +44,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
   });
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     fetch("/admin/kelas/list")
@@ -44,7 +55,11 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
 
+  const confirmSubmit = () => {
+    setConfirmOpen(false);
     post("/admin/users", {
       onSuccess: (page) => {
         const newStudent = (page.props as any)?.newStudent;
@@ -120,6 +135,24 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
       <Button type="submit" disabled={processing} className="w-full mt-2">
         Simpan
       </Button>
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi penyimpanan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah data sudah benar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={processing}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSubmit} disabled={processing}>
+              Ya, benar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   );
 }

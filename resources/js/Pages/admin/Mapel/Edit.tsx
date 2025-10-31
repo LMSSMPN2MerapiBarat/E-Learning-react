@@ -3,6 +3,16 @@ import { router } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 export default function EditMapel({
   mapel,
@@ -17,9 +27,15 @@ export default function EditMapel({
     nama_mapel: mapel.nama_mapel || "",
   });
   const [loading, setLoading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
+
+  const confirmSubmit = () => {
+    setConfirmOpen(false);
     setLoading(true);
     router.put(`/admin/mapel/${mapel.id}`, form, {
       onSuccess: () => {
@@ -49,6 +65,24 @@ export default function EditMapel({
           {loading ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi penyimpanan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah data sudah benar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSubmit} disabled={loading}>
+              Ya, benar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   );
 }

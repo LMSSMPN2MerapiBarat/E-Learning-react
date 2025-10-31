@@ -11,6 +11,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
   const { data, setData, post, reset, processing, errors } = useForm({
@@ -25,6 +35,7 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
 
   const [mapels, setMapels] = useState<any[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     fetch("/admin/mapel/list")
@@ -40,6 +51,11 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
+
+  const confirmSubmit = () => {
+    setConfirmOpen(false);
     post("/admin/guru", {
       onSuccess: () => {
         toast.success("Guru berhasil ditambahkan!");
@@ -179,6 +195,24 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           {processing ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi penyimpanan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah data sudah benar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={processing}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSubmit} disabled={processing}>
+              Ya, benar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   );
 }

@@ -7,6 +7,16 @@ import { Label } from "@/Components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -16,6 +26,7 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const [prefix, setPrefix] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     if (data.tingkat === "Kelas 7") setPrefix("VII-");
@@ -31,6 +42,11 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
+
+  const confirmSubmit = () => {
+    setConfirmOpen(false);
     post(route("admin.kelas.store"), {
       onSuccess: () => {
         toast.success("✅ Kelas berhasil disimpan!");
@@ -117,6 +133,27 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
                   )}
                 </Button>
               </div>
+              <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Konfirmasi penyimpanan</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Apakah data sudah benar?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={processing}>
+                      Batal
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={confirmSubmit}
+                      disabled={processing}
+                    >
+                      Ya, benar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </form>
           </CardContent>
         </Card>

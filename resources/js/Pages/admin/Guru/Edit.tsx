@@ -5,6 +5,16 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 // 🧩 Type definitions
 type GuruType = {
@@ -48,6 +58,7 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
   const [loading, setLoading] = useState(false);
   const [mapels, setMapels] = useState<Mapel[]>([]);
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   // 🔄 Ambil data mapel dari backend
   useEffect(() => {
@@ -84,6 +95,11 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setConfirmOpen(true);
+  };
+
+  const confirmSubmit = () => {
+    setConfirmOpen(false);
     setLoading(true);
 
     router.put(`/admin/guru/${guru.id}`, form, {
@@ -209,6 +225,24 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
           )}
         </Button>
       </div>
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi penyimpanan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah data sudah benar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSubmit} disabled={loading}>
+              Ya, benar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   );
 }
