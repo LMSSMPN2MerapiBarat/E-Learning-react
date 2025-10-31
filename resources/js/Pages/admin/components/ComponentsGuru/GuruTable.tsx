@@ -11,6 +11,26 @@ import {
 import { Button } from "@/Components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
+const formatKelasLabel = (value: unknown) => {
+  if (!value) return "-";
+  const items = Array.isArray(value)
+    ? value
+    : String(value)
+        .split(",")
+        .map((item) => item.trim());
+
+  const formatted = items
+    .map((item) =>
+      item
+        .replace(/Kelas\s*\d+\s*[-:]?\s*/gi, "")
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
+
+  return formatted.length ? formatted.join(", ") : "-";
+};
+
 export default function GuruTable({
   guruList,
   setSelectedGuru,
@@ -123,7 +143,7 @@ export default function GuruTable({
                   <td className="p-3">{guru.nip || "-"}</td>
                   <td className="p-3">{guru.email}</td>
                   <td className="p-3">{guru.mapel || "-"}</td>
-                  <td className="p-3">{guru.kelas || "-"}</td>
+                  <td className="p-3">{formatKelasLabel(guru.kelas)}</td>
                   <td className="p-3">{guru.no_telp || "-"}</td>
                   <td className="p-3 text-right space-x-2">
                     <Button

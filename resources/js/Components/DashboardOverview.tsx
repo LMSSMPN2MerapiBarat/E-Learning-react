@@ -57,6 +57,29 @@ interface Mapel {
   guru?: string | null;
 }
 
+const formatClassLabel = (
+  value: string | string[] | null | undefined
+): string => {
+  if (!value) return "-";
+
+  const items = Array.isArray(value)
+    ? value
+    : String(value)
+        .split(",")
+        .map((item) => item.trim());
+
+  const formatted = items
+    .map((item) =>
+      item
+        .replace(/Kelas\s*\d+\s*[-:]?\s*/gi, "")
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
+
+  return formatted.length ? formatted.join(", ") : "-";
+};
+
 interface PageProps extends InertiaPageProps {
   auth: {
     user: {
@@ -264,7 +287,7 @@ export default function DashboardOverview() {
                         <TableCell>{s.nis ?? "-"}</TableCell>
                         <TableCell>{s.name ?? "-"}</TableCell>
                         <TableCell>{s.email ?? "-"}</TableCell>
-                        <TableCell>{s.kelas ?? "-"}</TableCell>
+                        <TableCell>{formatClassLabel(s.kelas)}</TableCell>
                         <TableCell>{s.no_telp ?? "-"}</TableCell>
                       </TableRow>
                     ))}
@@ -319,7 +342,7 @@ export default function DashboardOverview() {
                         <TableCell>{g.name ?? "-"}</TableCell>
                         <TableCell>{g.email ?? "-"}</TableCell>
                         <TableCell>{g.mapel ?? "-"}</TableCell>
-                        <TableCell>{g.kelas ?? "-"}</TableCell>
+                        <TableCell>{formatClassLabel(g.kelas)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
