@@ -1,10 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Head, usePage, router } from "@inertiajs/react";
 import { toast } from "sonner";
 import { Plus, Upload, Download, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/Components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 import CreateGuru from "./Create";
 import EditGuru from "./Edit";
 import AdminLayout from "@/Layouts/AdminLayout";
@@ -24,6 +34,10 @@ export default function GuruPage() {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isConfirmImportOpen, setIsConfirmImportOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const importInputRef = useRef<HTMLInputElement | null>(null);
 
   const reloadGurus = () => {
     router.reload({
@@ -48,25 +62,62 @@ export default function GuruPage() {
   };
 
   // 📤 Import
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    if (importInputRef.current) {
+      importInputRef.current.value = "";
+    }
     if (!file) return;
+    setImportFile(file);
+    setIsConfirmImportOpen(true);
+  };
+
+  const resetImportState = () => {
+    setImportFile(null);
+    if (importInputRef.current) {
+      importInputRef.current.value = "";
+    }
+  };
+
+  const performImport = () => {
+    if (!importFile) return;
+    const fileToUpload = importFile;
     setIsLoading(true);
-    const toastId = toast.loading("📤 Mengimpor data guru...");
+    const toastId = toast.loading("dY Mengimpor data guru...");
+    setIsConfirmImportOpen(false);
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", fileToUpload);
     formData.append("role", "guru");
 
     router.post("/admin/users/import", formData, {
       forceFormData: true,
-      onSuccess: () => {
-        toast.success("✅ Data guru berhasil diimpor!", { id: toastId });
-        reloadGurus();
+      onSuccess: (page) => {
+        const flashError = (page.props as any)?.flash?.error ?? null;
+        if (flashError) {
+          setImportError(flashError);
+          toast.error(flashError, { id: toastId });
+        } else {
+          toast.success("�o. Data guru berhasil diimpor!", { id: toastId });
+          reloadGurus();
+        }
       },
-      onError: () => toast.error("❌ Gagal mengimpor data guru.", { id: toastId }),
-      onFinish: () => setTimeout(() => setIsLoading(false), 700),
+      onError: (errors) => {
+        const message =
+          (errors && (errors.file || errors.role)) || "�?O Gagal mengimpor data guru.";
+        setImportError(message);
+        toast.error(message, { id: toastId });
+      },
+      onFinish: () => {
+        setTimeout(() => setIsLoading(false), 700);
+        resetImportState();
+      },
     });
+  };
+
+  const handleCancelImport = () => {
+    setIsConfirmImportOpen(false);
+    resetImportState();
   };
 
   // 📦 Export
@@ -103,12 +154,19 @@ export default function GuruPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto md:justify-end">
-            <input id="importFile" type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImport} />
+            <input
+              id="importFile"
+              ref={importInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              className="hidden"
+              onChange={handleSelectImport}
+            />
             <Button
               variant="outline"
               size="sm"
               className="w-full sm:w-auto"
-              onClick={() => document.getElementById("importFile")?.click()}
+              onClick={() => importInputRef.current?.click()}
             >
               <Upload className="w-4 h-4 mr-2" /> Import Excel
             </Button>
@@ -173,11 +231,64 @@ export default function GuruPage() {
         deleteConfirm={deleteConfirm}
         setDeleteConfirm={setDeleteConfirm}
         bulkDeleteConfirm={bulkDeleteConfirm}
-        setBulkDeleteConfirm={setBulkDeleteConfirm}
-        selectedIds={selectedIds}
-        reloadGurus={reloadGurus}
-        setIsBulkDeleting={setIsBulkDeleting}
-      />
+      setBulkDeleteConfirm={setBulkDeleteConfirm}
+      selectedIds={selectedIds}
+      reloadGurus={reloadGurus}
+      setIsBulkDeleting={setIsBulkDeleting}
+    />
+
+      <AlertDialog
+        open={isConfirmImportOpen}
+        onOpenChange={(open) => {
+          setIsConfirmImportOpen(open);
+          if (!open && !isLoading) {
+            resetImportState();
+          }
+        }}
+      >
+        <AlertDialogContent onInteractOutside={(event) => event.preventDefault()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Import Data</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin file{" "}
+              <span className="font-semibold">{importFile?.name}</span> sudah
+              benar dan siap diimpor?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelImport}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={performImport}>
+              Ya, Import
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!importError}
+        onOpenChange={(open) => {
+          if (!open) {
+            setImportError(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Import Gagal</AlertDialogTitle>
+            <AlertDialogDescription>
+              {importError ?? "Terjadi kesalahan saat mengimpor data guru."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setImportError(null)}>
+              Mengerti
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }
+
