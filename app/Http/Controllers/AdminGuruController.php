@@ -53,17 +53,23 @@ class AdminGuruController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users',
-            'password'  => 'required|string|min:8',
-            'nip'       => 'required|digits:18',
-            'mapel_ids' => 'nullable|array',
-            'no_telp'   => 'nullable|string|max:20',
-            'kelas_ids' => 'nullable|array',
-            'kelas_ids.*' => 'exists:kelas,id',
-            'mapel_ids.*' => 'exists:mata_pelajarans,id',
-        ]);
+        $validated = $request->validate(
+            [
+                'name'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+                'email'     => 'required|email|unique:users',
+                'password'  => 'required|string|min:8',
+                'nip'       => 'required|digits:18',
+                'mapel_ids' => 'nullable|array',
+                'no_telp'   => ['nullable', 'digits_between:9,12'],
+                'kelas_ids' => 'nullable|array',
+                'kelas_ids.*' => 'exists:kelas,id',
+                'mapel_ids.*' => 'exists:mata_pelajarans,id',
+            ],
+            [
+                'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
+                'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+            ]
+        );
 
         $user = User::create([
             'name'     => $validated['name'],
@@ -86,16 +92,22 @@ class AdminGuruController extends Controller
 
     public function update(Request $request, Guru $guru)
     {
-        $validated = $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email,' . $guru->user->id,
-            'nip'       => 'required|digits:18',
-            'no_telp'   => 'nullable|string|max:20',
-            'mapel_ids' => 'nullable|array',
-            'mapel_ids.*' => 'exists:mata_pelajarans,id',
-            'kelas_ids' => 'nullable|array',
-            'kelas_ids.*' => 'exists:kelas,id',
-        ]);
+        $validated = $request->validate(
+            [
+                'name'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+                'email'     => 'required|email|unique:users,email,' . $guru->user->id,
+                'nip'       => 'required|digits:18',
+                'no_telp'   => ['nullable', 'digits_between:9,12'],
+                'mapel_ids' => 'nullable|array',
+                'mapel_ids.*' => 'exists:mata_pelajarans,id',
+                'kelas_ids' => 'nullable|array',
+                'kelas_ids.*' => 'exists:kelas,id',
+            ],
+            [
+                'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
+                'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+            ]
+        );
 
         $guru->user->update([
             'name'  => $validated['name'],

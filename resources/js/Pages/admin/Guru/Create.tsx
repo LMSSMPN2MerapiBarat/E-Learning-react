@@ -59,9 +59,19 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
     });
   };
 
+  const handleNameChange = (value: string) => {
+    const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
+    setData("name", lettersOnly);
+  };
+
   const handleNipChange = (value: string) => {
     const digitsOnly = value.replace(/\D/g, "").slice(0, 18);
     setData("nip", digitsOnly);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
+    setData("no_telp", digitsOnly);
   };
 
   return (
@@ -69,9 +79,11 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
       <div>
         <Label>Nama</Label>
         <Input
-          placeholder="Nama lengkap"
+          placeholder="Masukkan nama lengkap (huruf saja)"
           value={data.name}
-          onChange={(e) => setData("name", e.target.value)}
+          onChange={(e) => handleNameChange(e.target.value)}
+          pattern="[A-Za-z\s]+"
+          title="Nama hanya boleh berisi huruf dan spasi."
           required
         />
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
@@ -126,10 +138,18 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
         <Label>No. Telepon</Label>
         <Input
           type="text"
-          placeholder="Contoh: 081234567890"
+          placeholder="Masukkan 9-12 digit nomor telepon"
+          inputMode="numeric"
+          pattern="[0-9]{9,12}"
+          minLength={9}
+          maxLength={12}
           value={data.no_telp}
-          onChange={(e) => setData("no_telp", e.target.value)}
+          onChange={(e) => handlePhoneChange(e.target.value)}
+          title="No. telepon harus 9-12 digit angka."
         />
+        {errors.no_telp && (
+          <p className="text-red-500 text-sm">{errors.no_telp}</p>
+        )}
       </div>
 
       <div>

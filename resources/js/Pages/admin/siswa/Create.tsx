@@ -74,13 +74,26 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
     setData("nis", digitsOnly);
   };
 
+  const handleNameChange = (value: string) => {
+    const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
+    setData("name", lettersOnly);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
+    setData("no_telp", digitsOnly);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
         <Label>Nama Lengkap</Label>
         <Input
           value={data.name}
-          onChange={(e) => setData("name", e.target.value)}
+          onChange={(e) => handleNameChange(e.target.value)}
+          placeholder="Contoh: Andi Saputra"
+          pattern="[A-Za-z\s]+"
+          title="Nama hanya boleh berisi huruf dan spasi."
           required
         />
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
@@ -92,6 +105,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           type="email"
           value={data.email}
           onChange={(e) => setData("email", e.target.value)}
+          placeholder="contoh: siswa@sekolah.sch.id"
           required
         />
         {errors.email && (
@@ -107,6 +121,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           autoComplete="new-password"
           value={data.password}
           onChange={(e) => setData("password", e.target.value)}
+          placeholder="Minimal 8 karakter"
           required
         />
         {errors.password && (
@@ -122,6 +137,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           maxLength={10}
           value={data.nis}
           onChange={(e) => handleNisChange(e.target.value)}
+          placeholder="Masukkan 10 digit NISN"
           required
         />
         {errors.nis && <p className="text-red-500 text-sm">{errors.nis}</p>}
@@ -150,7 +166,13 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
         <Label>No. Telepon</Label>
         <Input
           value={data.no_telp}
-          onChange={(e) => setData("no_telp", e.target.value)}
+          onChange={(e) => handlePhoneChange(e.target.value)}
+          placeholder="Masukkan 9-12 digit nomor telepon"
+          inputMode="numeric"
+          pattern="[0-9]{9,12}"
+          minLength={9}
+          maxLength={12}
+          title="No. telepon harus 9-12 digit angka."
         />
         {errors.no_telp && (
           <p className="text-red-500 text-sm">{errors.no_telp}</p>

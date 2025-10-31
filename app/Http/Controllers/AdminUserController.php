@@ -178,17 +178,23 @@ class AdminUserController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
-            'role'     => 'required|in:admin,guru,siswa',
-            'nip'      => 'required_if:role,guru|digits:18',
-            'mapel'    => 'nullable|string|max:255',
-            'nis'      => 'required_if:role,siswa|digits:10',
-            'kelas_id' => 'nullable|exists:kelas,id',
-            'no_telp'  => 'nullable|string|max:20',
-        ]);
+        $validated = $request->validate(
+            [
+                'name'     => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+                'email'    => 'required|email|unique:users',
+                'password' => 'required|string|min:8',
+                'role'     => 'required|in:admin,guru,siswa',
+                'nip'      => 'required_if:role,guru|digits:18',
+                'mapel'    => 'nullable|string|max:255',
+                'nis'      => 'required_if:role,siswa|digits:10',
+                'kelas_id' => 'nullable|exists:kelas,id',
+                'no_telp'  => ['nullable', 'digits_between:9,12'],
+            ],
+            [
+                'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
+                'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+            ]
+        );
 
         $user = User::create([
             'name'     => $validated['name'],
@@ -225,17 +231,23 @@ class AdminUserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $validated = $request->validate([
-            'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users,email,' . $id,
-            'role'     => 'required|in:admin,guru,siswa',
-            'password' => 'nullable|string|min:8',
-            'kelas_id' => 'nullable|exists:kelas,id',
-            'nis'      => 'nullable|digits:10',
-            'nip'      => 'nullable|digits:18',
-            'mapel'    => 'nullable|string|max:255',
-            'no_telp'  => 'nullable|string|max:20',
-        ]);
+        $validated = $request->validate(
+            [
+                'name'     => ['required', 'string', 'max:100', 'regex:/^[\pL\s]+$/u'],
+                'email'    => 'required|email|unique:users,email,' . $id,
+                'role'     => 'required|in:admin,guru,siswa',
+                'password' => 'nullable|string|min:8',
+                'kelas_id' => 'nullable|exists:kelas,id',
+                'nis'      => 'nullable|digits:10',
+                'nip'      => 'nullable|digits:18',
+                'mapel'    => 'nullable|string|max:255',
+                'no_telp'  => ['nullable', 'digits_between:9,12'],
+            ],
+            [
+                'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
+                'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+            ]
+        );
 
         $data = [
             'name'  => $validated['name'],

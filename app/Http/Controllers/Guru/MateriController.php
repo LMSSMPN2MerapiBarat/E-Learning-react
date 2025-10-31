@@ -78,7 +78,7 @@ class MateriController extends Controller
             'deskripsi'         => 'nullable|string',
             'kelas_id'          => 'nullable|exists:kelas,id',
             'mata_pelajaran_id' => 'nullable|exists:mata_pelajarans,id',
-            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,txt,zip,rar|max:10240',
+            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,pps,ppsx,txt,zip,rar|max:20480',
         ]);
 
         $kelasId = $validated['kelas_id'] !== null ? (int) $validated['kelas_id'] : null;
@@ -132,7 +132,7 @@ class MateriController extends Controller
             'deskripsi'         => 'nullable|string',
             'kelas_id'          => 'nullable|exists:kelas,id',
             'mata_pelajaran_id' => 'nullable|exists:mata_pelajarans,id',
-            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,txt,zip,rar|max:10240',
+            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,pps,ppsx,txt,zip,rar|max:20480',
         ]);
 
         $kelasId = $validated['kelas_id'] !== null ? (int) $validated['kelas_id'] : null;

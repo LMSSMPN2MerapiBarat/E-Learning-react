@@ -80,6 +80,16 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
       setForm({ ...form, nip: digitsOnly });
       return;
     }
+    if (name === "no_telp") {
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
+      setForm({ ...form, no_telp: digitsOnly });
+      return;
+    }
+    if (name === "name") {
+      const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
+      setForm({ ...form, name: lettersOnly });
+      return;
+    }
     setForm({ ...form, [name]: value });
   };
 
@@ -131,6 +141,9 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
             name="name"
             value={form.name}
             onChange={handleChange}
+            placeholder="Masukkan nama lengkap (huruf saja)"
+            pattern="[A-Za-z\s]+"
+            title="Nama hanya boleh berisi huruf dan spasi."
             required
           />
         </div>
@@ -167,6 +180,12 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
             name="no_telp"
             value={form.no_telp}
             onChange={handleChange}
+            placeholder="Masukkan 9-12 digit nomor telepon"
+            inputMode="numeric"
+            pattern="[0-9]{9,12}"
+            minLength={9}
+            maxLength={12}
+            title="No. telepon harus 9-12 digit angka."
             required
           />
         </div>

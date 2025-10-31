@@ -49,6 +49,7 @@ export default function CreateMapel({ onSuccess }: { onSuccess: () => void }) {
         <Input
           value={data.nama_mapel}
           onChange={(e) => setData("nama_mapel", e.target.value)}
+          placeholder="Contoh: Matematika"
           required
         />
         {errors.nama_mapel && (

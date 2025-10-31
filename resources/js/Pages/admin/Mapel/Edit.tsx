@@ -60,6 +60,7 @@ export default function EditMapel({
         <Input
           value={form.nama_mapel}
           onChange={(e) => setForm({ ...form, nama_mapel: e.target.value })}
+          placeholder="Contoh: Matematika"
           required
         />
       </div>

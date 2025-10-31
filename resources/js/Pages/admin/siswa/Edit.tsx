@@ -68,6 +68,16 @@ export default function EditSiswa({
     setForm({ ...form, nis: digitsOnly });
   };
 
+  const handleNameChange = (value: string) => {
+    const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
+    setForm({ ...form, name: lettersOnly });
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
+    setForm({ ...form, no_telp: digitsOnly });
+  };
+
   useEffect(() => {
     fetch("/admin/kelas/list")
       .then((res) => res.json())
@@ -115,7 +125,10 @@ export default function EditSiswa({
         <Label>Nama</Label>
         <Input
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          onChange={(e) => handleNameChange(e.target.value)}
+          placeholder="Contoh: Andi Saputra"
+          pattern="[A-Za-z\s]+"
+          title="Nama hanya boleh berisi huruf dan spasi."
           required
         />
       </div>
@@ -126,6 +139,7 @@ export default function EditSiswa({
           type="email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
+          placeholder="contoh: siswa@sekolah.sch.id"
           required
         />
       </div>
@@ -172,7 +186,13 @@ export default function EditSiswa({
         <Label>No. Telepon</Label>
         <Input
           value={form.no_telp}
-          onChange={(e) => setForm({ ...form, no_telp: e.target.value })}
+          onChange={(e) => handlePhoneChange(e.target.value)}
+          placeholder="Masukkan 9-12 digit nomor telepon"
+          inputMode="numeric"
+          pattern="[0-9]{9,12}"
+          minLength={9}
+          maxLength={12}
+          title="No. telepon harus 9-12 digit angka."
         />
       </div>
 
