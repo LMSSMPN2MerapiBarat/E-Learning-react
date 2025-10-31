@@ -3,6 +3,7 @@ import { router } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { toast } from "sonner";
 import {
   Select,
   SelectTrigger,
@@ -58,10 +59,16 @@ export default function EditKelas({
     setLoading(true);
     router.put(`/admin/kelas/${kelas.id}`, form, {
       onSuccess: () => {
+        toast.success("Kelas berhasil diperbarui!");
         onSuccess();
         setLoading(false);
       },
-      onError: () => setLoading(false),
+      onError: (formErrors) => {
+        setLoading(false);
+        const message =
+          formErrors?.kelas ?? "Gagal memperbarui data kelas.";
+        toast.error(message);
+      },
     });
   };
 

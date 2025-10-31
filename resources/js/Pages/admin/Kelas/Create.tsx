@@ -49,11 +49,15 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
     setConfirmOpen(false);
     post(route("admin.kelas.store"), {
       onSuccess: () => {
-        toast.success("✅ Kelas berhasil disimpan!");
+        toast.success("Kelas berhasil disimpan!");
         reset();
         onSuccess();
       },
-      onError: () => toast.error("❌ Gagal menyimpan data kelas."),
+      onError: (formErrors) => {
+        const message =
+          formErrors?.kelas ?? "Gagal menyimpan data kelas.";
+        toast.error(message);
+      },
     });
   };
 

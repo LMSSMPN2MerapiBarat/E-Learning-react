@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class AdminKelasController extends Controller
@@ -24,12 +25,17 @@ class AdminKelasController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'tingkat'       => 'required|string|max:50',
-            'kelas'         => 'required|string|max:50',
-            'tahun_ajaran'  => 'required|string|max:20',
-            'deskripsi'     => 'nullable|string',
-        ]);
+        $validated = $request->validate(
+            [
+                'tingkat'       => 'required|string|max:50',
+                'kelas'         => ['required', 'string', 'max:50', Rule::unique('kelas', 'kelas')],
+                'tahun_ajaran'  => 'required|string|max:20',
+                'deskripsi'     => 'nullable|string',
+            ],
+            [
+                'kelas.unique' => 'Nama kelas sudah digunakan.',
+            ]
+        );
 
         Kelas::create($validated);
 
@@ -47,12 +53,17 @@ class AdminKelasController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'tingkat'       => 'required|string|max:50',
-            'kelas'         => 'required|string|max:50',
-            'tahun_ajaran'  => 'required|string|max:20',
-            'deskripsi'     => 'nullable|string',
-        ]);
+        $validated = $request->validate(
+            [
+                'tingkat'       => 'required|string|max:50',
+                'kelas'         => ['required', 'string', 'max:50', Rule::unique('kelas', 'kelas')->ignore($id)],
+                'tahun_ajaran'  => 'required|string|max:20',
+                'deskripsi'     => 'nullable|string',
+            ],
+            [
+                'kelas.unique' => 'Nama kelas sudah digunakan.',
+            ]
+        );
 
         $kelas = Kelas::findOrFail($id);
         $kelas->update($validated);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class AdminMapelController extends Controller
@@ -24,9 +25,19 @@ class AdminMapelController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_mapel' => 'required|string|max:255',
-        ]);
+        $request->validate(
+            [
+                'nama_mapel' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('mata_pelajarans', 'nama_mapel'),
+                ],
+            ],
+            [
+                'nama_mapel.unique' => 'Nama Mata Pelajaran sudah digunakan.',
+            ]
+        );
 
         MataPelajaran::create($request->only('nama_mapel'));
 
@@ -43,9 +54,19 @@ class AdminMapelController extends Controller
 
     public function update(Request $request, MataPelajaran $mapel)
     {
-        $request->validate([
-            'nama_mapel' => 'required|string|max:255',
-        ]);
+        $request->validate(
+            [
+                'nama_mapel' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('mata_pelajarans', 'nama_mapel')->ignore($mapel->id),
+                ],
+            ],
+            [
+                'nama_mapel.unique' => 'Nama Mata Pelajaran sudah digunakan.',
+            ]
+        );
 
         $mapel->update($request->only('nama_mapel'));
 

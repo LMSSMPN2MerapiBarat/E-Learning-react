@@ -3,6 +3,7 @@ import { router } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,10 +40,16 @@ export default function EditMapel({
     setLoading(true);
     router.put(`/admin/mapel/${mapel.id}`, form, {
       onSuccess: () => {
+        toast.success("Mata pelajaran berhasil diperbarui!");
         setLoading(false);
         onSuccess();
       },
-      onError: () => setLoading(false),
+      onError: (formErrors) => {
+        setLoading(false);
+        const message =
+          formErrors?.nama_mapel ?? "Gagal memperbarui mata pelajaran.";
+        toast.error(message);
+      },
     });
   };
 

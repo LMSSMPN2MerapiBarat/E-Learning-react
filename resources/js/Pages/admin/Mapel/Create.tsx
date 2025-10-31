@@ -3,6 +3,7 @@ import { useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,8 +30,14 @@ export default function CreateMapel({ onSuccess }: { onSuccess: () => void }) {
     setConfirmOpen(false);
     post("/admin/mapel", {
       onSuccess: () => {
+        toast.success("Mata pelajaran berhasil ditambahkan!");
         reset();
         onSuccess();
+      },
+      onError: (formErrors) => {
+        const message =
+          formErrors.nama_mapel ?? "Gagal menambahkan mata pelajaran.";
+        toast.error(message);
       },
     });
   };
