@@ -188,7 +188,10 @@ export default function QuizAttemptDialog({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] w-full max-w-3xl overflow-y-auto">
+      <DialogContent
+        className="max-h-[90vh] w-full max-w-3xl overflow-y-auto"
+        onInteractOutside={(event) => event.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>{quiz.title}</DialogTitle>
         </DialogHeader>
