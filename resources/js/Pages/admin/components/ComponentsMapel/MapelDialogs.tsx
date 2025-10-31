@@ -48,7 +48,10 @@ const MapelDialogs: React.FC<MapelDialogsProps> = ({
     <>
       {isEditOpen && selectedMapel && (
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent
+            className="max-w-md"
+            onInteractOutside={(event) => event.preventDefault()}
+          >
             <DialogHeader>
               <DialogTitle>Edit Mata Pelajaran</DialogTitle>
             </DialogHeader>

@@ -73,7 +73,10 @@ const KelasHeader: React.FC<KelasHeaderProps> = ({
               Tambah Kelas
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent
+            className="max-w-md"
+            onInteractOutside={(event) => event.preventDefault()}
+          >
             <DialogHeaderRoot>
               <DialogTitle>Tambah Kelas Baru</DialogTitle>
             </DialogHeaderRoot>

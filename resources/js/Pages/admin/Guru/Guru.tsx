@@ -140,7 +140,10 @@ export default function GuruPage() {
                   <Plus className="w-4 h-4 mr-2" /> Tambah Guru
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-full max-w-3xl max-h-[85vh] overflow-y-auto">
+              <DialogContent
+                className="w-full max-w-3xl max-h-[85vh] overflow-y-auto"
+                onInteractOutside={(event) => event.preventDefault()}
+              >
                 <DialogHeader>
                   <DialogTitle>Tambah Guru Baru</DialogTitle>
                 </DialogHeader>

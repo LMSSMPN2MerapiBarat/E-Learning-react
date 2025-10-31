@@ -48,7 +48,10 @@ const KelasDialogs: React.FC<KelasDialogsProps> = ({
     <>
       {isEditOpen && selectedKelas && (
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent
+            className="max-w-md"
+            onInteractOutside={(event) => event.preventDefault()}
+          >
             <DialogHeader>
               <DialogTitle>Edit Data Kelas</DialogTitle>
             </DialogHeader>

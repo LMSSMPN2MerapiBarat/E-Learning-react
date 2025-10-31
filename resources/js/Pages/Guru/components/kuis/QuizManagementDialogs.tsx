@@ -44,7 +44,10 @@ const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
 }) => (
   <>
     <Dialog open={isCreateOpen} onOpenChange={onCreateClose}>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent
+        className="max-h-[90vh] max-w-3xl overflow-y-auto"
+        onInteractOutside={(event) => event.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Buat Kuis Baru</DialogTitle>
         </DialogHeader>
@@ -58,7 +61,10 @@ const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
     </Dialog>
 
     <Dialog open={!!editItem} onOpenChange={onEditClose}>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent
+        className="max-h-[90vh] max-w-3xl overflow-y-auto"
+        onInteractOutside={(event) => event.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Edit Kuis</DialogTitle>
         </DialogHeader>
