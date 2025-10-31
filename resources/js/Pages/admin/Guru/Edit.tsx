@@ -15,12 +15,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Components/ui/select";
 
 // 🧩 Type definitions
 type GuruType = {
   id: number;
   name: string;
   email: string;
+  jenis_kelamin?: string;
   nip?: string;
   no_telp?: string;
   mapel_ids?: number[];
@@ -49,6 +57,7 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
     id: guru.id,
     name: guru.name || "",
     email: guru.email || "",
+    jenis_kelamin: guru.jenis_kelamin || "",
     nip: guru.nip || "",
     no_telp: guru.no_telp || "",
     mapel_ids: guru.mapel_ids || [],
@@ -91,6 +100,10 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
       return;
     }
     setForm({ ...form, [name]: value });
+  };
+
+  const handleGenderChange = (value: string) => {
+    setForm({ ...form, jenis_kelamin: value });
   };
 
   const handleMapelSelect = (id: number) => {
@@ -146,6 +159,22 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
             title="Nama hanya boleh berisi huruf dan spasi."
             required
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Jenis Kelamin</Label>
+          <Select
+            value={form.jenis_kelamin ?? ""}
+            onValueChange={handleGenderChange}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Pilih jenis kelamin" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="laki-laki">Laki-laki</SelectItem>
+              <SelectItem value="perempuan">Perempuan</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">

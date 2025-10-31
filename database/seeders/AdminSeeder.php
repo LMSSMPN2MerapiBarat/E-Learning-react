@@ -20,6 +20,7 @@ class AdminSeeder extends Seeder
                 'email' => 'admin@example.com',
                 'password' => Hash::make('password'), // Ganti sesuai kebutuhan
                 'role' => 'admin',
+                'jenis_kelamin' => 'laki-laki',
             ]);
         }
     }

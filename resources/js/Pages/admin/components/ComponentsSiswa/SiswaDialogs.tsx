@@ -88,7 +88,10 @@ export default function SiswaDialogs({
     <>
       {/* Tambah */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent onInteractOutside={(event) => event.preventDefault()}>
+        <DialogContent
+          className="w-full max-w-3xl max-h-[85vh] overflow-y-auto"
+          onInteractOutside={(event) => event.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>Tambah Siswa Baru</DialogTitle>
           </DialogHeader>
@@ -98,7 +101,10 @@ export default function SiswaDialogs({
 
       {/* Edit */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent onInteractOutside={(event) => event.preventDefault()}>
+        <DialogContent
+          className="w-full max-w-3xl max-h-[85vh] overflow-y-auto"
+          onInteractOutside={(event) => event.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>Edit Data Siswa</DialogTitle>
           </DialogHeader>

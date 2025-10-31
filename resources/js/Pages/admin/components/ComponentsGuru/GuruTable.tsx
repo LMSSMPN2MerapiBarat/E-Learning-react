@@ -51,6 +51,7 @@ export default function GuruTable({
           guru.name?.toLowerCase().includes(lowerSearch) ||
           guru.email?.toLowerCase().includes(lowerSearch) ||
           guru.nip?.toLowerCase().includes(lowerSearch) ||
+          guru.jenis_kelamin?.toLowerCase().includes(lowerSearch) ||
           guru.kelas?.toLowerCase().includes(lowerSearch);
         const matchSubject =
           selectedSubject === "all" ||
@@ -123,7 +124,7 @@ export default function GuruTable({
 
       {/* 📋 Tabel Guru */}
       <div className="hidden overflow-x-auto rounded-lg border bg-white md:block">
-        <table className="min-w-[800px] w-full text-sm">
+        <table className="min-w-[900px] w-full text-sm">
           <thead className="bg-gray-50">
             <tr>
               <th className="w-[40px] p-3 text-center">
@@ -141,6 +142,7 @@ export default function GuruTable({
               </th>
               <th className="w-[60px] p-3 text-center">No</th>
               <th className="p-3 text-left">Nama</th>
+              <th className="p-3 text-left">Jenis Kelamin</th>
               <th className="p-3 text-left">NIP</th>
               <th className="p-3 text-left">Email</th>
               <th className="p-3 text-left">Mata Pelajaran</th>
@@ -163,6 +165,9 @@ export default function GuruTable({
                   </td>
                   <td className="p-3 text-center">{offset + index + 1}</td>
                   <td className="p-3">{guru.name}</td>
+                  <td className="p-3 capitalize">
+                    {guru.jenis_kelamin || "-"}
+                  </td>
                   <td className="p-3">{guru.nip || "-"}</td>
                   <td className="p-3">{guru.email}</td>
                   <td className="p-3">{guru.mapel || "-"}</td>
@@ -193,7 +198,7 @@ export default function GuruTable({
               ))
             ) : filteredGurus.length === 0 ? (
               <tr>
-                <td colSpan={9} className="py-6 text-center text-gray-500">
+                <td colSpan={10} className="py-6 text-center text-gray-500">
                   Tidak ada data guru yang cocok.
                 </td>
               </tr>
@@ -230,6 +235,12 @@ export default function GuruTable({
                 <p>
                   <span className="font-medium text-gray-600">NIP:</span>{" "}
                   {guru.nip || "-"}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-600">
+                    Jenis Kelamin:
+                  </span>{" "}
+                  {guru.jenis_kelamin || "-"}
                 </p>
                 <p>
                   <span className="font-medium text-gray-600">Mapel:</span>{" "}

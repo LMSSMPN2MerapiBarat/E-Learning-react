@@ -33,6 +33,7 @@ class AdminGuruController extends Controller
                 return [
                     'id'       => $g->id,
                     'name'     => $g->user->name,
+                    'jenis_kelamin' => $g->user->jenis_kelamin,
                     'email'    => $g->user->email,
                     'nip'      => $g->nip,
                     'mapel'    => $mapelList->implode(', '),
@@ -56,6 +57,7 @@ class AdminGuruController extends Controller
         $validated = $request->validate(
             [
                 'name'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+                'jenis_kelamin' => ['required', 'in:laki-laki,perempuan'],
                 'email'     => 'required|email|unique:users',
                 'password'  => 'required|string|min:8',
                 'nip'       => 'required|digits:18',
@@ -67,12 +69,14 @@ class AdminGuruController extends Controller
             ],
             [
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
+                'jenis_kelamin.in'          => 'Pilih jenis kelamin yang valid.',
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
             ]
         );
 
         $user = User::create([
             'name'     => $validated['name'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role'     => 'guru',
@@ -95,6 +99,7 @@ class AdminGuruController extends Controller
         $validated = $request->validate(
             [
                 'name'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+                'jenis_kelamin' => ['required', 'in:laki-laki,perempuan'],
                 'email'     => 'required|email|unique:users,email,' . $guru->user->id,
                 'nip'       => 'required|digits:18',
                 'no_telp'   => ['nullable', 'digits_between:9,12'],
@@ -105,12 +110,14 @@ class AdminGuruController extends Controller
             ],
             [
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
+                'jenis_kelamin.in'          => 'Pilih jenis kelamin yang valid.',
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
             ]
         );
 
         $guru->user->update([
             'name'  => $validated['name'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
             'email' => $validated['email'],
         ]);
 

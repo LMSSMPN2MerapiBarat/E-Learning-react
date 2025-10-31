@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
+            'jenis_kelamin' => 'laki-laki',
         ]);
 
         // ✅ Buat 1 kelas default (untuk siswa)
@@ -39,6 +40,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'guru@example.com',
             'password' => Hash::make('password'),
             'role' => 'guru',
+            'jenis_kelamin' => 'laki-laki',
         ]);
 
         Guru::create([
@@ -54,6 +56,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'siswa@example.com',
             'password' => Hash::make('password'),
             'role' => 'siswa',
+            'jenis_kelamin' => 'laki-laki',
         ]);
 
         Siswa::create([

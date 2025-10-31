@@ -5,6 +5,13 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Components/ui/select";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -18,6 +25,7 @@ import {
 export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
   const { data, setData, post, reset, processing, errors } = useForm({
     name: "",
+    jenis_kelamin: "",
     nip: "",
     email: "",
     password: "",
@@ -87,6 +95,25 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           required
         />
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+      </div>
+
+      <div>
+        <Label>Jenis Kelamin</Label>
+        <Select
+          value={data.jenis_kelamin}
+          onValueChange={(value) => setData("jenis_kelamin", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Pilih jenis kelamin" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="laki-laki">Laki-laki</SelectItem>
+            <SelectItem value="perempuan">Perempuan</SelectItem>
+          </SelectContent>
+        </Select>
+        {errors.jenis_kelamin && (
+          <p className="text-red-500 text-sm">{errors.jenis_kelamin}</p>
+        )}
       </div>
 
       <div>

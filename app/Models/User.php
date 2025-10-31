@@ -14,6 +14,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'jenis_kelamin',
 
         // kolom berikut memang ada di migration lama; namun logika kini
         // dipindahkan ke tabel profil (Gurus/Siswas). Kolom ini tidak lagi dipakai

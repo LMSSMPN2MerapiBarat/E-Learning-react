@@ -36,6 +36,7 @@ interface StudentData {
   kelas?: string;
   no_telp: string;
   nis: string;
+  jenis_kelamin?: string;
 }
 
 interface EditSiswaProps {
@@ -58,6 +59,7 @@ export default function EditSiswa({
     kelas_id: student.kelas_id ? String(student.kelas_id) : "",
     no_telp: student.no_telp || "",
     nis: student.nis || "",
+    jenis_kelamin: student.jenis_kelamin || "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -78,6 +80,9 @@ export default function EditSiswa({
     setForm({ ...form, no_telp: digitsOnly });
   };
 
+  const handleGenderChange = (value: string) => {
+    setForm({ ...form, jenis_kelamin: value });
+  };
   useEffect(() => {
     fetch("/admin/kelas/list")
       .then((res) => res.json())
@@ -100,6 +105,7 @@ export default function EditSiswa({
       kelas_id: form.kelas_id || null,
       no_telp: form.no_telp,
       nis: form.nis,
+      jenis_kelamin: form.jenis_kelamin,
       role: "siswa",
     };
 
@@ -119,95 +125,111 @@ export default function EditSiswa({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 p-4 bg-white rounded-lg shadow-sm"
+      className="space-y-6 p-4 bg-white rounded-lg shadow-sm"
     >
-      <div>
-        <Label>Nama</Label>
-        <Input
-          value={form.name}
-          onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="Contoh: Andi Saputra"
-          pattern="[A-Za-z\s]+"
-          title="Nama hanya boleh berisi huruf dan spasi."
-          required
-        />
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <Label>Nama Lengkap</Label>
+          <Input
+            value={form.name}
+            onChange={(e) => handleNameChange(e.target.value)}
+            placeholder="Contoh: Andi Saputra"
+            pattern="[A-Za-z\s]+"
+            title="Nama hanya boleh berisi huruf dan spasi."
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Jenis Kelamin</Label>
+          <Select value={form.jenis_kelamin} onValueChange={handleGenderChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Pilih jenis kelamin" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="laki-laki">Laki-laki</SelectItem>
+              <SelectItem value="perempuan">Perempuan</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Email</Label>
+          <Input
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            placeholder="contoh: siswa@sekolah.sch.id"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Kelas</Label>
+          <Select
+            value={form.kelas_id}
+            onValueChange={(v) => setForm({ ...form, kelas_id: v })}
+          >
+            <SelectTrigger>
+              <SelectValue
+                placeholder={
+                  form.kelas_id
+                    ? kelasList.find((k) => String(k.id) === form.kelas_id)
+                        ?.kelas
+                    : "Pilih kelas"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {kelasList.map((k) => (
+                <SelectItem key={k.id} value={String(k.id)}>
+                  {k.tingkat} - {k.kelas} ({k.tahun_ajaran})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>NISN</Label>
+          <Input
+            value={form.nis}
+            inputMode="numeric"
+            pattern="[0-9]{10}"
+            maxLength={10}
+            minLength={10}
+            onChange={(e) => handleNisChange(e.target.value)}
+            placeholder="Masukkan 10 digit NISN"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>No. Telepon</Label>
+          <Input
+            value={form.no_telp}
+            onChange={(e) => handlePhoneChange(e.target.value)}
+            placeholder="Masukkan 9-12 digit nomor telepon"
+            inputMode="numeric"
+            pattern="[0-9]{9,12}"
+            minLength={9}
+            maxLength={12}
+            title="No. telepon harus 9-12 digit angka."
+          />
+        </div>
+
+        <div className="space-y-2 md:col-span-2">
+          <Label>Password (opsional)</Label>
+          <Input
+            type="password"
+            minLength={8}
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            placeholder="Kosongkan jika tidak ingin mengubah password"
+          />
+        </div>
       </div>
 
-      <div>
-        <Label>Email</Label>
-        <Input
-          type="email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          placeholder="contoh: siswa@sekolah.sch.id"
-          required
-        />
-      </div>
-
-      <div>
-        <Label>Kelas</Label>
-        <Select
-          value={form.kelas_id}
-          onValueChange={(v) => setForm({ ...form, kelas_id: v })}
-        >
-          <SelectTrigger>
-            <SelectValue
-              placeholder={
-                form.kelas_id
-                  ? kelasList.find((k) => String(k.id) === form.kelas_id)?.kelas
-                  : "Pilih kelas"
-              }
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {kelasList.map((k) => (
-              <SelectItem key={k.id} value={String(k.id)}>
-                {k.tingkat} - {k.kelas} ({k.tahun_ajaran})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label>NISN</Label>
-        <Input
-          value={form.nis}
-          inputMode="numeric"
-          pattern="[0-9]{10}"
-          maxLength={10}
-          minLength={10}
-          onChange={(e) => handleNisChange(e.target.value)}
-          placeholder="Masukkan 10 digit NISN"
-        />
-      </div>
-
-      <div>
-        <Label>No. Telepon</Label>
-        <Input
-          value={form.no_telp}
-          onChange={(e) => handlePhoneChange(e.target.value)}
-          placeholder="Masukkan 9-12 digit nomor telepon"
-          inputMode="numeric"
-          pattern="[0-9]{9,12}"
-          minLength={9}
-          maxLength={12}
-          title="No. telepon harus 9-12 digit angka."
-        />
-      </div>
-
-      <div>
-        <Label>Password (opsional)</Label>
-        <Input
-          type="password"
-          minLength={8}
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          placeholder="Kosongkan jika tidak ingin mengubah password"
-        />
-      </div>
-
-      <div className="flex justify-end gap-2 pt-3">
+      <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="outline" onClick={onCancel}>
           Batal
         </Button>

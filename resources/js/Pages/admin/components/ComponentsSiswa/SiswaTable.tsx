@@ -43,7 +43,7 @@ export default function SiswaTable({
   return (
     <>
       <div className="hidden overflow-x-auto rounded-lg border bg-white md:block">
-        <Table className="min-w-[780px]">
+        <Table className="min-w-[880px]">
         <TableHeader>
           <TableRow>
             <TableHead className="w-[40px] text-center">
@@ -63,6 +63,7 @@ export default function SiswaTable({
             <TableHead className="w-[60px] text-center">No</TableHead>
             <TableHead>NIS</TableHead>
             <TableHead>Nama</TableHead>
+            <TableHead>Jenis Kelamin</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Kelas</TableHead>
             <TableHead>No. Telepon</TableHead>
@@ -86,6 +87,9 @@ export default function SiswaTable({
                 </TableCell>
                 <TableCell>{student.nis || "-"}</TableCell>
                 <TableCell>{student.name}</TableCell>
+                <TableCell className="capitalize">
+                  {student.jenis_kelamin || "-"}
+                </TableCell>
                 <TableCell>{student.email}</TableCell>
                 <TableCell>{student.kelas || "-"}</TableCell>
                 <TableCell>{student.no_telp || "-"}</TableCell>
@@ -112,7 +116,7 @@ export default function SiswaTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-6 text-gray-500">
+              <TableCell colSpan={9} className="text-center py-6 text-gray-500">
                 Tidak ada data siswa yang cocok.
               </TableCell>
             </TableRow>
@@ -148,6 +152,10 @@ export default function SiswaTable({
                 <p>
                   <span className="font-medium text-gray-600">NIS:</span>{" "}
                   {student.nis || "-"}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-600">Jenis Kelamin:</span>{" "}
+                  {student.jenis_kelamin || "-"}
                 </p>
                 <p>
                   <span className="font-medium text-gray-600">Kelas:</span>{" "}
@@ -190,3 +198,4 @@ export default function SiswaTable({
     </>
   );
 }
+

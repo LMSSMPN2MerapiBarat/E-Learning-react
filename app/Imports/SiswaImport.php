@@ -52,11 +52,15 @@ class SiswaImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFai
             return null;
         }
 
+        $genderInput = strtolower(trim($row['jenis_kelamin'] ?? $row['gender'] ?? ''));
+        $gender = in_array($genderInput, ['laki-laki', 'perempuan']) ? $genderInput : null;
+
         $user = User::create([
             'name'     => $nama,
             'email'    => $email,
             'password' => Hash::make('password'),
             'role'     => 'siswa',
+            'jenis_kelamin' => $gender,
         ]);
 
         return new Siswa([

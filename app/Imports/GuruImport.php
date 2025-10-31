@@ -13,22 +13,26 @@ class GuruImport implements ToModel, WithHeadingRow
 {
     public function model(array $row)
     {
-        // ✅ 1. Buat akun user untuk guru
+        // âœ… 1. Buat akun user untuk guru
+        $genderInput = strtolower(trim($row['jenis_kelamin'] ?? $row['gender'] ?? ''));
+        $gender = in_array($genderInput, ['laki-laki', 'perempuan']) ? $genderInput : null;
+
         $user = User::create([
             'name'     => $row['nama'] ?? 'Tanpa Nama',
             'email'    => $row['email'] ?? uniqid('guru_') . '@example.com',
             'password' => Hash::make('password'),
             'role'     => 'guru',
+            'jenis_kelamin' => $gender,
         ]);
 
-        // ✅ 2. Buat data guru
+        // âœ… 2. Buat data guru
         $guru = Guru::create([
             'user_id' => $user->id,
             'nip'     => $row['nip'] ?? null,
             'no_telp' => $row['no_telepon'] ?? null,
         ]);
 
-        // ✅ 3. Hubungkan ke tabel mata pelajaran (bisa lebih dari satu, dipisahkan koma)
+        // âœ… 3. Hubungkan ke tabel mata pelajaran (bisa lebih dari satu, dipisahkan koma)
         if (!empty($row['mapel'])) {
             $mapelNames = array_map('trim', explode(',', $row['mapel']));
 

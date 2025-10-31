@@ -60,9 +60,11 @@ export default function SiswaPage() {
 
   const filteredStudents = useMemo(() => {
     return studentsList.filter((student) => {
+      const lowerSearch = searchTerm.toLowerCase();
       const matchSearch =
-        student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.nis?.toLowerCase().includes(searchTerm.toLowerCase());
+        student.name?.toLowerCase().includes(lowerSearch) ||
+        student.nis?.toLowerCase().includes(lowerSearch) ||
+        student.jenis_kelamin?.toLowerCase().includes(lowerSearch);
       const matchKelas =
         selectedClass === "all" || student.kelas === selectedClass;
       return matchSearch && matchKelas;

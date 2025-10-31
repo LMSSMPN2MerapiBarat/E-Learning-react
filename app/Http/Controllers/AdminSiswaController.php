@@ -19,6 +19,7 @@ class AdminSiswaController extends Controller
                 return [
                     'id'       => $s->user->id,
                     'name'     => $s->user->name,
+                    'jenis_kelamin' => $s->user->jenis_kelamin,
                     'email'    => $s->user->email,
                     'nis'      => $s->nis,
                     'no_telp'  => $s->no_telp,
