@@ -11,12 +11,22 @@ import {
   CardTitle,
 } from "@/Components/ui/card";
 import { GraduationCap } from "lucide-react";
-import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,18 +38,22 @@ export default function LoginPage() {
         { email, password },
         {
           onSuccess: () => {
-            toast.success("Login berhasil!");
+            setErrorDialogOpen(false);
           },
           onError: (errors) => {
-            toast.error(
-              errors.email || errors.password || "Email atau password salah!"
-            );
+            const message =
+              errors.email ||
+              errors.password ||
+              "Email atau password salah. Silakan periksa kembali.";
+            setErrorMessage(message);
+            setErrorDialogOpen(true);
           },
           onFinish: () => setProcessing(false),
         }
       );
     } catch (error) {
-      toast.error("Terjadi kesalahan, coba lagi.");
+      setErrorMessage("Terjadi kesalahan, coba lagi.");
+      setErrorDialogOpen(true);
       setProcessing(false);
     }
   };
@@ -96,6 +110,19 @@ export default function LoginPage() {
               </Button>
             </form>
           </CardContent>
+          <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Login gagal</AlertDialogTitle>
+                <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
+                  Tutup
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </Card>
       </div>
     </>

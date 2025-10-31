@@ -22,8 +22,8 @@ class GuruKelas extends Model
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
-    public function kuis()
-    {
-        return $this->hasMany(Kuis::class, 'guru_kelas_id');
-    }
+    // public function kuis()
+    // {
+    //     return $this->hasMany(Kuis::class, 'guru_kelas_id');
+    // }
 }
