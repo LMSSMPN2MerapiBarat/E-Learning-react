@@ -74,7 +74,13 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "nip") {
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 18);
+      setForm({ ...form, nip: digitsOnly });
+      return;
+    }
+    setForm({ ...form, [name]: value });
   };
 
   const handleMapelSelect = (id: number) => {
@@ -131,7 +137,17 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
 
         <div className="space-y-2">
           <Label>NIP</Label>
-          <Input name="nip" value={form.nip} onChange={handleChange} required />
+          <Input
+            name="nip"
+            value={form.nip}
+            onChange={handleChange}
+            required
+            inputMode="numeric"
+            pattern="[0-9]{18}"
+            maxLength={18}
+            minLength={18}
+            placeholder="Masukkan 18 digit NIP"
+          />
         </div>
 
         <div className="space-y-2">

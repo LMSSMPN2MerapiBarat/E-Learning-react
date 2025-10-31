@@ -33,7 +33,7 @@ interface CreateSiswaProps {
 }
 
 export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
-  const { data, setData, post, processing, reset } = useForm({
+  const { data, setData, post, processing, reset, errors } = useForm({
     name: "",
     email: "",
     password: "",
@@ -69,6 +69,11 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
     });
   };
 
+  const handleNisChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+    setData("nis", digitsOnly);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
@@ -76,7 +81,9 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
         <Input
           value={data.name}
           onChange={(e) => setData("name", e.target.value)}
+          required
         />
+        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
       </div>
 
       <div>
@@ -85,24 +92,39 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           type="email"
           value={data.email}
           onChange={(e) => setData("email", e.target.value)}
+          required
         />
+        {errors.email && (
+          <p className="text-red-500 text-sm">{errors.email}</p>
+        )}
       </div>
 
       <div>
         <Label>Password</Label>
         <Input
           type="password"
+          minLength={8}
+          autoComplete="new-password"
           value={data.password}
           onChange={(e) => setData("password", e.target.value)}
+          required
         />
+        {errors.password && (
+          <p className="text-red-500 text-sm">{errors.password}</p>
+        )}
       </div>
 
       <div>
-        <Label>NIS</Label>
+        <Label>NISN</Label>
         <Input
+          inputMode="numeric"
+          pattern="[0-9]{10}"
+          maxLength={10}
           value={data.nis}
-          onChange={(e) => setData("nis", e.target.value)}
+          onChange={(e) => handleNisChange(e.target.value)}
+          required
         />
+        {errors.nis && <p className="text-red-500 text-sm">{errors.nis}</p>}
       </div>
 
       <div>
@@ -130,6 +152,9 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           value={data.no_telp}
           onChange={(e) => setData("no_telp", e.target.value)}
         />
+        {errors.no_telp && (
+          <p className="text-red-500 text-sm">{errors.no_telp}</p>
+        )}
       </div>
 
       <Button type="submit" disabled={processing} className="w-full mt-2">

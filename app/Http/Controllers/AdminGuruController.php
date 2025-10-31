@@ -56,8 +56,8 @@ class AdminGuruController extends Controller
         $validated = $request->validate([
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|unique:users',
-            'password'  => 'required|min:6',
-            'nip'       => 'nullable|string|max:20',
+            'password'  => 'required|string|min:8',
+            'nip'       => 'required|digits:18',
             'mapel_ids' => 'nullable|array',
             'no_telp'   => 'nullable|string|max:20',
             'kelas_ids' => 'nullable|array',
@@ -89,7 +89,7 @@ class AdminGuruController extends Controller
         $validated = $request->validate([
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|unique:users,email,' . $guru->user->id,
-            'nip'       => 'nullable|string|max:20',
+            'nip'       => 'required|digits:18',
             'no_telp'   => 'nullable|string|max:20',
             'mapel_ids' => 'nullable|array',
             'mapel_ids.*' => 'exists:mata_pelajarans,id',

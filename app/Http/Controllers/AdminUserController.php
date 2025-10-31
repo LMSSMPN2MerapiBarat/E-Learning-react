@@ -181,11 +181,11 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|string|min:8',
             'role'     => 'required|in:admin,guru,siswa',
-            'nip'      => 'nullable|string|max:20',
+            'nip'      => 'required_if:role,guru|digits:18',
             'mapel'    => 'nullable|string|max:255',
-            'nis'      => 'nullable|string|max:20',
+            'nis'      => 'required_if:role,siswa|digits:10',
             'kelas_id' => 'nullable|exists:kelas,id',
             'no_telp'  => 'nullable|string|max:20',
         ]);
@@ -229,10 +229,10 @@ class AdminUserController extends Controller
             'name'     => 'required|string|max:100',
             'email'    => 'required|email|unique:users,email,' . $id,
             'role'     => 'required|in:admin,guru,siswa',
-            'password' => 'nullable|min:6',
+            'password' => 'nullable|string|min:8',
             'kelas_id' => 'nullable|exists:kelas,id',
-            'nis'      => 'nullable|string|max:20',
-            'nip'      => 'nullable|string|max:20',
+            'nis'      => 'nullable|digits:10',
+            'nip'      => 'nullable|digits:18',
             'mapel'    => 'nullable|string|max:255',
             'no_telp'  => 'nullable|string|max:20',
         ]);

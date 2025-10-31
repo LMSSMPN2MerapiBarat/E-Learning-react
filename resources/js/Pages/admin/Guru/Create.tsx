@@ -59,6 +59,11 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
     });
   };
 
+  const handleNipChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 18);
+    setData("nip", digitsOnly);
+  };
+
   return (
     <form onSubmit={submit} className="space-y-4 mt-2">
       <div>
@@ -67,6 +72,7 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           placeholder="Nama lengkap"
           value={data.name}
           onChange={(e) => setData("name", e.target.value)}
+          required
         />
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
       </div>
@@ -75,10 +81,15 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
         <Label>NIP</Label>
         <Input
           type="text"
-          placeholder="Masukkan NIP"
+          inputMode="numeric"
+          pattern="[0-9]{18}"
+          maxLength={18}
+          placeholder="Masukkan 18 digit NIP"
           value={data.nip}
-          onChange={(e) => setData("nip", e.target.value)}
+          onChange={(e) => handleNipChange(e.target.value)}
+          required
         />
+        {errors.nip && <p className="text-red-500 text-sm">{errors.nip}</p>}
       </div>
 
       <div>
@@ -88,17 +99,27 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           placeholder="email@sekolah.sch.id"
           value={data.email}
           onChange={(e) => setData("email", e.target.value)}
+          required
         />
+        {errors.email && (
+          <p className="text-red-500 text-sm">{errors.email}</p>
+        )}
       </div>
 
       <div>
         <Label>Password</Label>
         <Input
           type="password"
-          placeholder="Minimal 6 karakter"
+          placeholder="Minimal 8 karakter"
+          minLength={8}
+          autoComplete="new-password"
           value={data.password}
           onChange={(e) => setData("password", e.target.value)}
+          required
         />
+        {errors.password && (
+          <p className="text-red-500 text-sm">{errors.password}</p>
+        )}
       </div>
 
       <div>

@@ -63,6 +63,11 @@ export default function EditSiswa({
   const [loading, setLoading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
+  const handleNisChange = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+    setForm({ ...form, nis: digitsOnly });
+  };
+
   useEffect(() => {
     fetch("/admin/kelas/list")
       .then((res) => res.json())
@@ -151,10 +156,15 @@ export default function EditSiswa({
       </div>
 
       <div>
-        <Label>NIS</Label>
+        <Label>NISN</Label>
         <Input
           value={form.nis}
-          onChange={(e) => setForm({ ...form, nis: e.target.value })}
+          inputMode="numeric"
+          pattern="[0-9]{10}"
+          maxLength={10}
+          minLength={10}
+          onChange={(e) => handleNisChange(e.target.value)}
+          placeholder="Masukkan 10 digit NISN"
         />
       </div>
 
@@ -170,6 +180,7 @@ export default function EditSiswa({
         <Label>Password (opsional)</Label>
         <Input
           type="password"
+          minLength={8}
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
           placeholder="Kosongkan jika tidak ingin mengubah password"
