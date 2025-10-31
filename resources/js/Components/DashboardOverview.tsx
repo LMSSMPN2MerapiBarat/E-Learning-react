@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 
+// ==== Interfaces ====
 interface Student {
   id: number;
   name?: string | null;
@@ -57,6 +58,26 @@ interface Mapel {
   guru?: string | null;
 }
 
+interface PageProps extends InertiaPageProps {
+  auth: {
+    user: {
+      id: number;
+      name: string;
+      email: string;
+      role: string;
+    };
+  };
+  students: Student[];
+  gurus: Guru[];
+  kelas: KelasItem[];
+  mapels: Mapel[];
+  totalGuru: number;
+  totalSiswa: number;
+  totalMateri: number;
+  totalKuis: number;
+}
+
+// ==== Utils ====
 const formatClassLabel = (
   value: string | string[] | null | undefined
 ): string => {
@@ -80,25 +101,7 @@ const formatClassLabel = (
   return formatted.length ? formatted.join(", ") : "-";
 };
 
-interface PageProps extends InertiaPageProps {
-  auth: {
-    user: {
-      id: number;
-      name: string;
-      email: string;
-      role: string;
-    };
-  };
-  students: Student[];
-  gurus: Guru[];
-  kelas: KelasItem[];
-  mapels: Mapel[];
-  totalGuru: number;
-  totalSiswa: number;
-  totalMateri: number;
-  totalKuis: number;
-}
-
+// ==== Main Component ====
 export default function DashboardOverview() {
   const {
     students = [],
@@ -168,9 +171,7 @@ export default function DashboardOverview() {
     const paginated = items.slice(start, start + perPage);
 
     useEffect(() => {
-      if (page > totalPages) {
-        setPage(totalPages);
-      }
+      if (page > totalPages) setPage(totalPages);
     }, [page, totalPages]);
 
     useEffect(() => {
@@ -249,9 +250,20 @@ export default function DashboardOverview() {
             Data siswa, guru, kelas, dan mata pelajaran
           </CardDescription>
         </CardHeader>
+
+        {/* === Tabs Content Section === */}
         <CardContent>
-          <Tabs defaultValue="students" className="space-y-4">
-            <TabsList className="grid grid-cols-4 w-full">
+          <Tabs defaultValue="students" className="space-y-6">
+            {/* Tabs List */}
+            <TabsList
+              className="
+                relative z-10 bg-white
+                flex w-full flex-wrap gap-2
+                sm:grid sm:grid-cols-4 sm:gap-2
+                rounded-md shadow-sm mb-6
+                sticky top-0
+              "
+            >
               <TabsTrigger value="students">Siswa</TabsTrigger>
               <TabsTrigger value="guru">Guru</TabsTrigger>
               <TabsTrigger value="kelas">Kelas</TabsTrigger>
@@ -259,60 +271,80 @@ export default function DashboardOverview() {
             </TabsList>
 
             {/* === SISWA === */}
-            <TabsContent value="students" className="space-y-4">
-              <div className="relative">
+            <TabsContent
+              value="students"
+              className="space-y-4 relative z-0 transition-all duration-200 ease-in-out"
+            >
+              <div className="relative mt-2">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Cari siswa (nama, NIS, kelas)..."
                   value={searchStudents}
                   onChange={(e) => setSearchStudents(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 py-2"
                 />
               </div>
 
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>NIS</TableHead>
-                      <TableHead>Nama</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Kelas</TableHead>
-                      <TableHead>No. Telp</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {siswaPagination.data.map((s) => (
-                      <TableRow key={s.id}>
-                        <TableCell>{s.nis ?? "-"}</TableCell>
-                        <TableCell>{s.name ?? "-"}</TableCell>
-                        <TableCell>{s.email ?? "-"}</TableCell>
-                        <TableCell>{formatClassLabel(s.kelas)}</TableCell>
-                        <TableCell>{s.no_telp ?? "-"}</TableCell>
+              <div className="rounded-lg border bg-white mt-2">
+                {/* Table Desktop */}
+                <div className="hidden overflow-x-auto md:block">
+                  <Table className="min-w-[720px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>NIS</TableHead>
+                        <TableHead>Nama</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Kelas</TableHead>
+                        <TableHead>No. Telp</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {siswaPagination.data.map((s) => (
+                        <TableRow key={s.id}>
+                          <TableCell>{s.nis ?? "-"}</TableCell>
+                          <TableCell>{s.name ?? "-"}</TableCell>
+                          <TableCell>{s.email ?? "-"}</TableCell>
+                          <TableCell>{formatClassLabel(s.kelas)}</TableCell>
+                          <TableCell>{s.no_telp ?? "-"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
 
-                {/* Pagination Controls */}
-                <div className="flex justify-between items-center p-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={siswaPagination.prev}
-                    disabled={siswaPagination.page === 1}
-                  >
+                {/* Mobile Cards */}
+                <div className="space-y-3 p-4 md:hidden">
+                  {siswaPagination.data.length > 0 ? (
+                    siswaPagination.data.map((s) => (
+                      <div
+                        key={s.id}
+                        className="space-y-2 rounded-lg border bg-white p-4 shadow-sm"
+                      >
+                        <p className="text-base font-semibold">{s.name ?? "-"}</p>
+                        <p className="text-sm text-gray-500">{s.email ?? "-"}</p>
+                        <div className="grid gap-1 text-sm">
+                          <p><span className="font-medium">NIS:</span> {s.nis ?? "-"}</p>
+                          <p><span className="font-medium">Kelas:</span> {formatClassLabel(s.kelas)}</p>
+                          <p><span className="font-medium">No. Telp:</span> {s.no_telp ?? "-"}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+                      Tidak ada data siswa.
+                    </p>
+                  )}
+                </div>
+
+                {/* Pagination */}
+                <div className="flex flex-col sm:flex-row items-center justify-between border-t px-3 py-3 gap-2">
+                  <Button variant="outline" size="sm" onClick={siswaPagination.prev} disabled={siswaPagination.page === 1} className="w-full sm:w-auto">
                     ← Sebelumnya
                   </Button>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 text-center">
                     Halaman {siswaPagination.page} dari {siswaPagination.totalPages}
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={siswaPagination.next}
-                    disabled={siswaPagination.page === siswaPagination.totalPages}
-                  >
+                  <Button variant="outline" size="sm" onClick={siswaPagination.next} disabled={siswaPagination.page === siswaPagination.totalPages} className="w-full sm:w-auto">
                     Berikutnya →
                   </Button>
                 </div>
@@ -320,51 +352,67 @@ export default function DashboardOverview() {
             </TabsContent>
 
             {/* === GURU === */}
-            <TabsContent value="guru" className="space-y-4">
+            <TabsContent value="guru" className="space-y-4 relative z-0">
               <Input
-                placeholder="Cari guru (nama, mapel)..."
+                placeholder="Cari guru (nama, mapel, kelas)..."
                 value={searchGuru}
                 onChange={(e) => setSearchGuru(e.target.value)}
+                className="py-2"
               />
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nama</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Mata Pelajaran</TableHead>
-                      <TableHead>Kelas Diajar</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {guruPagination.data.map((g) => (
-                      <TableRow key={g.id}>
-                        <TableCell>{g.name ?? "-"}</TableCell>
-                        <TableCell>{g.email ?? "-"}</TableCell>
-                        <TableCell>{g.mapel ?? "-"}</TableCell>
-                        <TableCell>{formatClassLabel(g.kelas)}</TableCell>
+
+              <div className="rounded-lg border bg-white mt-2">
+                <div className="hidden overflow-x-auto md:block">
+                  <Table className="min-w-[680px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nama</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Mata Pelajaran</TableHead>
+                        <TableHead>Kelas Diajar</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <div className="flex justify-between items-center p-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={guruPagination.prev}
-                    disabled={guruPagination.page === 1}
-                  >
+                    </TableHeader>
+                    <TableBody>
+                      {guruPagination.data.map((g) => (
+                        <TableRow key={g.id}>
+                          <TableCell>{g.name ?? "-"}</TableCell>
+                          <TableCell>{g.email ?? "-"}</TableCell>
+                          <TableCell>{g.mapel ?? "-"}</TableCell>
+                          <TableCell>{formatClassLabel(g.kelas)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="space-y-3 p-4 md:hidden">
+                  {guruPagination.data.length > 0 ? (
+                    guruPagination.data.map((g) => (
+                      <div key={g.id} className="space-y-2 rounded-lg border bg-white p-4 shadow-sm">
+                        <p className="text-base font-semibold">{g.name ?? "-"}</p>
+                        <p className="text-sm text-gray-500">{g.email ?? "-"}</p>
+                        <div className="grid gap-1 text-sm">
+                          <p><span className="font-medium">Mapel:</span> {g.mapel ?? "-"}</p>
+                          <p><span className="font-medium">Kelas:</span> {formatClassLabel(g.kelas)}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+                      Tidak ada data guru.
+                    </p>
+                  )}
+                </div>
+
+                {/* Pagination */}
+                <div className="flex flex-col sm:flex-row items-center justify-between border-t px-3 py-3 gap-2">
+                  <Button variant="outline" size="sm" onClick={guruPagination.prev} disabled={guruPagination.page === 1} className="w-full sm:w-auto">
                     ← Sebelumnya
                   </Button>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 text-center">
                     Halaman {guruPagination.page} dari {guruPagination.totalPages}
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={guruPagination.next}
-                    disabled={guruPagination.page === guruPagination.totalPages}
-                  >
+                  <Button variant="outline" size="sm" onClick={guruPagination.next} disabled={guruPagination.page === guruPagination.totalPages} className="w-full sm:w-auto">
                     Berikutnya →
                   </Button>
                 </div>
@@ -372,49 +420,64 @@ export default function DashboardOverview() {
             </TabsContent>
 
             {/* === KELAS === */}
-            <TabsContent value="kelas" className="space-y-4">
+            <TabsContent value="kelas" className="space-y-4 relative z-0">
               <Input
                 placeholder="Cari kelas..."
                 value={searchKelas}
                 onChange={(e) => setSearchKelas(e.target.value)}
+                className="py-2"
               />
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nama Kelas</TableHead>
-                      <TableHead>Wali Kelas</TableHead>
-                      <TableHead>Jumlah Pengajar</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {kelasPagination.data.map((k) => (
-                      <TableRow key={k.id}>
-                        <TableCell>{k.nama ?? "-"}</TableCell>
-                        <TableCell>{k.wali ?? "-"}</TableCell>
-                        <TableCell>{k.jumlah_pengajar ?? 0}</TableCell>
+
+              <div className="rounded-lg border bg-white mt-2">
+                <div className="hidden overflow-x-auto md:block">
+                  <Table className="min-w-[620px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nama Kelas</TableHead>
+                        <TableHead>Wali Kelas</TableHead>
+                        <TableHead>Jumlah Pengajar</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <div className="flex justify-between items-center p-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={kelasPagination.prev}
-                    disabled={kelasPagination.page === 1}
-                  >
+                    </TableHeader>
+                    <TableBody>
+                      {kelasPagination.data.map((k) => (
+                        <TableRow key={k.id}>
+                          <TableCell>{k.nama ?? "-"}</TableCell>
+                          <TableCell>{k.wali ?? "-"}</TableCell>
+                          <TableCell>{k.jumlah_pengajar ?? 0}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="space-y-3 p-4 md:hidden">
+                  {kelasPagination.data.length > 0 ? (
+                    kelasPagination.data.map((k) => (
+                      <div key={k.id} className="space-y-2 rounded-lg border bg-white p-4 shadow-sm">
+                        <p className="text-base font-semibold">{k.nama ?? "-"}</p>
+                        <div className="grid gap-1 text-sm">
+                          <p><span className="font-medium">Wali:</span> {k.wali ?? "-"}</p>
+                          <p><span className="font-medium">Pengajar:</span> {k.jumlah_pengajar ?? 0}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+                      Tidak ada data kelas.
+                    </p>
+                  )}
+                </div>
+
+                {/* Pagination */}
+                <div className="flex flex-col sm:flex-row items-center justify-between border-t px-3 py-3 gap-2">
+                  <Button variant="outline" size="sm" onClick={kelasPagination.prev} disabled={kelasPagination.page === 1} className="w-full sm:w-auto">
                     ← Sebelumnya
                   </Button>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 text-center">
                     Halaman {kelasPagination.page} dari {kelasPagination.totalPages}
                   </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={kelasPagination.next}
-                    disabled={kelasPagination.page === kelasPagination.totalPages}
-                  >
+                  <Button variant="outline" size="sm" onClick={kelasPagination.next} disabled={kelasPagination.page === kelasPagination.totalPages} className="w-full sm:w-auto">
                     Berikutnya →
                   </Button>
                 </div>
@@ -422,52 +485,82 @@ export default function DashboardOverview() {
             </TabsContent>
 
             {/* === MAPEL === */}
-            <TabsContent value="mapel" className="space-y-4">
-              <Input
-                placeholder="Cari mata pelajaran..."
-                value={searchMapel}
-                onChange={(e) => setSearchMapel(e.target.value)}
-              />
-              <div className="border rounded-lg">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nama Mata Pelajaran</TableHead>
-                      <TableHead>Guru Pengampu</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mapelPagination.data.map((m) => (
-                      <TableRow key={m.id}>
-                        <TableCell>{m.nama ?? "-"}</TableCell>
-                        <TableCell>{m.guru ?? "-"}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <div className="flex justify-between items-center p-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={mapelPagination.prev}
-                    disabled={mapelPagination.page === 1}
-                  >
-                    ← Sebelumnya
-                  </Button>
-                  <p className="text-sm text-gray-500">
-                    Halaman {mapelPagination.page} dari {mapelPagination.totalPages}
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={mapelPagination.next}
-                    disabled={mapelPagination.page === mapelPagination.totalPages}
-                  >
-                    Berikutnya →
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
+<TabsContent value="mapel" className="space-y-4 relative z-0">
+  <div className="relative mt-4">
+    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+    <Input
+      placeholder="Cari mata pelajaran..."
+      value={searchMapel}
+      onChange={(e) => setSearchMapel(e.target.value)}
+      className="pl-10 py-2"
+    />
+  </div>
+
+  <div className="rounded-lg border bg-white mt-2">
+    <div className="hidden overflow-x-auto md:block">
+      <Table className="min-w-[520px]">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nama Mata Pelajaran</TableHead>
+            <TableHead>Guru Pengampu</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {mapelPagination.data.map((m) => (
+            <TableRow key={m.id}>
+              <TableCell>{m.nama ?? "-"}</TableCell>
+              <TableCell>{m.guru ?? "-"}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+
+    {/* Mobile Cards */}
+    <div className="space-y-3 p-4 md:hidden">
+      {mapelPagination.data.length > 0 ? (
+        mapelPagination.data.map((m) => (
+          <div key={m.id} className="space-y-1 rounded-lg border bg-white p-4 shadow-sm">
+            <p className="text-base font-semibold">{m.nama ?? "-"}</p>
+            <p className="text-sm text-gray-600">
+              Guru Pengampu: {m.guru ?? "-"}
+            </p>
+          </div>
+        ))
+      ) : (
+        <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+          Tidak ada data mata pelajaran.
+        </p>
+      )}
+    </div>
+
+    {/* Pagination */}
+    <div className="flex flex-col sm:flex-row items-center justify-between border-t px-3 py-3 gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={mapelPagination.prev}
+        disabled={mapelPagination.page === 1}
+        className="w-full sm:w-auto"
+      >
+        ← Sebelumnya
+      </Button>
+      <p className="text-sm text-gray-500 text-center">
+        Halaman {mapelPagination.page} dari {mapelPagination.totalPages}
+      </p>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={mapelPagination.next}
+        disabled={mapelPagination.page === mapelPagination.totalPages}
+        className="w-full sm:w-auto"
+      >
+        Berikutnya →
+      </Button>
+    </div>
+  </div>
+</TabsContent>
+
           </Tabs>
         </CardContent>
       </Card>
