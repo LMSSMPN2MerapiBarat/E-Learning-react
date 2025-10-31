@@ -53,8 +53,12 @@ export default function SiswaHeader({
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <Button variant="outline" className="relative overflow-hidden" asChild>
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <Button
+        variant="outline"
+        className="relative overflow-hidden w-full sm:w-auto"
+        asChild
+      >
         <label className="cursor-pointer flex items-center gap-2">
           <Upload className="w-4 h-4" />
           Import
@@ -70,7 +74,7 @@ export default function SiswaHeader({
       <Button
         variant="outline"
         onClick={handleExport}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 w-full sm:w-auto"
       >
         <Download className="w-4 h-4" /> Export
       </Button>
@@ -79,14 +83,14 @@ export default function SiswaHeader({
         <Button
           variant="destructive"
           onClick={() => setIsDeleteDialogOpen(true)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full sm:w-auto"
         >
           <Trash2 className="w-4 h-4" />
           Hapus Terpilih ({selectedIds.length})
         </Button>
       )}
 
-      <Button onClick={() => setIsAddOpen(true)}>
+      <Button onClick={() => setIsAddOpen(true)} className="w-full sm:w-auto">
         <Plus className="w-4 h-4 mr-2" /> Tambah
       </Button>
     </div>

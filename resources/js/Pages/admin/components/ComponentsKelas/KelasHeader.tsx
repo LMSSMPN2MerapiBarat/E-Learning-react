@@ -1,0 +1,88 @@
+import React from "react";
+import {
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Download, Plus, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader as DialogHeaderRoot,
+  DialogTitle,
+  DialogTrigger,
+} from "@/Components/ui/dialog";
+import CreateKelas from "@/Pages/admin/Kelas/Create";
+
+interface KelasHeaderProps {
+  selectedIds: number[];
+  isBulkDeleting: boolean;
+  onBulkDeleteRequest: () => void;
+  onExport: () => void;
+  isAddOpen: boolean;
+  setIsAddOpen: (value: boolean) => void;
+  onAddSuccess: () => void;
+}
+
+const KelasHeader: React.FC<KelasHeaderProps> = ({
+  selectedIds,
+  isBulkDeleting,
+  onBulkDeleteRequest,
+  onExport,
+  isAddOpen,
+  setIsAddOpen,
+  onAddSuccess,
+}) => {
+  return (
+    <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <CardTitle className="text-xl font-normal">Data Kelas</CardTitle>
+        <CardDescription>
+          Kelola data kelas, tingkat, dan tahun ajaran
+        </CardDescription>
+      </div>
+
+      <div className="flex w-full flex-wrap items-center justify-end gap-2 md:w-auto">
+        {selectedIds.length > 0 && (
+          <Button
+            variant="destructive"
+            onClick={onBulkDeleteRequest}
+            disabled={isBulkDeleting}
+            className="w-full sm:w-auto"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Hapus Terpilih
+          </Button>
+        )}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onExport}
+          className="w-full sm:w-auto"
+        >
+          <Download className="mr-2 h-4 w-4" />
+          Export Excel
+        </Button>
+
+        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-full sm:w-auto">
+              <Plus className="mr-2 h-4 w-4" />
+              Tambah Kelas
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeaderRoot>
+              <DialogTitle>Tambah Kelas Baru</DialogTitle>
+            </DialogHeaderRoot>
+            <CreateKelas onSuccess={onAddSuccess} />
+          </DialogContent>
+        </Dialog>
+      </div>
+    </CardHeader>
+  );
+};
+
+export default KelasHeader;

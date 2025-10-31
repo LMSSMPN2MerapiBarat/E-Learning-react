@@ -103,8 +103,8 @@ export default function GuruTable({
       </div>
 
       {/* 📋 Tabel Guru */}
-      <div className="border rounded-lg overflow-x-auto bg-white">
-        <table className="w-full text-sm">
+      <div className="hidden overflow-x-auto rounded-lg border bg-white md:block">
+        <table className="min-w-[800px] w-full text-sm">
           <thead className="bg-gray-50">
             <tr>
               <th className="p-3 w-[40px] text-center">
@@ -175,6 +175,72 @@ export default function GuruTable({
             )}
           </tbody>
         </table>
+      </div>
+      <div className="space-y-3 md:hidden">
+        {filteredGurus.length > 0 ? (
+          filteredGurus.map((guru: any) => (
+            <div
+              key={guru.id}
+              className="rounded-lg border bg-white p-4 shadow-sm space-y-3"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold text-gray-900">
+                    {guru.name}
+                  </p>
+                  <p className="text-sm text-gray-500">{guru.email}</p>
+                </div>
+                <input
+                  type="checkbox"
+                  className="mt-1 h-4 w-4 accent-blue-600"
+                  checked={selectedIds.includes(guru.id)}
+                  onChange={() => toggleSelect(guru.id)}
+                />
+              </div>
+              <div className="grid gap-1 text-sm">
+                <p>
+                  <span className="font-medium text-gray-600">NIP:</span>{" "}
+                  {guru.nip || "-"}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-600">Mapel:</span>{" "}
+                  {guru.mapel || "-"}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-600">Kelas:</span>{" "}
+                  {formatKelasLabel(guru.kelas)}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-600">No. Telepon:</span>{" "}
+                  {guru.no_telp || "-"}
+                </p>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedGuru(guru);
+                    setIsEditOpen(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4 text-blue-600" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDeleteConfirm(guru.id)}
+                >
+                  <Trash2 className="h-4 w-4 text-red-600" />
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+            Tidak ada data guru yang cocok.
+          </p>
+        )}
       </div>
     </>
   );

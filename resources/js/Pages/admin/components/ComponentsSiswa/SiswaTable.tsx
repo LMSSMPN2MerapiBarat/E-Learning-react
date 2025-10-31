@@ -39,8 +39,9 @@ export default function SiswaTable({
   };
 
   return (
-    <div className="border rounded-lg overflow-x-auto bg-white">
-      <Table>
+    <>
+      <div className="hidden overflow-x-auto rounded-lg border bg-white md:block">
+        <Table className="min-w-[780px]">
         <TableHeader>
           <TableRow>
             <TableHead className="w-[40px] text-center">
@@ -111,7 +112,72 @@ export default function SiswaTable({
             </TableRow>
           )}
         </TableBody>
-      </Table>
-    </div>
+        </Table>
+      </div>
+      <div className="space-y-3 md:hidden">
+        {students.length > 0 ? (
+          students.map((student) => (
+            <div
+              key={student.id}
+              className="space-y-3 rounded-lg border bg-white p-4 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-base font-semibold text-gray-900">
+                    {student.name}
+                  </p>
+                  <p className="text-sm text-gray-500">{student.email}</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(student.id)}
+                  onChange={() => toggleSelect(student.id)}
+                  className="mt-1 h-4 w-4 accent-blue-600"
+                />
+              </div>
+              <div className="grid gap-1 text-sm">
+                <p>
+                  <span className="font-medium text-gray-600">NIS:</span>{" "}
+                  {student.nis || "-"}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-600">Kelas:</span>{" "}
+                  {student.kelas || "-"}
+                </p>
+                <p>
+                  <span className="font-medium text-gray-600">
+                    No. Telepon:
+                  </span>{" "}
+                  {student.no_telp || "-"}
+                </p>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedStudent(student);
+                    setIsEditOpen(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4 text-blue-600" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDeleteConfirm(student.id)}
+                >
+                  <Trash2 className="h-4 w-4 text-red-600" />
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+            Tidak ada data siswa yang cocok.
+          </p>
+        )}
+      </div>
+    </>
   );
 }

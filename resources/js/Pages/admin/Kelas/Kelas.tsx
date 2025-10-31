@@ -1,35 +1,12 @@
 import React, { useState } from "react";
 import { Head, usePage, router } from "@inertiajs/react";
 import { toast } from "sonner";
-import { Plus, Download, Loader2, Trash2 } from "lucide-react";
-import { Button } from "@/Components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/Components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/Components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/Components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/Components/ui/card";
 import AdminLayout from "@/Layouts/AdminLayout";
-import CreateKelas from "./Create";
-import EditKelas from "./Edit";
+import KelasHeader from "@/Pages/admin/components/ComponentsKelas/KelasHeader";
+import KelasTable from "@/Pages/admin/components/ComponentsKelas/KelasTable";
+import KelasDialogs from "@/Pages/admin/components/ComponentsKelas/KelasDialogs";
 
 export default function KelasPage() {
   const { props }: any = usePage();
@@ -117,9 +94,9 @@ export default function KelasPage() {
 
       {isBulkDeleting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl px-8 py-6 flex flex-col items-center gap-3">
-            <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-            <p className="text-gray-700 font-semibold">
+          <div className="flex flex-col items-center gap-3 rounded-xl bg-white px-8 py-6 shadow-xl">
+            <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+            <p className="font-semibold text-gray-700">
               Menghapus {selectedIds.length} data kelas...
             </p>
           </div>
@@ -127,185 +104,40 @@ export default function KelasPage() {
       )}
 
       <Card>
-        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <CardTitle className="font-normal text-xl">Data Kelas</CardTitle>
-            <CardDescription>
-              Kelola data kelas, tingkat, dan tahun ajaran
-            </CardDescription>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {selectedIds.length > 0 && (
-              <Button
-                variant="destructive"
-                onClick={confirmBulkDelete}
-                disabled={isBulkDeleting}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Hapus Terpilih
-              </Button>
-            )}
-
-            <Button variant="outline" size="sm" onClick={handleExport}>
-              <Download className="w-4 h-4 mr-2" /> Export Excel
-            </Button>
-
-            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" /> Tambah Kelas
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Tambah Kelas Baru</DialogTitle>
-                </DialogHeader>
-                <CreateKelas onSuccess={handleAddSuccess} />
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border text-sm">
-              <thead className="bg-gray-100 text-gray-700">
-                <tr>
-                  <th className="p-2 w-10">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedIds.length === kelasList.length &&
-                        kelasList.length > 0
-                      }
-                      onChange={(e) =>
-                        setSelectedIds(
-                          e.target.checked ? kelasList.map((k) => k.id) : []
-                        )
-                      }
-                    />
-                  </th>
-                  <th className="p-2 text-left">Tingkat</th>
-                  <th className="p-2 text-left">Nama Kelas</th>
-                  <th className="p-2 text-left">Tahun Ajaran</th>
-                  <th className="p-2 text-left">Jumlah Siswa</th>
-                  <th className="p-2 text-left">Jumlah Pengajar</th>
-                  <th className="p-2 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-  {kelasList.map((kelas) => (
-    <tr key={kelas.id} className="border-t">
-      <td className="p-2 text-center">
-        <input
-          type="checkbox"
-          checked={selectedIds.includes(kelas.id)}
-          onChange={(e) =>
-            setSelectedIds(
-              e.target.checked
-                ? [...selectedIds, kelas.id]
-                : selectedIds.filter((id) => id !== kelas.id)
-            )
-          }
+        <KelasHeader
+          selectedIds={selectedIds}
+          isBulkDeleting={isBulkDeleting}
+          onBulkDeleteRequest={confirmBulkDelete}
+          onExport={handleExport}
+          isAddOpen={isAddOpen}
+          setIsAddOpen={setIsAddOpen}
+          onAddSuccess={handleAddSuccess}
         />
-      </td>
-      <td className="p-2">{kelas.tingkat}</td>
-      {/* ✅ Ganti nama_kelas jadi kelas */}
-      <td className="p-2">{kelas.kelas}</td>
-      <td className="p-2">{kelas.tahun_ajaran}</td>
-      <td className="p-2 text-center">{kelas.siswa_count ?? 0}</td>
-      <td className="p-2 text-center">{kelas.guru_count ?? 0}</td>
-      <td className="p-2 flex justify-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setSelectedKelas(kelas);
-            setIsEditOpen(true);
-          }}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={() => setDeleteConfirm(kelas.id)}
-        >
-          Hapus
-        </Button>
-      </td>
-    </tr>
-  ))}
-              </tbody>
-            </table>
-          </div>
+        <CardContent>
+          <KelasTable
+            kelasList={kelasList}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            setSelectedKelas={setSelectedKelas}
+            setIsEditOpen={setIsEditOpen}
+            setDeleteConfirm={setDeleteConfirm}
+          />
         </CardContent>
       </Card>
 
-      {isEditOpen && selectedKelas && (
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Edit Data Kelas</DialogTitle>
-            </DialogHeader>
-            <EditKelas
-              kelas={selectedKelas}
-              onSuccess={handleEditSuccess}
-              onCancel={() => setIsEditOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
-
-      <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Hapus Data Kelas</AlertDialogTitle>
-            <AlertDialogDescription>
-              Apakah kamu yakin ingin menghapus kelas ini? 
-              <span className="text-red-600 font-semibold">
-                {" "}Tindakan ini tidak dapat dibatalkan.
-              </span>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => handleSingleDelete(deleteConfirm!)}
-              className="bg-red-600 hover:bg-red-700 text-white focus:ring-red-700"
-            >
-              Ya, Hapus
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <AlertDialog open={bulkDeleteConfirm} onOpenChange={setBulkDeleteConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Hapus {selectedIds.length} Kelas Terpilih
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Apakah kamu yakin ingin menghapus{" "}
-              <span className="font-semibold text-red-600">
-                {selectedIds.length}
-              </span>{" "}
-              data kelas? Tindakan ini tidak dapat dibatalkan.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleBulkDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Ya, Hapus Semua
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <KelasDialogs
+        isEditOpen={isEditOpen}
+        setIsEditOpen={setIsEditOpen}
+        selectedKelas={selectedKelas}
+        onEditSuccess={handleEditSuccess}
+        deleteConfirm={deleteConfirm}
+        setDeleteConfirm={setDeleteConfirm}
+        onDelete={handleSingleDelete}
+        bulkDeleteConfirm={bulkDeleteConfirm}
+        setBulkDeleteConfirm={setBulkDeleteConfirm}
+        selectedIds={selectedIds}
+        onBulkDelete={handleBulkDelete}
+      />
     </AdminLayout>
   );
 }
