@@ -5,13 +5,6 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -120,30 +113,41 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
 
       <div>
         <Label>Mata Pelajaran (bisa lebih dari satu)</Label>
-        <Select
-          onValueChange={(val) => {
-            const id = parseInt(val);
-            setData(
-              "mapel_ids",
-              data.mapel_ids.includes(id)
-                ? data.mapel_ids.filter((m) => m !== id)
-                : [...data.mapel_ids, id]
-            );
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Pilih mata pelajaran" />
-          </SelectTrigger>
-          <SelectContent>
-            {mapels.map((m) => (
-              <SelectItem key={m.id} value={String(m.id)}>
+        <div className="flex flex-wrap gap-2 rounded-md border p-2">
+          {mapels.length === 0 && (
+            <p className="text-sm text-gray-500">
+              Tidak ada data mata pelajaran.
+            </p>
+          )}
+          {mapels.map((m) => {
+            const mapelId = m.id;
+            const isSelected = data.mapel_ids.includes(mapelId);
+
+            return (
+              <button
+                type="button"
+                key={mapelId}
+                onClick={() =>
+                  setData(
+                    "mapel_ids",
+                    isSelected
+                      ? data.mapel_ids.filter((id) => id !== mapelId)
+                      : [...data.mapel_ids, mapelId]
+                  )
+                }
+                className={`rounded-md border px-3 py-1 text-sm transition ${
+                  isSelected
+                    ? "border-blue-700 bg-blue-600 text-white"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
                 {m.nama_mapel}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              </button>
+            );
+          })}
+        </div>
         {data.mapel_ids.length > 0 && (
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="mt-1 text-sm text-gray-600">
             Dipilih: {data.mapel_ids.length} mapel
           </p>
         )}

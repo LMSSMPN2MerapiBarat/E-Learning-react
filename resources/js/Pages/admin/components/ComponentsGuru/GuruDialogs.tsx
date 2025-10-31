@@ -68,7 +68,7 @@ export default function GuruDialogs({
     <>
       {/* Dialog Edit */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
+        <DialogContent className="w-full max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Data Guru</DialogTitle>
           </DialogHeader>

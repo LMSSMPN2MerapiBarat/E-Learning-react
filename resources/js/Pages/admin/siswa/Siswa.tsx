@@ -3,7 +3,8 @@ import { Head, usePage, router } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
-import { LoadingOverlay, FilterBar, Pagination } from "@/Pages/admin/components/ComponentsSiswa/SiswaComponents";
+import { LoadingOverlay, FilterBar } from "@/Pages/admin/components/ComponentsSiswa/SiswaComponents";
+import SimplePagination from "@/Components/SimplePagination";
 
 import SiswaHeader from "@/Pages/admin/components/ComponentsSiswa/SiswaHeader";
 import SiswaTable from "@/Pages/admin/components/ComponentsSiswa/SiswaTable";
@@ -116,9 +117,10 @@ export default function SiswaPage() {
             setSelectedStudent={setSelectedStudent}
             setIsEditOpen={setIsEditOpen}
             setDeleteConfirm={setDeleteConfirm}
+            startIndex={(currentPage - 1) * itemsPerPage}
           />
 
-          <Pagination
+          <SimplePagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}

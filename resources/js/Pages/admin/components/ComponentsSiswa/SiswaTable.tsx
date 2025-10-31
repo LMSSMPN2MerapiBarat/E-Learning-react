@@ -17,6 +17,7 @@ interface Props {
   setSelectedStudent: (v: any) => void;
   setIsEditOpen: (v: boolean) => void;
   setDeleteConfirm: (v: number | null) => void;
+  startIndex: number;
 }
 
 export default function SiswaTable({
@@ -26,6 +27,7 @@ export default function SiswaTable({
   setSelectedStudent,
   setIsEditOpen,
   setDeleteConfirm,
+  startIndex,
 }: Props) {
   const toggleSelectAll = () => {
     if (selectedIds.length === students.length) setSelectedIds([]);
@@ -58,6 +60,7 @@ export default function SiswaTable({
                 )}
               </Button>
             </TableHead>
+            <TableHead className="w-[60px] text-center">No</TableHead>
             <TableHead>NIS</TableHead>
             <TableHead>Nama</TableHead>
             <TableHead>Email</TableHead>
@@ -69,7 +72,7 @@ export default function SiswaTable({
 
         <TableBody>
           {students.length > 0 ? (
-            students.map((student) => (
+            students.map((student, index) => (
               <TableRow key={student.id}>
                 <TableCell className="text-center">
                   <input
@@ -77,6 +80,9 @@ export default function SiswaTable({
                     checked={selectedIds.includes(student.id)}
                     onChange={() => toggleSelect(student.id)}
                   />
+                </TableCell>
+                <TableCell className="text-center">
+                  {startIndex + index + 1}
                 </TableCell>
                 <TableCell>{student.nis || "-"}</TableCell>
                 <TableCell>{student.name}</TableCell>
@@ -106,7 +112,7 @@ export default function SiswaTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-6 text-gray-500">
+              <TableCell colSpan={8} className="text-center py-6 text-gray-500">
                 Tidak ada data siswa yang cocok.
               </TableCell>
             </TableRow>
@@ -116,13 +122,16 @@ export default function SiswaTable({
       </div>
       <div className="space-y-3 md:hidden">
         {students.length > 0 ? (
-          students.map((student) => (
+          students.map((student, index) => (
             <div
               key={student.id}
               className="space-y-3 rounded-lg border bg-white p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
+                  <p className="text-sm font-semibold text-gray-500">
+                    No. {startIndex + index + 1}
+                  </p>
                   <p className="text-base font-semibold text-gray-900">
                     {student.name}
                   </p>

@@ -117,49 +117,61 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label>Nama Lengkap</Label>
-        <Input name="name" value={form.name} onChange={handleChange} required />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <Label>Nama Lengkap</Label>
+          <Input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>NIP</Label>
+          <Input name="nip" value={form.nip} onChange={handleChange} required />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Email</Label>
+          <Input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>No. Telepon</Label>
+          <Input
+            name="no_telp"
+            value={form.no_telp}
+            onChange={handleChange}
+            required
+          />
+        </div>
       </div>
 
-      <div>
-        <Label>NIP</Label>
-        <Input name="nip" value={form.nip} onChange={handleChange} required />
-      </div>
-
-      <div>
-        <Label>Email</Label>
-        <Input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div>
-        <Label>No. Telepon</Label>
-        <Input
-          name="no_telp"
-          value={form.no_telp}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div>
+      <div className="space-y-2">
         <Label>Mata Pelajaran (bisa pilih lebih dari satu)</Label>
-        <div className="flex flex-wrap gap-2 border p-2 rounded-md">
+        <div className="flex flex-wrap gap-2 rounded-md border p-2">
+          {mapels.length === 0 && (
+            <p className="text-sm text-gray-500">
+              Tidak ada data mata pelajaran.
+            </p>
+          )}
           {mapels.map((m: Mapel) => (
             <button
               type="button"
               key={m.id}
               onClick={() => handleMapelSelect(m.id)}
-              className={`px-3 py-1 rounded-md border ${
+              className={`rounded-md border px-3 py-1 text-sm transition ${
                 form.mapel_ids?.includes(m.id)
-                  ? "bg-blue-600 text-white border-blue-700"
+                  ? "border-blue-700 bg-blue-600 text-white"
                   : "bg-gray-100 hover:bg-gray-200"
               }`}
             >
@@ -169,18 +181,20 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
         </div>
 
         {form.mapel_ids && form.mapel_ids.length > 0 && (
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500">
             Dipilih: {form.mapel_ids.length} mapel
           </p>
         )}
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label>Kelas yang Diajar</Label>
-        <div className="flex flex-wrap gap-2 border p-2 rounded-md">
+        <div className="flex flex-wrap gap-2 rounded-md border p-2">
           {kelasList.map((kelas: Kelas) => {
             const namaKelas =
-              `${kelas.tingkat ?? ""} ${kelas.kelas ?? ""}`.trim() || kelas.kelas || "Tanpa Nama";
+              `${kelas.tingkat ?? ""} ${kelas.kelas ?? ""}`.trim() ||
+              kelas.kelas ||
+              "Tanpa Nama";
             const isSelected = form.kelas_ids?.includes(kelas.id);
 
             return (
@@ -188,9 +202,9 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
                 type="button"
                 key={kelas.id}
                 onClick={() => handleKelasSelect(kelas.id)}
-                className={`px-3 py-1 rounded-md border text-sm transition ${
+                className={`rounded-md border px-3 py-1 text-sm transition ${
                   isSelected
-                    ? "bg-blue-600 text-white border-blue-700"
+                    ? "border-blue-700 bg-blue-600 text-white"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
               >
@@ -204,13 +218,13 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
         </div>
 
         {form.kelas_ids && form.kelas_ids.length > 0 && (
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500">
             Dipilih: {form.kelas_ids.length} kelas
           </p>
         )}
       </div>
 
-      <div className="flex justify-end space-x-2 pt-2">
+      <div className="flex justify-end gap-2 pt-2">
         <Button variant="outline" onClick={onCancel} type="button">
           Batal
         </Button>

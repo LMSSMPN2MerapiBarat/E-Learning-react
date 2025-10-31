@@ -1,6 +1,5 @@
 import React from "react";
 import { Loader2, Search } from "lucide-react";
-import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import {
   Select,
@@ -71,42 +70,3 @@ export function FilterBar({
   );
 }
 
-interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}
-
-export function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: PaginationProps) {
-  if (totalPages <= 1) return null;
-
-  return (
-    <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
-      <p>
-        Halaman {currentPage} dari {totalPages}
-      </p>
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-        >
-          Sebelumnya
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
-        >
-          Selanjutnya
-        </Button>
-      </div>
-    </div>
-  );
-}
