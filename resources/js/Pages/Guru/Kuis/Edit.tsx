@@ -1,35 +1,15 @@
 import { useForm } from "@inertiajs/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/Components/ui/select";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "@/Components/ui/radio-group";
-import { Badge } from "@/Components/ui/badge";
-import { Trash2 } from "lucide-react";
-
-interface Option {
-  id: number;
-  nama: string;
-}
-
-type QuizQuestionForm = {
-  id: string | number;
-  question: string;
-  options: string[];
-  correct_answer: number;
-};
+import ClassSelector from "@/Pages/Guru/components/kuis/ClassSelector";
+import QuizMetadataFields from "@/Pages/Guru/components/kuis/QuizMetadataFields";
+import QuizQuestionsEditor from "@/Pages/Guru/components/kuis/QuizQuestionsEditor";
+import type {
+  Option,
+  QuizBaseForm,
+  QuizQuestionForm,
+} from "@/Pages/Guru/components/kuis/formTypes";
 
 interface QuizData {
   id: number;
@@ -42,16 +22,9 @@ interface QuizData {
   questions: QuizQuestionForm[];
 }
 
-type EditQuizForm = {
-  title: string;
-  description: string;
-  mata_pelajaran_id: number | null;
-  duration: number;
-  status: "draft" | "published";
-  kelas_ids: number[];
-  questions: QuizQuestionForm[];
+interface EditQuizForm extends QuizBaseForm {
   _method: "PUT";
-};
+}
 
 interface EditQuizProps {
   quiz: QuizData;
@@ -63,11 +36,11 @@ interface EditQuizProps {
 
 const normalizeQuestions = (
   questions: Array<Partial<QuizQuestionForm>> | undefined,
-): QuizQuestionForm[] => {
-  return (questions ?? []).map((question, index) => ({
-    id: question.id ?? index,
+): QuizQuestionForm[] =>
+  (questions ?? []).map((question, index) => ({
+    id: String(question.id ?? index),
     question: question.question ?? "",
-    options: Array.isArray(question.options) ? question.options : [],
+    options: Array.isArray(question.options) ? question.options : ["", "", "", ""],
     correct_answer:
       typeof question.correct_answer === "number"
         ? question.correct_answer
@@ -75,7 +48,6 @@ const normalizeQuestions = (
           ? (question as { correctAnswer?: number }).correctAnswer!
           : 0,
   }));
-};
 
 export default function EditQuiz({
   quiz,
@@ -98,7 +70,7 @@ export default function EditQuiz({
   const { data, setData, post, processing, errors } = form;
 
   useEffect(() => {
-    const nextState: EditQuizForm = {
+    form.setData(() => ({
       title: quiz.judul,
       description: quiz.deskripsi ?? "",
       mata_pelajaran_id: quiz.mata_pelajaran_id ?? null,
@@ -107,9 +79,7 @@ export default function EditQuiz({
       kelas_ids: quiz.kelas_ids ?? [],
       questions: normalizeQuestions(quiz.questions),
       _method: "PUT",
-    };
-
-    form.setData(() => nextState);
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quiz.id]);
 
@@ -122,8 +92,18 @@ export default function EditQuiz({
     );
   };
 
+  const addQuestion = () => {
+    const newQuestion: QuizQuestionForm = {
+      id: crypto.randomUUID(),
+      question: "",
+      options: ["", "", "", ""],
+      correct_answer: 0,
+    };
+    setData("questions", [...data.questions, newQuestion]);
+  };
+
   const updateQuestion = (
-    id: string | number,
+    id: string,
     payload: Partial<QuizQuestionForm>,
   ) => {
     setData(
@@ -134,22 +114,17 @@ export default function EditQuiz({
     );
   };
 
-  const removeQuestion = (id: string | number) => {
+  const removeQuestion = (id: string) => {
     setData(
       "questions",
       data.questions.filter((question) => question.id !== id),
     );
   };
 
-  const addQuestion = () => {
-    const newQuestion: QuizQuestionForm = {
-      id: crypto.randomUUID(),
-      question: "",
-      options: ["", "", "", ""],
-      correct_answer: 0,
-    };
-    setData("questions", [...data.questions, newQuestion]);
-  };
+  const questionsError = useMemo(
+    () => errors["questions"] || errors["questions.0.question"],
+    [errors],
+  );
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -166,207 +141,50 @@ export default function EditQuiz({
     );
 
     if (invalidQuestion) {
-      toast.error("Lengkapi pertanyaan dan semua opsi jawaban sebelum menyimpan.");
+      toast.error(
+        "Lengkapi pertanyaan dan semua opsi jawaban sebelum menyimpan.",
+      );
       return;
     }
 
     post(`/guru/kuis/${quiz.id}`, {
+      preserveScroll: true,
       onSuccess: () => {
-        toast.success("Kuis berhasil diperbarui.");
+        toast.success("Kuis berhasil diperbarui!");
         onSuccess();
       },
-      onError: () => toast.error("Terjadi kesalahan saat memperbarui kuis."),
+      onError: (formErrors) => {
+        const message = formErrors.title || formErrors.description;
+        if (message) {
+          toast.error(message);
+        }
+      },
     });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="title_edit">Judul Kuis</Label>
-        <Input
-          id="title_edit"
-          value={data.title}
-          onChange={(e) => setData("title", e.target.value)}
-          placeholder="Masukkan judul kuis"
-        />
-        {errors.title && (
-          <p className="text-xs text-red-500">{errors.title}</p>
-        )}
-      </div>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <QuizMetadataFields
+        data={data}
+        setData={setData}
+        errors={errors}
+        mapelOptions={mapelOptions}
+      />
 
-      <div className="space-y-2">
-        <Label htmlFor="description_edit">Deskripsi</Label>
-        <Textarea
-          id="description_edit"
-          rows={3}
-          value={data.description}
-          onChange={(e) => setData("description", e.target.value)}
-          placeholder="Tambahkan deskripsi singkat mengenai kuis"
-        />
-        {errors.description && (
-          <p className="text-xs text-red-500">{errors.description}</p>
-        )}
-      </div>
+      <ClassSelector
+        options={kelasOptions}
+        selectedIds={data.kelas_ids}
+        onToggle={toggleKelas}
+        error={errors.kelas_ids as string | undefined}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="mapel_edit">Mata Pelajaran</Label>
-          <Select
-            value={
-              data.mata_pelajaran_id !== null ? String(data.mata_pelajaran_id) : ""
-            }
-            onValueChange={(value: string) =>
-              setData("mata_pelajaran_id", value ? Number(value) : null)
-            }
-          >
-            <SelectTrigger id="mapel_edit">
-              <SelectValue placeholder="Pilih" />
-            </SelectTrigger>
-            <SelectContent>
-              {mapelOptions.map((mapel) => (
-                <SelectItem key={mapel.id} value={String(mapel.id)}>
-                  {mapel.nama}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.mata_pelajaran_id && (
-            <p className="text-xs text-red-500">
-              {errors.mata_pelajaran_id}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="duration_edit">Durasi (menit)</Label>
-          <Input
-            id="duration_edit"
-            type="number"
-            min={1}
-            value={data.duration}
-            onChange={(e) => setData("duration", Number(e.target.value))}
-          />
-          {errors.duration && (
-            <p className="text-xs text-red-500">{errors.duration}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label>Status</Label>
-          <Select
-            value={data.status}
-            onValueChange={(value: "draft" | "published") =>
-              setData("status", value)
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Pilih status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="published">Dipublikasikan</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.status && (
-            <p className="text-xs text-red-500">{errors.status}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label>Pilih Kelas</Label>
-        <div className="flex flex-wrap gap-2">
-          {kelasOptions.map((kelas) => {
-            const selected = data.kelas_ids.includes(kelas.id);
-            return (
-              <Button
-                key={kelas.id}
-                type="button"
-                variant={selected ? "default" : "outline"}
-                onClick={() => toggleKelas(kelas.id)}
-              >
-                {selected && <Badge className="mr-2">Dipilih</Badge>}
-                {kelas.nama}
-              </Button>
-            );
-          })}
-        </div>
-        {errors.kelas_ids && (
-          <p className="text-xs text-red-500">{errors.kelas_ids}</p>
-        )}
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <Label>Daftar Soal</Label>
-            <p className="text-xs text-gray-500">
-              Sunting pertanyaan dan pilihan jawaban.
-            </p>
-          </div>
-          <Button type="button" variant="outline" onClick={addQuestion}>
-            Tambah Soal
-          </Button>
-        </div>
-
-        {data.questions.map((question, index) => (
-          <div key={question.id} className="rounded-lg border p-4 space-y-4">
-            <div className="flex items-start justify-between gap-2">
-              <Label className="text-sm font-medium">
-                Pertanyaan {index + 1}
-              </Label>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => removeQuestion(question.id)}
-              >
-                <Trash2 className="w-4 h-4 text-red-500" />
-              </Button>
-            </div>
-            <Textarea
-              value={question.question}
-              onChange={(e) =>
-                updateQuestion(question.id, { question: e.target.value })
-              }
-              placeholder="Tulis pertanyaan..."
-            />
-            <div className="space-y-2">
-              <Label>Pilihan Jawaban</Label>
-              <RadioGroup
-                value={String(question.correct_answer)}
-                onValueChange={(value: string) =>
-                  updateQuestion(question.id, {
-                    correct_answer: Number(value),
-                  })
-                }
-              >
-                {question.options.map((option, optionIndex) => (
-                  <div key={`${question.id}-${optionIndex}`} className="flex items-center gap-2">
-                    <RadioGroupItem
-                      value={String(optionIndex)}
-                      id={`correct-edit-${question.id}-${optionIndex}`}
-                    />
-                    <Input
-                      value={option}
-                      onChange={(e) => {
-                        const nextOptions = [...question.options];
-                        nextOptions[optionIndex] = e.target.value;
-                        updateQuestion(question.id, {
-                          options: nextOptions,
-                        });
-                      }}
-                      placeholder={`Pilihan ${String.fromCharCode(
-                        65 + optionIndex,
-                      )}`}
-                    />
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
-          </div>
-        ))}
-      </div>
+      <QuizQuestionsEditor
+        questions={data.questions}
+        onAdd={addQuestion}
+        onRemove={removeQuestion}
+        onUpdate={updateQuestion}
+        error={questionsError as string | undefined}
+      />
 
       <div className="flex justify-end gap-2 pt-4">
         <Button type="button" variant="outline" onClick={onCancel}>

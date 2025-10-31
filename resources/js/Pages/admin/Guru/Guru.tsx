@@ -102,13 +102,23 @@ export default function GuruPage() {
             <CardDescription>Kelola data guru dan informasi pengajaran</CardDescription>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto md:justify-end">
             <input id="importFile" type="file" accept=".xlsx,.xls" className="hidden" onChange={handleImport} />
-            <Button variant="outline" size="sm" onClick={() => document.getElementById("importFile")?.click()}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full sm:w-auto"
+              onClick={() => document.getElementById("importFile")?.click()}
+            >
               <Upload className="w-4 h-4 mr-2" /> Import Excel
             </Button>
 
-            <Button variant="outline" size="sm" onClick={handleExport}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              className="w-full sm:w-auto"
+            >
               <Download className="w-4 h-4 mr-2" /> Export Excel
             </Button>
 
@@ -118,6 +128,7 @@ export default function GuruPage() {
                 size="sm"
                 onClick={() => setBulkDeleteConfirm(true)}
                 disabled={isBulkDeleting}
+                className="w-full sm:w-auto"
               >
                 <Trash2 className="w-4 h-4 mr-2" /> Hapus Terpilih ({selectedIds.length})
               </Button>
@@ -125,7 +136,7 @@ export default function GuruPage() {
 
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="w-full sm:w-auto">
                   <Plus className="w-4 h-4 mr-2" /> Tambah Guru
                 </Button>
               </DialogTrigger>
