@@ -7,6 +7,7 @@ import {
   GraduationCap,
   LibraryBig,
   LogOut,
+  X,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -29,10 +30,19 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
     router.post("/logout");
   };
 
+  const handleNavClick = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      onClose();
+    }
+  };
+
+  const translateClass = sidebarOpen
+    ? "translate-x-0 lg:translate-x-0"
+    : "-translate-x-full lg:-translate-x-full";
+
   return (
     <div
-      className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-md border-r transform transition-transform duration-300 ease-in-out
-      ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+      className={`fixed inset-y-0 left-0 z-40 w-64 border-r bg-white shadow-md transition-transform duration-300 ease-in-out ${translateClass}`}
     >
       {/* Header Sidebar */}
       <div className="px-4 py-4 border-b">
@@ -74,8 +84,9 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
           <button
             onClick={onClose}
             className="text-gray-600 hover:text-gray-900 lg:hidden"
+            aria-label="Tutup menu"
           >
-            ✕
+            <X className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -94,6 +105,7 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
                   ? "bg-blue-100 text-blue-700"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
+              onClick={handleNavClick}
             >
               <Icon className="w-5 h-5 mr-3" />
               {menu.name}
