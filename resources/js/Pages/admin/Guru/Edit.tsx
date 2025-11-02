@@ -65,6 +65,8 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [errorDialog, setErrorDialog] = useState<string | null>(null);
   const [mapels, setMapels] = useState<Mapel[]>([]);
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -82,28 +84,43 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
       .catch(() => toast.error("Gagal memuat daftar kelas."));
   }, []);
 
+  const clearFieldError = (field: string) => {
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === "nip") {
       const digitsOnly = value.replace(/\D/g, "").slice(0, 18);
       setForm({ ...form, nip: digitsOnly });
+      clearFieldError("nip");
       return;
     }
     if (name === "no_telp") {
       const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
       setForm({ ...form, no_telp: digitsOnly });
+      clearFieldError("no_telp");
       return;
     }
     if (name === "name") {
       const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
       setForm({ ...form, name: lettersOnly });
+      clearFieldError("name");
       return;
     }
     setForm({ ...form, [name]: value });
+    clearFieldError(name);
   };
 
   const handleGenderChange = (value: string) => {
     setForm({ ...form, jenis_kelamin: value });
+    clearFieldError("jenis_kelamin");
   };
 
   const handleMapelSelect = (id: number) => {
@@ -130,16 +147,25 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
   const confirmSubmit = () => {
     setConfirmOpen(false);
     setLoading(true);
+    setFieldErrors({});
 
     router.put(`/admin/guru/${guru.id}`, form, {
       preserveScroll: true,
       onSuccess: () => {
         toast.success("✅ Data guru berhasil diperbarui!");
         setLoading(false);
+        setFieldErrors({});
+        setErrorDialog(null);
         onSuccess();
       },
-      onError: () => {
-        toast.error("❌ Terjadi kesalahan saat memperbarui data.");
+      onError: (errors) => {
+        const err = errors as Record<string, string>;
+        setFieldErrors(err);
+        if (err?.nip) {
+          setErrorDialog(err.nip);
+        } else {
+          toast.error("❌ Terjadi kesalahan saat memperbarui data.");
+        }
         setLoading(false);
       },
     });
@@ -190,6 +216,9 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
             minLength={18}
             placeholder="Masukkan 18 digit NIP"
           />
+          {fieldErrors.nip && (
+            <p className="text-red-500 text-sm">{fieldErrors.nip}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -318,6 +347,17 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
             <AlertDialogAction onClick={confirmSubmit} disabled={loading}>
               Ya, benar
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={errorDialog !== null} onOpenChange={(open) => !open && setErrorDialog(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Data tidak valid</AlertDialogTitle>
+            <AlertDialogDescription>{errorDialog}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialog(null)}>Mengerti</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

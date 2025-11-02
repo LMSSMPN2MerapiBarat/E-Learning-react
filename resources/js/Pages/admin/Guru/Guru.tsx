@@ -246,7 +246,7 @@ export default function GuruPage() {
           }
         }}
       >
-        <AlertDialogContent onInteractOutside={(event) => event.preventDefault()}>
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Konfirmasi Import Data</AlertDialogTitle>
             <AlertDialogDescription>

@@ -9,6 +9,8 @@ use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\GuruImport;
 use App\Imports\SiswaImport;
@@ -187,9 +189,9 @@ class AdminUserController extends Controller
                 'email'    => 'required|email|unique:users',
                 'password' => 'required|string|min:8',
                 'role'     => 'required|in:admin,guru,siswa',
-                'nip'      => 'required_if:role,guru|digits:18',
+                'nip'      => 'required_if:role,guru|digits:18|unique:gurus,nip',
                 'mapel'    => 'nullable|string|max:255',
-                'nis'      => 'required_if:role,siswa|digits:10',
+                'nis'      => 'required_if:role,siswa|digits:10|unique:siswas,nis',
                 'kelas_id' => 'nullable|exists:kelas,id',
                 'no_telp'  => ['nullable', 'digits_between:9,12'],
             ],
@@ -197,8 +199,17 @@ class AdminUserController extends Controller
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
                 'jenis_kelamin.in'          => 'Pilih jenis kelamin yang valid.',
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+                'nip.unique'                => 'NIP sudah terdaftar.',
+                'nis.unique'                => 'NIS sudah terdaftar.',
             ]
         );
+
+        $normalizedNip = isset($validated['nip'])
+            ? preg_replace('/\D+/', '', $validated['nip'])
+            : null;
+        $normalizedNis = isset($validated['nis'])
+            ? preg_replace('/\D+/', '', $validated['nis'])
+            : null;
 
         $user = User::create([
             'name'     => $validated['name'],
@@ -211,7 +222,7 @@ class AdminUserController extends Controller
         if ($user->role === 'siswa') {
             Siswa::create([
                 'user_id'  => $user->id,
-                'nis'      => $validated['nis'] ?? null,
+                'nis'      => $normalizedNis,
                 'kelas_id' => $validated['kelas_id'] ?? null,
                 'no_telp'  => $validated['no_telp'] ?? null,
             ]);
@@ -220,7 +231,7 @@ class AdminUserController extends Controller
         if ($user->role === 'guru') {
             Guru::create([
                 'user_id' => $user->id,
-                'nip'     => $validated['nip'] ?? null,
+                'nip'     => $normalizedNip,
                 'mapel'   => $validated['mapel'] ?? null,
                 'no_telp' => $validated['no_telp'] ?? null,
             ]);
@@ -244,8 +255,16 @@ class AdminUserController extends Controller
                 'role'     => 'required|in:admin,guru,siswa',
                 'password' => 'nullable|string|min:8',
                 'kelas_id' => 'nullable|exists:kelas,id',
-                'nis'      => 'nullable|digits:10',
-                'nip'      => 'nullable|digits:18',
+                'nis'      => [
+                    'nullable',
+                    'digits:10',
+                    Rule::unique('siswas', 'nis')->ignore(optional($user->siswa)->id),
+                ],
+                'nip'      => [
+                    'nullable',
+                    'digits:18',
+                    Rule::unique('gurus', 'nip')->ignore(optional($user->guru)->id),
+                ],
                 'mapel'    => 'nullable|string|max:255',
                 'no_telp'  => ['nullable', 'digits_between:9,12'],
             ],
@@ -253,6 +272,8 @@ class AdminUserController extends Controller
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
                 'jenis_kelamin.in'          => 'Pilih jenis kelamin yang valid.',
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+                'nip.unique'                => 'NIP sudah terdaftar.',
+                'nis.unique'                => 'NIS sudah terdaftar.',
             ]
         );
 
@@ -270,17 +291,24 @@ class AdminUserController extends Controller
         $user->update($data);
 
         // sinkron profil
+        $normalizedNis = isset($validated['nis'])
+            ? preg_replace('/\D+/', '', $validated['nis'])
+            : null;
+        $normalizedNip = isset($validated['nip'])
+            ? preg_replace('/\D+/', '', $validated['nip'])
+            : null;
+
         if ($user->role === 'siswa') {
             $profil = Siswa::firstOrCreate(['user_id' => $user->id]);
             $profil->update([
-                'nis'      => $validated['nis'] ?? $profil->nis,
+                'nis'      => $normalizedNis ?? $profil->nis,
                 'kelas_id' => $validated['kelas_id'] ?? $profil->kelas_id,
                 'no_telp'  => $validated['no_telp'] ?? $profil->no_telp,
             ]);
         } elseif ($user->role === 'guru') {
             $profil = Guru::firstOrCreate(['user_id' => $user->id]);
             $profil->update([
-                'nip'     => $validated['nip'] ?? $profil->nip,
+                'nip'     => $normalizedNip ?? $profil->nip,
                 'mapel'   => $validated['mapel'] ?? $profil->mapel,
                 'no_telp' => $validated['no_telp'] ?? $profil->no_telp,
             ]);
@@ -336,6 +364,9 @@ class AdminUserController extends Controller
             }
 
             return back()->with('success', '✅ Data ' . ucfirst($request->role) . ' berhasil diimpor!');
+        } catch (ValidationException $e) {
+            $firstError = collect($e->errors())->flatten()->first();
+            return back()->with('error', '❌ Gagal mengimpor: ' . ($firstError ?? $e->getMessage()));
         } catch (\Exception $e) {
             return back()->with('error', '❌ Gagal mengimpor: ' . $e->getMessage());
         }

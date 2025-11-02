@@ -7,10 +7,12 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
 
-class GuruImport implements ToModel, WithHeadingRow
+class GuruImport implements ToModel, WithHeadingRow, WithValidation
 {
     public function model(array $row)
     {
@@ -21,8 +23,19 @@ class GuruImport implements ToModel, WithHeadingRow
         $kelasString = $row['kelas'] ?? $row['Kelas'] ?? $row['kelas_yang_diajar'] ?? $row['Kelas yang Diajar'] ?? null;
         $noTelp      = $row['no_telp'] ?? $row['No. Telepon'] ?? $row['no_telepon'] ?? null;
 
+        $normalizedNip = $nip ? preg_replace('/\D+/', '', (string) $nip) : null;
+        if ($normalizedNip === '') {
+            $normalizedNip = null;
+        }
+
         if (User::where('email', $email)->exists()) {
             return null;
+        }
+
+        if ($normalizedNip && Guru::where('nip', $normalizedNip)->exists()) {
+            throw ValidationException::withMessages([
+                'nip' => "NIP {$normalizedNip} sudah terdaftar.",
+            ]);
         }
 
         $genderInput = strtolower(trim($row['jenis_kelamin'] ?? $row['gender'] ?? ''));
@@ -38,7 +51,7 @@ class GuruImport implements ToModel, WithHeadingRow
 
         $guru = Guru::create([
             'user_id' => $user->id,
-            'nip'     => $nip,
+            'nip'     => $normalizedNip,
             'no_telp' => $noTelp,
         ]);
 
@@ -90,6 +103,14 @@ class GuruImport implements ToModel, WithHeadingRow
         return $guru;
     }
 
+    public function rules(): array
+    {
+        return [
+            '*.email' => 'nullable|email|unique:users,email',
+            '*.nip'   => 'nullable|unique:gurus,nip',
+        ];
+    }
+
     private function determineTingkat(string $kelasNama): string
     {
         $nama = strtolower($kelasNama);
@@ -117,4 +138,3 @@ class GuruImport implements ToModel, WithHeadingRow
         return 'Kelas 7';
     }
 }
-

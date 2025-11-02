@@ -37,6 +37,7 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
   const [mapels, setMapels] = useState<any[]>([]);
   const [kelasList, setKelasList] = useState<any[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [errorDialog, setErrorDialog] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/admin/mapel/list")
@@ -50,6 +51,11 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
       .catch(() => toast.error("Gagal memuat daftar kelas."));
   }, []);
 
+  useEffect(() => {
+    if (errors.nip) {
+    }
+  }, [errors.nip]);
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setConfirmOpen(true);
@@ -60,6 +66,7 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
     post("/admin/guru", {
       onSuccess: () => {
         toast.success("Guru berhasil ditambahkan!");
+        setErrorDialog(null);
         reset();
         onSuccess();
       },
@@ -282,6 +289,17 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
             <AlertDialogAction onClick={confirmSubmit} disabled={processing}>
               Ya, benar
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={errorDialog !== null} onOpenChange={(open) => !open && setErrorDialog(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Data tidak valid</AlertDialogTitle>
+            <AlertDialogDescription>{errorDialog}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialog(null)}>Mengerti</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

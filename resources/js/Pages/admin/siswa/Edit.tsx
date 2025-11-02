@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { router } from "@inertiajs/react";
+import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -63,25 +64,41 @@ export default function EditSiswa({
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [errorDialog, setErrorDialog] = useState<string | null>(null);
 
   const handleNisChange = (value: string) => {
     const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
     setForm({ ...form, nis: digitsOnly });
+    clearFieldError("nis");
   };
 
   const handleNameChange = (value: string) => {
     const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
     setForm({ ...form, name: lettersOnly });
+    clearFieldError("name");
   };
 
   const handlePhoneChange = (value: string) => {
     const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
     setForm({ ...form, no_telp: digitsOnly });
+    clearFieldError("no_telp");
+  };
+
+  const clearFieldError = (field: string) => {
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
   };
 
   const handleGenderChange = (value: string) => {
     setForm({ ...form, jenis_kelamin: value });
+    clearFieldError("jenis_kelamin");
   };
   useEffect(() => {
     fetch("/admin/kelas/list")
@@ -116,9 +133,20 @@ export default function EditSiswa({
     router.put(`/admin/users/${student.id}`, payload, {
       onSuccess: () => {
         setLoading(false);
+        setFieldErrors({});
+        setErrorDialog(null);
         onSuccess({ ...student, ...form });
       },
-      onError: () => setLoading(false),
+      onError: (errors) => {
+        const err = errors as Record<string, string>;
+        setFieldErrors(err);
+        if (err?.nis) {
+          setErrorDialog(err.nis);
+        } else {
+          toast.error("Terjadi kesalahan saat memperbarui data siswa.");
+        }
+        setLoading(false);
+      },
     });
   };
 
@@ -201,6 +229,9 @@ export default function EditSiswa({
             onChange={(e) => handleNisChange(e.target.value)}
             placeholder="Masukkan 10 digit NISN"
           />
+          {fieldErrors.nis && (
+            <p className="text-red-500 text-sm">{fieldErrors.nis}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -252,6 +283,17 @@ export default function EditSiswa({
             <AlertDialogAction onClick={confirmSubmit} disabled={loading}>
               Ya, benar
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={errorDialog !== null} onOpenChange={(open) => !open && setErrorDialog(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Data tidak valid</AlertDialogTitle>
+            <AlertDialogDescription>{errorDialog}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialog(null)}>Mengerti</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

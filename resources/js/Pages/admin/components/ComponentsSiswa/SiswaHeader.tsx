@@ -160,7 +160,7 @@ export default function SiswaHeader({
           }
         }}
       >
-        <AlertDialogContent onInteractOutside={(event) => event.preventDefault()}>
+        <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Konfirmasi Import Data</AlertDialogTitle>
             <AlertDialogDescription>

@@ -46,6 +46,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [errorDialog, setErrorDialog] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/admin/kelas/list")
@@ -53,6 +54,12 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
       .then((data) => setKelasList(data))
       .catch((err) => console.error("Gagal memuat kelas:", err));
   }, []);
+
+  useEffect(() => {
+    if (errors.nis) {
+      setErrorDialog(errors.nis);
+    }
+  }, [errors.nis]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +71,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
     post("/admin/users", {
       onSuccess: (page) => {
         const newStudent = (page.props as any)?.newStudent;
+        setErrorDialog(null);
         if (onSuccess) onSuccess(newStudent);
         reset();
       },
@@ -228,6 +236,17 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
             <AlertDialogAction onClick={confirmSubmit} disabled={processing}>
               Ya, benar
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={errorDialog !== null} onOpenChange={(open) => !open && setErrorDialog(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Data tidak valid</AlertDialogTitle>
+            <AlertDialogDescription>{errorDialog}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialog(null)}>Mengerti</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

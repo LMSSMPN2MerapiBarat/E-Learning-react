@@ -7,6 +7,7 @@ use App\Models\Guru;
 use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class AdminGuruController extends Controller
@@ -60,7 +61,7 @@ class AdminGuruController extends Controller
                 'jenis_kelamin' => ['required', 'in:laki-laki,perempuan'],
                 'email'     => 'required|email|unique:users',
                 'password'  => 'required|string|min:8',
-                'nip'       => 'required|digits:18',
+                'nip'       => 'required|digits:18|unique:gurus,nip',
                 'mapel_ids' => 'nullable|array',
                 'no_telp'   => ['nullable', 'digits_between:9,12'],
                 'kelas_ids' => 'nullable|array',
@@ -71,8 +72,11 @@ class AdminGuruController extends Controller
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
                 'jenis_kelamin.in'          => 'Pilih jenis kelamin yang valid.',
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+                'nip.unique'                => 'NIP sudah terdaftar.',
             ]
         );
+
+        $normalizedNip = preg_replace('/\D+/', '', $validated['nip']);
 
         $user = User::create([
             'name'     => $validated['name'],
@@ -84,7 +88,7 @@ class AdminGuruController extends Controller
 
         $guru = Guru::create([
             'user_id' => $user->id,
-            'nip'     => $validated['nip'] ?? null,
+            'nip'     => $normalizedNip,
             'no_telp' => $validated['no_telp'] ?? null,
         ]);
 
@@ -101,7 +105,11 @@ class AdminGuruController extends Controller
                 'name'      => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
                 'jenis_kelamin' => ['required', 'in:laki-laki,perempuan'],
                 'email'     => 'required|email|unique:users,email,' . $guru->user->id,
-                'nip'       => 'required|digits:18',
+                'nip'       => [
+                    'required',
+                    'digits:18',
+                    Rule::unique('gurus', 'nip')->ignore($guru->id),
+                ],
                 'no_telp'   => ['nullable', 'digits_between:9,12'],
                 'mapel_ids' => 'nullable|array',
                 'mapel_ids.*' => 'exists:mata_pelajarans,id',
@@ -112,8 +120,11 @@ class AdminGuruController extends Controller
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
                 'jenis_kelamin.in'          => 'Pilih jenis kelamin yang valid.',
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
+                'nip.unique'                => 'NIP sudah terdaftar.',
             ]
         );
+
+        $normalizedNip = preg_replace('/\D+/', '', $validated['nip']);
 
         $guru->user->update([
             'name'  => $validated['name'],
@@ -122,7 +133,7 @@ class AdminGuruController extends Controller
         ]);
 
         $guru->update([
-            'nip'     => $validated['nip'] ?? null,
+            'nip'     => $normalizedNip,
             'no_telp' => $validated['no_telp'] ?? null,
         ]);
 
