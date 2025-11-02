@@ -26,17 +26,11 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
   error,
 }) => (
   <div className="space-y-4">
-    <div className="flex items-center justify-between">
-      <div>
-        <Label className="text-sm font-medium">Daftar Soal</Label>
-        <p className="text-xs text-gray-500">
-          Tambahkan pertanyaan beserta pilihan jawaban.
-        </p>
-      </div>
-      <Button type="button" variant="outline" onClick={onAdd}>
-        <Plus className="mr-2 h-4 w-4" />
-        Tambah Soal
-      </Button>
+    <div>
+      <Label className="text-sm font-medium">Daftar Soal</Label>
+      <p className="text-xs text-gray-500">
+        Tambahkan pertanyaan beserta pilihan jawaban.
+      </p>
     </div>
 
     {error && <p className="text-xs text-red-500">{error}</p>}
@@ -96,12 +90,19 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
               </div>
             ))}
           </RadioGroup>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-red-500">
             Tandai jawaban benar dengan memilih radio button di samping.
           </p>
         </div>
       </div>
     ))}
+
+    <div className="flex justify-end">
+      <Button type="button" variant="outline" onClick={onAdd}>
+        <Plus className="mr-2 h-4 w-4" />
+        Tambah Soal
+      </Button>
+    </div>
   </div>
 );
 
