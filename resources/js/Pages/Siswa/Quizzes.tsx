@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
 import StudentQuizList from "./components/StudentQuizList";
-import QuizAttemptDialog from "./components/QuizAttemptDialog";
-import type { QuizAttemptLite, QuizItem, SiswaPageProps } from "./types";
+import type { QuizItem, SiswaPageProps } from "./types";
 import { toast } from "sonner";
 
 export default function Quizzes() {
   const { props } = usePage<SiswaPageProps>();
   const { student, hasClass, quizzes = [] } = props;
   const [quizList, setQuizList] = useState<QuizItem[]>(quizzes);
-  const [activeQuiz, setActiveQuiz] = useState<QuizItem | null>(null);
 
   useEffect(() => {
     setQuizList(quizzes);
@@ -36,33 +34,16 @@ export default function Quizzes() {
       );
       return;
     }
-    setActiveQuiz(quiz);
-  };
+    let targetUrl = `/siswa/quizzes/${quiz.id}`;
+    try {
+      if (typeof route === "function") {
+        targetUrl = route("siswa.quizzes.show", quiz.id);
+      }
+    } catch (error) {
+      console.warn("Ziggy route siswa.quizzes.show tidak ditemukan, fallback ke URL manual.", error);
+    }
 
-  const closeQuiz = () => setActiveQuiz(null);
-
-  const handleAttemptSubmitted = (attempt: QuizAttemptLite) => {
-    if (!activeQuiz) return;
-
-    setQuizList((prev) =>
-      prev.map((item) =>
-        item.id === activeQuiz.id
-          ? {
-              ...item,
-              latestAttempt: attempt,
-            }
-          : item,
-      ),
-    );
-
-    setActiveQuiz((prev) =>
-      prev
-        ? {
-            ...prev,
-            latestAttempt: attempt,
-          }
-        : prev,
-    );
+    router.visit(targetUrl);
   };
 
   return (
@@ -94,14 +75,6 @@ export default function Quizzes() {
           <StudentQuizList quizzes={quizList} onStartQuiz={startQuiz} />
         </motion.div>
       </div>
-
-      {activeQuiz && (
-        <QuizAttemptDialog
-          quiz={activeQuiz}
-          onClose={closeQuiz}
-          onSubmitted={handleAttemptSubmitted}
-        />
-      )}
     </StudentLayout>
   );
 }

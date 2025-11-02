@@ -7,9 +7,104 @@ use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class QuizAttemptController extends Controller
 {
+    public function show(Request $request, Quiz $quiz)
+    {
+        $user = $request->user();
+        $siswa = $user->siswa;
+
+        if (!$siswa) {
+            abort(403, 'Profil siswa tidak ditemukan.');
+        }
+
+        $quiz->load([
+            'kelas',
+            'mataPelajaran',
+            'guru.user',
+            'questions.options',
+        ]);
+
+        $kelasIds = $quiz->kelas->pluck('id');
+        if ($kelasIds->isNotEmpty() && $siswa->kelas_id && !$kelasIds->contains($siswa->kelas_id)) {
+            abort(403, 'Anda tidak terdaftar pada kelas kuis ini.');
+        }
+
+        $now = now();
+        if (
+            ($quiz->available_from && $now->lt($quiz->available_from)) ||
+            ($quiz->available_until && $now->gt($quiz->available_until))
+        ) {
+            abort(403, 'Kuis tidak tersedia pada waktu ini.');
+        }
+
+        if ($quiz->questions->isEmpty()) {
+            abort(404, 'Kuis belum memiliki soal.');
+        }
+
+        $formatKelasLabel = static function ($kelasModel) {
+            if (!$kelasModel) {
+                return null;
+            }
+
+            $parts = array_filter([
+                $kelasModel->tingkat,
+                $kelasModel->kelas,
+            ]);
+
+            $label = trim(implode(' ', $parts));
+
+            return $label !== '' ? $label : null;
+        };
+
+        $quizPayload = [
+            'id' => $quiz->id,
+            'title' => $quiz->judul,
+            'description' => $quiz->deskripsi,
+            'duration' => $quiz->durasi,
+            'status' => $quiz->status,
+            'subject' => $quiz->mataPelajaran?->nama_mapel,
+            'subjectId' => $quiz->mata_pelajaran_id,
+            'teacher' => $quiz->guru?->user?->name,
+            'classNames' => $quiz->kelas
+                ->map(fn($kelasItem) => $formatKelasLabel($kelasItem))
+                ->filter()
+                ->values()
+                ->all(),
+            'questions' => $quiz->questions
+                ->values()
+                ->map(function ($question) {
+                    $sortedOptions = $question->options->sortBy('urutan')->values();
+
+                    return [
+                        'id' => $question->id,
+                        'prompt' => $question->pertanyaan,
+                        'options' => $sortedOptions
+                            ->map(fn($option) => [
+                                'id' => $option->id,
+                                'text' => $option->teks,
+                                'order' => $option->urutan,
+                            ])
+                            ->all(),
+                        'correctAnswer' => optional(
+                            $question->options->firstWhere('is_benar', true)
+                        )->urutan ?? 0,
+                    ];
+                })
+                ->all(),
+            'totalQuestions' => $quiz->questions->count(),
+            'availableFrom' => $quiz->available_from?->toIso8601String(),
+            'availableUntil' => $quiz->available_until?->toIso8601String(),
+        ];
+
+        return Inertia::render('Siswa/QuizExam', [
+            'quiz' => $quizPayload,
+            'backUrl' => route('siswa.quizzes'),
+        ]);
+    }
+
     public function store(Request $request, Quiz $quiz)
     {
         $user = $request->user();

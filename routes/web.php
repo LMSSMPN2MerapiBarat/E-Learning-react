@@ -171,6 +171,9 @@ Route::middleware(['auth', 'role:siswa'])
         Route::get('/dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
         Route::get('/materi', [SiswaDashboardController::class, 'materials'])->name('materials');
         Route::get('/kuis', [SiswaDashboardController::class, 'quizzes'])->name('quizzes');
+        Route::get('/quizzes/{quiz}', [SiswaQuizAttemptController::class, 'show'])
+            ->whereNumber('quiz')
+            ->name('quizzes.show');
         Route::get('/nilai', [SiswaDashboardController::class, 'grades'])->name('grades');
         Route::get('/materi/{materi}/preview', [SiswaMateriController::class, 'preview'])->name('materials.preview');
         Route::get('/materi/{materi}/download', [SiswaMateriController::class, 'download'])->name('materials.download');
