@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminSiswaController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\MateriController as GuruMateriController;
 use App\Http\Controllers\Guru\QuizController as GuruQuizController;
+use App\Http\Controllers\Guru\KelasController as GuruKelasController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Siswa\MateriController as SiswaMateriController;
 use App\Http\Controllers\Siswa\QuizAttemptController as SiswaQuizAttemptController;
@@ -90,6 +91,9 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/Create', [AdminKelasController::class, 'create'])->name('create');
             Route::post('/', [AdminKelasController::class, 'store'])->name('store');
             Route::get('/export', [AdminKelasController::class, 'export'])->name('export');
+            Route::get('/{id}/detail', [AdminKelasController::class, 'detail'])
+                ->whereNumber('id')
+                ->name('detail');
             Route::delete('/bulk-delete', [AdminKelasController::class, 'bulkDelete'])->name('bulk-delete');
             Route::get('/{id}/Edit', [AdminKelasController::class, 'edit'])->whereNumber('id')->name('edit');
             Route::put('/{id}', [AdminKelasController::class, 'update'])->whereNumber('id')->name('update');
@@ -110,6 +114,8 @@ Route::middleware(['auth', 'role:admin'])
             // ⚠️ letakkan bulk delete di atas {mapel}
             Route::delete('/bulk-delete', [AdminMapelController::class, 'bulkDelete'])->name('bulk-delete');
 
+            Route::get('/{mapel}/detail', [AdminMapelController::class, 'detail'])
+                ->name('detail');
             Route::get('/{mapel}/Edit', [AdminMapelController::class, 'edit'])->name('edit');
             Route::put('/{mapel}', [AdminMapelController::class, 'update'])->name('update');
             Route::delete('/{mapel}', [AdminMapelController::class, 'destroy'])->name('destroy');
@@ -154,6 +160,8 @@ Route::middleware(['auth', 'role:guru'])
         Route::put('/materi/{materi}', [GuruMateriController::class, 'update'])->name('materi.update');
         Route::delete('/materi/{materi}', [GuruMateriController::class, 'destroy'])->name('materi.destroy');
         Route::get('/materi/{materi}/download', [GuruMateriController::class, 'download'])->name('materi.download');
+
+        Route::get('/kelas', [GuruKelasController::class, 'index'])->name('kelas.index');
 
         Route::get('/kuis', [GuruQuizController::class, 'index'])->name('kuis.index');
         Route::post('/kuis', [GuruQuizController::class, 'store'])->name('kuis.store');
