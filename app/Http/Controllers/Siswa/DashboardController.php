@@ -108,6 +108,7 @@ class DashboardController extends Controller
 
         $materials = $materiCollection
             ->map(function ($materi) use ($formatKelasLabel) {
+                $youtubeEmbedUrl = $this->buildYoutubeEmbedUrl($materi->youtube_url);
                 return [
                     'id' => $materi->id,
                     'title' => $materi->judul,
@@ -122,6 +123,11 @@ class DashboardController extends Controller
                     'downloadUrl' => $materi->file_path ? route('siswa.materials.download', $materi) : null,
                     'fileMime' => $materi->file_mime,
                     'fileSize' => $materi->file_size,
+                    'youtubeUrl' => $materi->youtube_url,
+                    'youtubeEmbedUrl' => $youtubeEmbedUrl,
+                    'videoUrl' => $materi->video_path ? Storage::url($materi->video_path) : null,
+                    'videoMime' => $materi->video_mime,
+                    'videoSize' => $materi->video_size,
                     'createdAt' => $materi->created_at?->toIso8601String(),
                 ];
             })
@@ -304,5 +310,34 @@ class DashboardController extends Controller
             'gradeSubjects' => $gradeSubjects,
             'gradeSummary' => $gradeSummary,
         ];
+    }
+
+    private function buildYoutubeEmbedUrl(?string $url): ?string
+    {
+        if (!$url) {
+            return null;
+        }
+
+        $trimmed = trim($url);
+        if ($trimmed === '') {
+            return null;
+        }
+
+        $patterns = [
+            '/(?:youtube\\.com\\/(?:watch\\?v=|embed\\/|shorts\\/)|youtu\\.be\\/)([A-Za-z0-9_-]{11})/i',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $trimmed, $matches)) {
+                return 'https://www.youtube.com/embed/' . $matches[1];
+            }
+        }
+
+        parse_str(parse_url($trimmed, PHP_URL_QUERY) ?? '', $query);
+        if (!empty($query['v']) && is_string($query['v'])) {
+            return 'https://www.youtube.com/embed/' . $query['v'];
+        }
+
+        return null;
     }
 }

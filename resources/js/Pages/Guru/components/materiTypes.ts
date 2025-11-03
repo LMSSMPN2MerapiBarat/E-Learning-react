@@ -16,5 +16,12 @@ export interface MateriItem {
   file_name?: string | null;
   file_mime?: string | null;
   file_url?: string | null;
+  file_size?: number | null;
+  youtube_url?: string | null;
+  youtube_embed_url?: string | null;
+  video_name?: string | null;
+  video_mime?: string | null;
+  video_size?: number | null;
+  video_url?: string | null;
   created_at?: string | null;
 }

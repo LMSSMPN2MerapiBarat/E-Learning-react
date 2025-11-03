@@ -24,6 +24,8 @@ type CreateMateriForm = {
   kelas_id: number | null;
   mata_pelajaran_id: number | null;
   file: File | null;
+  video: File | null;
+  youtube_url: string;
 };
 
 interface CreateMateriProps {
@@ -45,12 +47,19 @@ export default function CreateMateri({
     kelas_id: null,
     mata_pelajaran_id: null,
     file: null,
+    video: null,
+    youtube_url: "",
   });
   const { data, setData, post, processing, reset, errors } = form;
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setData("file", file ?? null);
+  };
+
+  const handleVideoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setData("video", file ?? null);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -160,6 +169,37 @@ export default function CreateMateri({
         />
         {errors.file && (
           <p className="text-xs text-red-500">{errors.file}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="video">File Video (opsional)</Label>
+        <Input
+          id="video"
+          type="file"
+          accept="video/*"
+          onChange={handleVideoChange}
+        />
+        {errors.video && (
+          <p className="text-xs text-red-500">{errors.video}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="youtube_url">Tautan YouTube (opsional)</Label>
+        <Input
+          id="youtube_url"
+          type="url"
+          inputMode="url"
+          value={data.youtube_url}
+          onChange={(e) => setData("youtube_url", e.target.value)}
+          placeholder="https://www.youtube.com/watch?v=..."
+        />
+        <p className="text-xs text-gray-500">
+          Masukkan URL video YouTube jika ingin membagikan video secara langsung.
+        </p>
+        {errors.youtube_url && (
+          <p className="text-xs text-red-500">{errors.youtube_url}</p>
         )}
       </div>
 

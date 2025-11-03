@@ -16,7 +16,16 @@ import {
   SelectValue,
 } from "@/Components/ui/select";
 import { Badge } from "@/Components/ui/badge";
-import { Download, Eye, FileText, Search, User, Calendar } from "lucide-react";
+import {
+  Download,
+  Eye,
+  FileText,
+  Search,
+  User,
+  Calendar,
+  PlayCircle,
+  Youtube,
+} from "lucide-react";
 import type { MaterialItem } from "../types";
 
 const getFileExtension = (
@@ -170,10 +179,18 @@ export default function StudentMaterialBrowser({
                 material.fileName,
                 material.fileMime,
               );
-              const badgeClass = getFileBadgeClass(extension);
+              const documentBadgeClass = getFileBadgeClass(extension);
+              const documentBadgeLabel = extension
+                ? extension.toUpperCase()
+                : "FILE";
               const dateLabel = formatDate(material.createdAt);
-              const previewHref = material.previewUrl ?? material.fileUrl ?? undefined;
-              const downloadHref = material.downloadUrl ?? material.fileUrl ?? undefined;
+              const previewHref =
+                material.previewUrl ?? material.fileUrl ?? undefined;
+              const downloadHref =
+                material.downloadUrl ?? material.fileUrl ?? undefined;
+              const hasDocumentLinks = Boolean(previewHref || downloadHref);
+              const hasVideoFile = Boolean(material.videoUrl);
+              const hasYoutube = Boolean(material.youtubeEmbedUrl);
 
               return (
                 <Card
@@ -181,16 +198,42 @@ export default function StudentMaterialBrowser({
                   className="border-l-4 border-l-blue-500 shadow-sm transition hover:border-l-blue-600 hover:shadow-md"
                 >
                   <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-start md:justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-base font-semibold text-gray-900">
-                        {material.title}
-                      </h3>
-                      {material.description && (
-                        <p className="mt-1 text-sm text-gray-600">
-                          {material.description}
-                        </p>
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900">
+                          {material.title}
+                        </h3>
+                        {material.description && (
+                          <p className="mt-1 text-sm text-gray-600">
+                            {material.description}
+                          </p>
+                        )}
+                      </div>
+
+                      {material.youtubeEmbedUrl && (
+                        <div className="aspect-video w-full overflow-hidden rounded-lg bg-black">
+                          <iframe
+                            src={`${material.youtubeEmbedUrl}?rel=0`}
+                            title={`Video YouTube ${material.title}`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            className="h-full w-full"
+                          />
+                        </div>
                       )}
-                      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+
+                      {material.videoUrl && (
+                        <video
+                          controls
+                          preload="metadata"
+                          className="w-full rounded-lg border border-gray-200"
+                        >
+                          <source src={material.videoUrl} />
+                          Browser Anda tidak mendukung pemutaran video.
+                        </video>
+                      )}
+
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
                         {material.subject && (
                           <Badge variant="outline">{material.subject}</Badge>
                         )}
@@ -199,12 +242,29 @@ export default function StudentMaterialBrowser({
                             Kelas {material.className}
                           </Badge>
                         )}
-                        <Badge className={`${badgeClass} border`}>
-                          {extension ? extension.toUpperCase() : "FILE"}
-                        </Badge>
+                        {hasDocumentLinks && (
+                          <Badge className={`${documentBadgeClass} border`}>
+                            {documentBadgeLabel}
+                          </Badge>
+                        )}
+                        {hasVideoFile && (
+                          <Badge className="border-purple-200 bg-purple-100 text-purple-600">
+                            Video
+                          </Badge>
+                        )}
+                        {hasYoutube && (
+                          <Badge className="border-red-200 bg-red-100 text-red-600">
+                            YouTube
+                          </Badge>
+                        )}
                         {material.fileSize && (
                           <Badge variant="outline">
-                            {(material.fileSize / (1024 * 1024)).toFixed(2)} MB
+                            Dokumen {(material.fileSize / (1024 * 1024)).toFixed(2)} MB
+                          </Badge>
+                        )}
+                        {material.videoSize && (
+                          <Badge variant="outline">
+                            Video {(material.videoSize / (1024 * 1024)).toFixed(2)} MB
                           </Badge>
                         )}
                         {material.teacher && (
@@ -221,8 +281,8 @@ export default function StudentMaterialBrowser({
                         )}
                       </div>
                     </div>
-                    <div className="flex w-full flex-col gap-2 md:w-48">
-                      {previewHref || downloadHref ? (
+                    <div className="flex w-full flex-col gap-2 md:w-52">
+                      {hasDocumentLinks && (
                         <>
                           <Button size="sm" asChild disabled={!previewHref}>
                             <a
@@ -235,20 +295,54 @@ export default function StudentMaterialBrowser({
                               Buka Materi
                             </a>
                           </Button>
-                          <Button variant="outline" size="sm" asChild disabled={!downloadHref}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                            disabled={!downloadHref}
+                          >
                             <a
                               href={downloadHref}
-                              download={downloadHref ? material.fileName ?? undefined : undefined}
+                              download={
+                                downloadHref
+                                  ? material.fileName ?? undefined
+                                  : undefined
+                              }
                               aria-disabled={!downloadHref}
                             >
                               <Download className="mr-2 h-4 w-4" />
-                              Unduh
+                              Unduh Dokumen
                             </a>
                           </Button>
                         </>
-                      ) : (
+                      )}
+                      {hasVideoFile && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a
+                            href={material.videoUrl ?? undefined}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <PlayCircle className="mr-2 h-4 w-4" />
+                            Unduh Video
+                          </a>
+                        </Button>
+                      )}
+                      {material.youtubeUrl && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a
+                            href={material.youtubeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Youtube className="mr-2 h-4 w-4" />
+                            Buka di YouTube
+                          </a>
+                        </Button>
+                      )}
+                      {!hasDocumentLinks && !hasVideoFile && !material.youtubeUrl && (
                         <Button size="sm" disabled>
-                          File tidak tersedia
+                          Materi tidak tersedia
                         </Button>
                       )}
                     </div>

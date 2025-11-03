@@ -2,7 +2,14 @@ import React from "react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
-import { FileText, Download, Pencil, Trash2 } from "lucide-react";
+import {
+  FileText,
+  Download,
+  Pencil,
+  Trash2,
+  PlayCircle,
+  Youtube,
+} from "lucide-react";
 import type { MateriItem } from "@/Pages/Guru/components/materiTypes";
 import { getFileExtension, getFileTypeColor } from "@/Pages/Guru/components/materiHelpers";
 
@@ -27,8 +34,15 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => (
     ) : (
       items.map((materi) => {
         const extension = getFileExtension(materi.file_name, materi.file_mime);
-        const fileTypeLabel = extension ? extension.toUpperCase() : "FILE";
-        const fileTypeClass = getFileTypeColor(extension ?? "default");
+        const documentBadgeClass = extension
+          ? getFileTypeColor(extension ?? "default")
+          : getFileTypeColor("default");
+        const documentBadgeLabel = extension
+          ? extension.toUpperCase()
+          : "FILE";
+        const hasDocument = Boolean(materi.file_url);
+        const hasVideoFile = Boolean(materi.video_url);
+        const hasYoutube = Boolean(materi.youtube_url);
 
         return (
           <Card key={materi.id} className="border transition-shadow hover:shadow-sm">
@@ -55,7 +69,19 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => (
                         {materi.kelas?.nama && (
                           <Badge variant="outline">Kelas {materi.kelas.nama}</Badge>
                         )}
-                        <Badge className={fileTypeClass}>{fileTypeLabel}</Badge>
+                        {hasDocument && (
+                          <Badge className={documentBadgeClass}>{documentBadgeLabel}</Badge>
+                        )}
+                        {hasVideoFile && (
+                          <Badge className="border-purple-200 bg-purple-100 text-purple-600">
+                            Video
+                          </Badge>
+                        )}
+                        {hasYoutube && (
+                          <Badge className="border-red-200 bg-red-100 text-red-600">
+                            YouTube
+                          </Badge>
+                        )}
                         {materi.created_at && (
                           <span>
                             Diunggah: {new Date(materi.created_at).toLocaleDateString("id-ID")}
@@ -75,6 +101,30 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => (
                       >
                         <Download className="mr-2 h-4 w-4" />
                         Unduh
+                      </a>
+                    </Button>
+                  )}
+                  {materi.video_url && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a
+                        href={materi.video_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <PlayCircle className="mr-2 h-4 w-4" />
+                        Putar Video
+                      </a>
+                    </Button>
+                  )}
+                  {materi.youtube_url && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a
+                        href={materi.youtube_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Youtube className="mr-2 h-4 w-4" />
+                        Buka YouTube
                       </a>
                     </Button>
                   )}

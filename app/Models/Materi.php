@@ -19,6 +19,11 @@ class Materi extends Model
         'file_name',
         'file_mime',
         'file_size',
+        'youtube_url',
+        'video_path',
+        'video_name',
+        'video_mime',
+        'video_size',
     ];
 
     public function guru()
@@ -36,4 +41,3 @@ class Materi extends Model
         return $this->belongsTo(MataPelajaran::class);
     }
 }
-

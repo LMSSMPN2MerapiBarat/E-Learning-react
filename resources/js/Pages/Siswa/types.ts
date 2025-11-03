@@ -26,6 +26,11 @@ export interface MaterialItem {
   downloadUrl?: string | null;
   fileMime?: string | null;
   fileSize?: number | null;
+  youtubeUrl?: string | null;
+  youtubeEmbedUrl?: string | null;
+  videoUrl?: string | null;
+  videoMime?: string | null;
+  videoSize?: number | null;
   createdAt?: string | null;
 }
 
