@@ -33,7 +33,7 @@ export default function Dashboard() {
       title="Dashboard Siswa"
       subtitle={
         student.className
-          ? `Kelas ${student.className}`
+          ? `${student.className}`
           : "Silakan hubungi admin atau guru untuk penempatan kelas."
       }
     >

@@ -3,6 +3,7 @@ import { Link, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
 import { BookOpen, FileQuestion, Home, LogOut, Trophy } from "lucide-react";
 import { Button } from "@/Components/ui/button";
+import type { PageProps } from "@/types";
 
 interface StudentLayoutProps {
   title?: string;
@@ -43,12 +44,26 @@ const NAV_ITEMS: Array<{
   },
 ];
 
+const getInitials = (name?: string | null, fallback = "S") => {
+  if (!name) return fallback;
+  const letters = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+  return letters || fallback;
+};
+
 export default function StudentLayout({
   title,
   subtitle,
   children,
 }: PropsWithChildren<StudentLayoutProps>) {
-  const page = usePage();
+  const page = usePage<PageProps>();
+  const { auth } = page.props;
+  const displayName = auth?.user?.name?.trim() || "Siswa";
+  const initials = getInitials(auth?.user?.name, "S");
 
   const routeHelper =
     typeof window !== "undefined" && typeof (window as any).route === "function"
@@ -108,16 +123,27 @@ export default function StudentLayout({
               </p>
             </div>
           </div>
-          <Button asChild variant="outline" className="hidden sm:inline-flex">
-            <Link
-              href={routeHelper ? routeHelper("logout") : "/logout"}
-              method="post"
-              as="button"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="hidden text-right sm:block">
+              <p className="text-xs text-gray-500">Halo</p>
+              <p className="text-sm font-semibold text-gray-900">
+                {displayName}
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+              {initials}
+            </div>
+            <Button asChild variant="outline" className="hidden sm:inline-flex">
+              <Link
+                href={routeHelper ? routeHelper("logout") : "/logout"}
+                method="post"
+                as="button"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Link>
+            </Button>
+          </div>
         </div>
         <div className="border-t">
           <nav className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3">

@@ -1,17 +1,33 @@
 import React, { PropsWithChildren, useEffect, useState } from "react";
+import { usePage } from "@inertiajs/react";
 import { Menu } from "lucide-react";
 import TeacherSidebar from "@/Components/TeacherSidebar";
 import { cn } from "@/Components/ui/utils";
+import type { PageProps } from "@/types";
 
 interface TeacherLayoutProps {
   title?: string;
 }
+
+const getInitials = (name?: string | null) => {
+  if (!name) return "G";
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+  return initials || "G";
+};
 
 export default function TeacherLayout({
   title,
   children,
 }: PropsWithChildren<TeacherLayoutProps>) {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const { auth } = usePage<PageProps>().props;
+  const displayName = auth?.user?.name?.trim() || "Guru";
+  const initials = getInitials(auth?.user?.name);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -60,6 +76,17 @@ export default function TeacherLayout({
               <p className="text-sm text-gray-600">
                 Kelola materi, kuis, dan aktivitas pembelajaran
               </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden text-right sm:block">
+              <p className="text-xs text-gray-500">Guru Aktif</p>
+              <p className="text-sm font-semibold text-gray-800">
+                {displayName}
+              </p>
+            </div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+              {initials}
             </div>
           </div>
         </header>
