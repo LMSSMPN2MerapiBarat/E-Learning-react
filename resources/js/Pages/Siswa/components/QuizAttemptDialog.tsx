@@ -9,7 +9,7 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  FileQuestion,
+  ClipboardList,
 } from "lucide-react";
 import axios from "axios";
 import type { QuizAttemptLite, QuizItem } from "../types";
@@ -199,7 +199,7 @@ export default function QuizAttemptDialog({
         {totalQuestions === 0 ? (
           <Card className="border-dashed">
             <CardContent className="py-12 text-center text-sm text-gray-500">
-              <FileQuestion className="mx-auto mb-3 h-10 w-10 text-gray-400" />
+              <ClipboardList className="mx-auto mb-3 h-10 w-10 text-gray-400" />
               Belum ada soal yang tersedia untuk kuis ini.
             </CardContent>
           </Card>

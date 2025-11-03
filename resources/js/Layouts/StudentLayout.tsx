@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
-import { BookOpen, FileQuestion, Home, LogOut, Trophy } from "lucide-react";
+import { BookOpen, ClipboardList, Home, LogOut, Trophy } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import type { PageProps } from "@/types";
 
@@ -34,7 +34,7 @@ const NAV_ITEMS: Array<{
     key: "quizzes",
     label: "Kuis",
     routeName: "siswa.quizzes",
-    icon: FileQuestion,
+    icon: ClipboardList,
   },
   {
     key: "grades",

@@ -1,7 +1,7 @@
 import { Link, router, usePage } from "@inertiajs/react";
 import {
   BookOpen,
-  FileQuestion,
+  ClipboardList,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -24,7 +24,7 @@ const menuItems = [
     icon: BookOpen,
   },
   { label: "Kelas Saya", href: "/guru/kelas", icon: Users },
-  { label: "Kelola Kuis", href: "/guru/kuis", icon: FileQuestion },
+  { label: "Kelola Kuis", href: "/guru/kuis", icon: ClipboardList },
 ];
 
 export default function TeacherSidebar({ sidebarOpen, onToggle }: TeacherSidebarProps) {

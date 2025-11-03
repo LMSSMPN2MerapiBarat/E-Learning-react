@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/Components/ui/card";
-import { BookOpen, FileQuestion, FileText, Users } from "lucide-react";
+import { BookOpen, ClipboardList, FileText, Users } from "lucide-react";
 import type { StatsPayload } from "../types";
 import { motion } from "motion/react";
 
@@ -13,7 +13,7 @@ const STAT_CONFIG = [
   {
     key: "quizCount" as const,
     label: "Kuis Aktif",
-    icon: FileQuestion,
+    icon: ClipboardList,
     accent: "bg-green-100 text-green-600",
   },
   {

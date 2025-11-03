@@ -26,7 +26,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  FileQuestion,
+  ClipboardList,
   X,
   XCircle,
 } from "lucide-react";
@@ -444,7 +444,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 p-2">
-                    <FileQuestion className="h-6 w-6 text-white" />
+                    <ClipboardList className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-lg font-semibold text-gray-900">
@@ -647,7 +647,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                 <Card className="sticky top-24 shadow-lg">
                   <CardContent className="p-6">
                     <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800">
-                      <FileQuestion className="h-5 w-5" />
+                      <ClipboardList className="h-5 w-5" />
                       Navigasi Soal
                     </h3>
 

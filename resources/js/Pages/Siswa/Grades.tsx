@@ -21,7 +21,6 @@ export default function Grades() {
   } = props;
 
   const [selectedSubject, setSelectedSubject] = useState("all");
-  const [selectedPeriod, setSelectedPeriod] = useState("semester1");
 
   const subjects = useMemo(() => {
     if (gradeSubjects.length > 0) return gradeSubjects;
@@ -112,15 +111,6 @@ export default function Grades() {
                 Pantau perkembangan nilai Anda sepanjang semester.
               </p>
             </div>
-            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder="Pilih Semester" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="semester1">Semester 1</SelectItem>
-                <SelectItem value="semester2">Semester 2</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </motion.div>
 

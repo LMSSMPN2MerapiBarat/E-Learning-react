@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
-import { BookOpen, FileQuestion, FileText } from "lucide-react";
+import { BookOpen, ClipboardList, FileText } from "lucide-react";
 
 interface QuickActionsCardProps {
   routeHelper?: (name: string, params?: Record<string, unknown>) => string;
@@ -32,7 +32,7 @@ const QuickActionsCard: React.FC<QuickActionsCardProps> = ({ routeHelper }) => {
         </Button>
         <Button asChild variant="outline" className="justify-start gap-3">
           <Link href={quizzesUrl}>
-            <FileQuestion className="h-5 w-5 text-emerald-600" />
+            <ClipboardList className="h-5 w-5 text-emerald-600" />
             Kerjakan Kuis Tersedia
           </Link>
         </Button>

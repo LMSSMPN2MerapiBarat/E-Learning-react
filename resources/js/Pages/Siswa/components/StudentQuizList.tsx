@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
-import { CalendarClock, CheckCircle, Clock, FileQuestion, User } from "lucide-react";
+import { CalendarClock, CheckCircle, Clock, ClipboardList, User } from "lucide-react";
 import type { QuizAttemptLite, QuizItem } from "../types";
 
 interface StudentQuizListProps {
@@ -48,7 +48,7 @@ export default function StudentQuizList({
         {quizzes.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="py-12 text-center text-sm text-gray-500">
-              <FileQuestion className="mx-auto mb-3 h-10 w-10 text-gray-400" />
+              <ClipboardList className="mx-auto mb-3 h-10 w-10 text-gray-400" />
               Belum ada kuis yang tersedia.
             </CardContent>
           </Card>
@@ -102,7 +102,7 @@ export default function StudentQuizList({
                     {quiz.duration} menit
                   </Badge>
                   <Badge variant="outline">
-                    <FileQuestion className="mr-1 h-3 w-3" />
+                    <ClipboardList className="mr-1 h-3 w-3" />
                     {quiz.totalQuestions} soal
                   </Badge>
                   {quiz.teacher && (

@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
-import { Calendar, FileQuestion, FileText } from "lucide-react";
+import { Calendar, ClipboardList, FileText } from "lucide-react";
 import type { GradeItem } from "@/Pages/Siswa/types";
 import { getScoreBgColor, getScoreColor, getGradeLabel } from "./gradeHelpers";
 
@@ -28,7 +28,7 @@ const GradeCard: React.FC<GradeCardProps> = ({ grade, accent }) => (
           <Badge variant="outline" className="capitalize">
             {grade.type === "quiz" ? (
               <span className="flex items-center gap-1">
-                <FileQuestion className="h-3 w-3" />
+                <ClipboardList className="h-3 w-3" />
                 Kuis
               </span>
             ) : (

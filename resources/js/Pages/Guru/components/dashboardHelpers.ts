@@ -1,6 +1,6 @@
 import {
   BookOpen,
-  FileQuestion,
+  ClipboardList,
   GraduationCap,
   Users,
 } from "lucide-react";
@@ -55,7 +55,7 @@ export const statCards = [
   {
     key: "kuis" as const,
     label: "Kuis Dibuat",
-    icon: FileQuestion,
+    icon: ClipboardList,
     color: "text-purple-600",
     bg: "bg-purple-50",
   },

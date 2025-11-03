@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
-import { FileQuestion, Pencil, Trash2 } from "lucide-react";
+import { ClipboardList, Pencil, Trash2 } from "lucide-react";
 import type { QuizItem } from "@/Pages/Guru/components/kuis/formTypes";
 
 interface QuizListProps {
@@ -54,7 +54,7 @@ const QuizList: React.FC<QuizListProps> = ({ quizzes, onEdit, onDelete }) => (
             <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-start md:justify-between">
               <div className="flex flex-1 gap-4">
                 <div className="rounded-lg bg-green-100 p-2">
-                  <FileQuestion className="h-5 w-5 text-green-600" />
+                  <ClipboardList className="h-5 w-5 text-green-600" />
                 </div>
                 <div className="flex-1 space-y-2">
                   <h3 className="text-base font-semibold text-gray-800">

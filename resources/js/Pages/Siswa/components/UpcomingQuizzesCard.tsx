@@ -11,7 +11,7 @@ import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
 import {
   Calendar,
-  FileQuestion,
+  ClipboardList,
   Timer,
   Users,
 } from "lucide-react";
@@ -74,7 +74,7 @@ const UpcomingQuizzesCard: React.FC<UpcomingQuizzesCardProps> = ({
               )}
               <div className="mt-3 flex flex-wrap gap-3 text-xs text-gray-500">
                 <span className="flex items-center gap-1">
-                  <FileQuestion className="h-3 w-3" />
+                  <ClipboardList className="h-3 w-3" />
                   {quiz.totalQuestions} soal
                 </span>
                 <span className="flex items-center gap-1">

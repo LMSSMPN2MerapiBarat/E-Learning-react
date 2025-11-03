@@ -6,7 +6,7 @@ import {
 } from "@/Components/ui/card";
 import {
   Award,
-  FileQuestion,
+  ClipboardList,
   FileText,
   TrendingUp,
 } from "lucide-react";
@@ -32,7 +32,7 @@ const summaryConfig = [
     key: "quizAverage" as const,
     title: "Rata-rata Kuis",
     description: (_value: number, total: number) => `${total} kuis`,
-    icon: FileQuestion,
+    icon: ClipboardList,
     gradient: "from-blue-500/90 to-blue-600/90",
   },
   {
