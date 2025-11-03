@@ -56,7 +56,9 @@ export default function GuruPage() {
     reloadGurus();
   };
   const handleEditSuccess = () => {
-    toast.success("✏️ Data guru berhasil diperbarui!");
+    toast.success("Perubahan tersimpan", {
+      description: "Data guru berhasil diperbarui.",
+    });
     setIsEditOpen(false);
     reloadGurus();
   };

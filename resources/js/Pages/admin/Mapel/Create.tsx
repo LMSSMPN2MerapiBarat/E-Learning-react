@@ -37,7 +37,16 @@ export default function CreateMapel({ onSuccess }: { onSuccess: () => void }) {
       onError: (formErrors) => {
         const message =
           formErrors.nama_mapel ?? "Gagal menambahkan mata pelajaran.";
-        toast.error(message);
+        let toastId: string | number;
+        toastId = toast.error("Data tidak valid", {
+          description: message,
+          duration: 6000,
+          dismissible: true,
+          action: {
+            label: "Tutup",
+            onClick: () => toast.dismiss(toastId),
+          },
+        });
       },
     });
   };

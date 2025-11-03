@@ -56,7 +56,13 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
       onError: (formErrors) => {
         const message =
           formErrors?.kelas ?? "Gagal menyimpan data kelas.";
-        toast.error(message);
+        let toastId: string | number;
+        toastId = toast.error("Data tidak valid", {
+          description: message,
+          duration: 6000,
+          dismissible: true,
+          action: { label: "Tutup", onClick: () => toast.dismiss(toastId) },
+        });
       },
     });
   };

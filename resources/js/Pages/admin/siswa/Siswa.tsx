@@ -48,7 +48,9 @@ export default function SiswaPage() {
 
   const handleEditSuccess = () => {
     setIsEditOpen(false);
-    toast.success("✅ Data siswa berhasil diperbarui!");
+    toast.success("Perubahan tersimpan", {
+      description: "Data siswa berhasil diperbarui.",
+    });
     reloadStudents();
   };
 

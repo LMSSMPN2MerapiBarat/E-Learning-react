@@ -66,7 +66,6 @@ export default function EditSiswa({
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [errorDialog, setErrorDialog] = useState<string | null>(null);
 
   const handleNisChange = (value: string) => {
     const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
@@ -134,17 +133,22 @@ export default function EditSiswa({
       onSuccess: () => {
         setLoading(false);
         setFieldErrors({});
-        setErrorDialog(null);
         onSuccess({ ...student, ...form });
       },
       onError: (errors) => {
         const err = errors as Record<string, string>;
         setFieldErrors(err);
-        if (err?.nis) {
-          setErrorDialog(err.nis);
-        } else {
-          toast.error("Terjadi kesalahan saat memperbarui data siswa.");
-        }
+        const description =
+          err?.nis ??
+          err?.email ??
+          "Terjadi kesalahan saat memperbarui data siswa.";
+        let toastId: string | number;
+        toastId = toast.error("Data tidak valid", {
+          description,
+          duration: 6000,
+          dismissible: true,
+          action: { label: "Tutup", onClick: () => toast.dismiss(toastId) },
+        });
         setLoading(false);
       },
     });
@@ -283,17 +287,6 @@ export default function EditSiswa({
             <AlertDialogAction onClick={confirmSubmit} disabled={loading}>
               Ya, benar
             </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog open={errorDialog !== null} onOpenChange={(open) => !open && setErrorDialog(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Data tidak valid</AlertDialogTitle>
-            <AlertDialogDescription>{errorDialog}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setErrorDialog(null)}>Mengerti</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

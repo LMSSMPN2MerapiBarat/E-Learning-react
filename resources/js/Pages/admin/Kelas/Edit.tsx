@@ -59,15 +59,20 @@ export default function EditKelas({
     setLoading(true);
     router.put(`/admin/kelas/${kelas.id}`, form, {
       onSuccess: () => {
-        toast.success("Kelas berhasil diperbarui!");
-        onSuccess();
         setLoading(false);
+        onSuccess();
       },
       onError: (formErrors) => {
         setLoading(false);
         const message =
           formErrors?.kelas ?? "Gagal memperbarui data kelas.";
-        toast.error(message);
+        let toastId: string | number;
+        toastId = toast.error("Data tidak valid", {
+          description: message,
+          duration: 6000,
+          dismissible: true,
+          action: { label: "Tutup", onClick: () => toast.dismiss(toastId) },
+        });
       },
     });
   };

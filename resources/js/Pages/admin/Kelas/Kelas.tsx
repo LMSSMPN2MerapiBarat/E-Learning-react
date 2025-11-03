@@ -42,7 +42,9 @@ export default function KelasPage() {
   };
 
   const handleEditSuccess = () => {
-    toast.success("Data kelas berhasil diperbarui!");
+    toast.success("Perubahan tersimpan", {
+      description: "Data kelas berhasil diperbarui.",
+    });
     setIsEditOpen(false);
     reloadKelas();
   };

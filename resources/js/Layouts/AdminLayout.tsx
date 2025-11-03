@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SidebarAdmin from "@/Components/SidebarAdmin";
 import { Menu } from "lucide-react";
+import { Toaster } from "@/Components/ui/sonner";
 
 export default function AdminLayout({
   children,
@@ -67,6 +68,7 @@ export default function AdminLayout({
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
+      <Toaster position="top-right" richColors closeButton />
     </div>
   );
 }

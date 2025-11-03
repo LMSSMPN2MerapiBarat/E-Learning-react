@@ -66,7 +66,6 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
 
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [errorDialog, setErrorDialog] = useState<string | null>(null);
   const [mapels, setMapels] = useState<Mapel[]>([]);
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -152,20 +151,24 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
     router.put(`/admin/guru/${guru.id}`, form, {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success("✅ Data guru berhasil diperbarui!");
         setLoading(false);
         setFieldErrors({});
-        setErrorDialog(null);
         onSuccess();
       },
       onError: (errors) => {
         const err = errors as Record<string, string>;
         setFieldErrors(err);
-        if (err?.nip) {
-          setErrorDialog(err.nip);
-        } else {
-          toast.error("❌ Terjadi kesalahan saat memperbarui data.");
-        }
+        const description =
+          err?.nip ??
+          err?.email ??
+          "Terjadi kesalahan saat memperbarui data.";
+        let toastId: string | number;
+        toastId = toast.error("Data tidak valid", {
+          description,
+          duration: 6000,
+          dismissible: true,
+          action: { label: "Tutup", onClick: () => toast.dismiss(toastId) },
+        });
         setLoading(false);
       },
     });
@@ -347,17 +350,6 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
             <AlertDialogAction onClick={confirmSubmit} disabled={loading}>
               Ya, benar
             </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog open={errorDialog !== null} onOpenChange={(open) => !open && setErrorDialog(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Data tidak valid</AlertDialogTitle>
-            <AlertDialogDescription>{errorDialog}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setErrorDialog(null)}>Mengerti</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

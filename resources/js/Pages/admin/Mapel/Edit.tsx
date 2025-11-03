@@ -40,7 +40,6 @@ export default function EditMapel({
     setLoading(true);
     router.put(`/admin/mapel/${mapel.id}`, form, {
       onSuccess: () => {
-        toast.success("Mata pelajaran berhasil diperbarui!");
         setLoading(false);
         onSuccess();
       },
@@ -48,7 +47,16 @@ export default function EditMapel({
         setLoading(false);
         const message =
           formErrors?.nama_mapel ?? "Gagal memperbarui mata pelajaran.";
-        toast.error(message);
+        let toastId: string | number;
+        toastId = toast.error("Data tidak valid", {
+          description: message,
+          duration: 6000,
+          dismissible: true,
+          action: {
+            label: "Tutup",
+            onClick: () => toast.dismiss(toastId),
+          },
+        });
       },
     });
   };

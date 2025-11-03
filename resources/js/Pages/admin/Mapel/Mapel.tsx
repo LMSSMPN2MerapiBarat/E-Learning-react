@@ -42,7 +42,9 @@ export default function MapelPage() {
   };
 
   const handleEditSuccess = () => {
-    toast.success("Data mata pelajaran berhasil diperbarui!");
+    toast.success("Perubahan tersimpan", {
+      description: "Data mata pelajaran berhasil diperbarui.",
+    });
     setIsEditOpen(false);
     reloadMapel();
   };
