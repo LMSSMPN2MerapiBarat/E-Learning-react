@@ -1,61 +1,106 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# E-Learning React – Dokumentasi Fitur
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Ringkasan
+- Platform e-learning berbasis Laravel + Inertia.js + React + TypeScript dengan antarmuka yang dioptimalisasi menggunakan komponen Shadcn UI dan ikon Lucide.
+- Mendukung tiga peran utama (admin, guru, siswa) dengan alur kerja yang terpisah di dalam struktur `resources/js/Pages`.
+- Mengandalkan notifikasi real-time melalui `sonner` toast, dialog konfirmasi, serta pagination dan pencarian sisi-klien untuk menjaga responsivitas.
+- Data utama (pengguna, kelas, materi, kuis) dikelola melalui request Inertia dan endpoint Laravel yang terintegrasi dengan model, seeder, dan ekspor/impor Excel.
 
-## About Laravel
+## Peran & Halaman Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Admin
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+#### Dashboard Admin (`resources/js/Pages/admin/dashboard.tsx` + `Components/DashboardOverview.tsx`)
+- Menyajikan ringkasan total guru, siswa, materi, dan kuis dalam kartu statistik serta tab terpisah untuk melihat daftar siswa, guru, kelas, dan mata pelajaran.
+- Setiap tab menyediakan pencarian instan, tampilan tabel responsif, dan kartu mobile sehingga data tetap mudah dibaca di berbagai ukuran layar.
+- Fitur pagination internal menjaga performa saat menelusuri data panjang, dengan tombol navigasi halaman dan indikator jumlah total halaman.
+- Data yang ditampilkan diambil langsung dari props Inertia sehingga selalu sinkron setelah aksi CRUD di halaman lain.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+#### Manajemen Guru (`resources/js/Pages/admin/Guru/Guru.tsx`)
+- Tabel guru interaktif dengan seleksi baris untuk pengeditan cepat, bulk delete, dan penghapusan individual.
+- Dialog `Create/Edit` menampilkan formulir lengkap untuk biodata, pemetaan mata pelajaran, serta memberikan validasi sisi-klien.
+- Tombol import dan export Excel memanfaatkan FormData untuk unggah file dan `window.location.href` untuk unduhan, disertai indikator progres dan hasil di toast.
+- Konfirmasi berlapis (dialog) memastikan tindakan berisiko seperti bulk delete dan import data tidak dilakukan tanpa persetujuan.
 
-## Learning Laravel
+#### Manajemen Siswa (`resources/js/Pages/admin/siswa/Siswa.tsx`)
+- Header aksi menyediakan import/export Excel, hapus semua data, hapus terpilih, dan tambah data baru dengan dialog konfirmasi berbeda untuk tiap jenis tindakan.
+- Fitur pencarian, filter kelas, dan pagination manual memudahkan admin memusatkan perhatian pada subset data yang relevan.
+- Komponen `SiswaTable` mendukung checkbox multi-seleksi dan tombol tindakan baris untuk edit/hapus.
+- Overlay loading dan toast memberi umpan balik selama proses CRUD, import, maupun bulk delete berlangsung.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### Manajemen Kelas (`resources/js/Pages/admin/Kelas/Kelas.tsx`)
+- Daftar kelas dilengkapi checkbox multi-seleksi untuk bulk delete, serta dialog edit per kelas dengan pemilihan wali dan parameter lain.
+- Ekspor data kelas ke Excel hanya membutuhkan satu klik, disertai toast keberhasilan setelah file siap diunduh.
+- Dialog konfirmasi hadir untuk setiap penghapusan (single ataupun bulk) sehingga admin dapat meninjau ulang sebelum mengeksekusi.
+- Refresh data dilakukan via `router.reload` setelah setiap aksi, menjaga tabel tetap mutakhir tanpa reload halaman penuh.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### Manajemen Mata Pelajaran (`resources/js/Pages/admin/Mapel/Mapel.tsx`)
+- Header menyediakan tombol tambah mapel (dialog modal) dan bulk delete ketika ada data terpilih.
+- Tabel mapel menampilkan nama mapel dan guru pengampu dengan tombol edit/hapus di baris, memastikan CRUD berjalan cepat.
+- Dialog `MapelDialogs` mengatur flow edit, konfirmasi hapus, serta aksi bulk delete melalui state yang terpusat.
+- Toast keberhasilan/kesalahan memandu admin melihat hasil operasi tanpa perlu membuka log.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Guru
 
-## Laravel Sponsors
+#### Dashboard Guru (`resources/js/Pages/Guru/dashboard.tsx`)
+- Kartu statistik (`StatOverview`) menunjukkan ringkasan materi dan kuis yang dikelola guru, lengkap dengan ikon dan tren ringkas.
+- `SubjectsCard` merangkum daftar mata pelajaran yang diajarkan, membantu guru melacak fokus pengajaran dengan cepat.
+- Bagian materi dan kuis terbaru ditampilkan dalam grid dua kolom (`RecentMateriCard`, `RecentQuizzesCard`) untuk melihat aktivitas terkini.
+- Semua konten dipaketkan dalam `TeacherLayout` yang menyertakan navigasi khusus guru dan judul halaman dinamis.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Kelola Materi (`resources/js/Pages/Guru/Materi/MateriPage.tsx`)
+- Header list menyediakan pencarian real-time dan tombol `Unggah Materi` yang membuka dialog form terstruktur.
+- Komponen `CreateMateri` dan `EditMateri` mendukung pemilihan kelas/mapel via dropdown, unggah file dengan validasi tipe, dan toast hasil.
+- Daftar materi menampilkan metadata lengkap (mapel, kelas, tanggal unggah, ukuran file) serta tombol unduh, edit, hapus dengan ikon intuitif.
+- Dialog konfirmasi hapus memastikan file tidak terhapus tanpa sengaja, sementara daftar otomatis memfilter berdasarkan kata kunci.
 
-### Premium Partners
+#### Kelola Kuis (`resources/js/Pages/Guru/Kuis/KuisPage.tsx`)
+- Header menyediakan pencarian, tombol tambah kuis, dan membuka dialog manajemen yang menyatukan form metadata, pemilihan kelas, serta editor soal.
+- `QuizMetadataFields` memungkinkan pengaturan status (draft/published), durasi, mata pelajaran, deskripsi, dan jadwal ketersediaan menggunakan toggle checkbox.
+- `ClassSelector` mendukung pemilihan banyak kelas dalam sekali klik, menampilkan badge “Dipilih” untuk kelas aktif.
+- `QuizQuestionsEditor` memfasilitasi penambahan, penghapusan, dan pengeditan soal beserta opsi jawaban serta penandaan jawaban benar via radio button.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Siswa
 
-## Contributing
+#### Dashboard Siswa (`resources/js/Pages/Siswa/Dashboard.tsx`)
+- Menampilkan peringatan apabila akun belum terhubung ke kelas, memastikan siswa tahu langkah selanjutnya.
+- `StudentStatsGrid` menunjukkan jumlah materi, kuis, materi baru, dan teman sekelas secara animatif menggunakan Motion untuk pengalaman interaktif.
+- `QuickActionsCard` menyediakan navigasi cepat ke halaman materi, kuis, dan nilai tanpa perlu melalui menu utama.
+- Bagian materi/kuis terbaru menampilkan tiga item teratas dengan tautan langsung ke detail untuk menjaga student engagement.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### Materi Pembelajaran (`resources/js/Pages/Siswa/Materials.tsx` + `components/StudentMaterialBrowser.tsx`)
+- Siswa dapat mencari materi berdasarkan judul, deskripsi, nama guru, kelas, maupun mata pelajaran melalui input tunggal.
+- Dropdown filter mata pelajaran mengelompokkan materi sesuai kebutuhan siswa (default menampilkan semua).
+- Setiap kartu materi menyajikan badge tipe file, ukuran, kelas, mata pelajaran, nama guru, dan tanggal unggah.
+- Tombol “Buka Materi” dan “Unduh” otomatis menyesuaikan ketersediaan URL preview/download sehingga siswa tidak mengakses file yang belum disiapkan.
 
-## Code of Conduct
+#### Kuis Interaktif (`resources/js/Pages/Siswa/Quizzes.tsx` + `components/StudentQuizList.tsx`)
+- Daftar kuis menampilkan status, jumlah soal, durasi, jadwal ketersediaan, dan badge kelas tujuan dalam kartu informatif.
+- Tombol aksi adaptif (Mulai, Kerjakan Lagi, Belum Tersedia, Sudah Berakhir) bergantung pada jadwal dan soal yang tersedia.
+- Informasi percobaan terakhir ditampilkan dalam badge hijau berisi skor dan jumlah jawaban benar untuk motivasi belajar.
+- Toast error muncul ketika kuis belum siap (tidak ada soal atau di luar jadwal), menjaga siswa dari akses yang sia-sia.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Halaman Pengerjaan Kuis (`resources/js/Pages/Siswa/QuizExam.tsx`)
+- Timer hitung mundur otomatis mengunci kuis ketika durasi habis dan memicu auto-submit bila siswa belum mengirim jawaban.
+- Navigasi soal didukung animasi slide (`motion`) dengan indikator soal belum/sudah dijawab serta ringkasan jumlah jawaban yang tersisa.
+- Setiap soal menampilkan pilihan jawaban dengan radio button besar, progress bar, dan badge durasi di bagian atas layar.
+- Dialog konfirmasi tersedia untuk keluar kuis, submit manual, maupun menampilkan hasil akhir lengkap (skor, benar/salah, ringkasan jawaban).
 
-## Security Vulnerabilities
+#### Nilai Saya (`resources/js/Pages/Siswa/Grades.tsx`)
+- Ringkasan nilai menampilkan rata-rata keseluruhan, rata-rata kuis, rata-rata tugas, dan total penilaian dengan pilihan semester.
+- Filter mata pelajaran memengaruhi grafik ringkasan dan tab riwayat sehingga siswa dapat fokus pada mata pelajaran tertentu.
+- `SubjectPerformanceList` merangkum jumlah penilaian dan rata-rata per mapel dengan indikator visual yang mudah dipahami.
+- `GradeHistoryTabs` memisahkan daftar penilaian menjadi tab Semua, Kuis, dan Tugas agar siswa dapat melihat detail dengan cepat.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Catatan Teknis
+- Komponen layout khusus (`AdminLayout`, `TeacherLayout`, `StudentLayout`) menyelaraskan navigasi, judul halaman, dan konten utama tiap peran.
+- Setiap aksi CRUD memanfaatkan `router.post/put/delete` milik Inertia disertai `router.reload({ only: [...] })` untuk menyegarkan data secara selektif.
+- Toast dari `sonner` menjadi kanal utama penyampaian status proses, sementara `AlertDialog` dari Shadcn menangani konfirmasi kritis.
+- Pagination sisi-klien digunakan pada tabel besar untuk mengurangi beban server dan menjaga kelincahan UI, dengan kesiapan untuk dialihkan ke server-side bila diperlukan.
+ 
+ 
+ Ringkasan Per Peran
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Admin – Tambah/edit/hapus data master: guru, siswa, kelas, mata pelajaran; impor/ekspor Excel; hapus massal; atur hak akses lewat halaman dashboard dengan tabel interaktif.
+- Guru – Kelola materi (unggah file, edit deskripsi, hapus) dan kuis (atur metadata, jadwal, soal, publikasi); pantau statistik dan aktivitas lewat dashboard khusus guru.
+- Siswa – Lihat ringkasan progres di dashboard, akses daftar materi, mengikuti kuis dengan timer dan hasil langsung, serta meninjau riwayat nilai dan performa per mata pelajaran.
