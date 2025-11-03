@@ -99,9 +99,9 @@ class QuizController extends Controller
         $validated = $request->validate([
             'title'              => 'required|string|max:255',
             'description'        => 'nullable|string',
-            'mata_pelajaran_id'  => 'nullable|exists:mata_pelajarans,id',
+            'mata_pelajaran_id'  => 'required|exists:mata_pelajarans,id',
             'duration'           => 'required|integer|min:1|max:600',
-            'max_attempts'       => 'nullable|integer|in:1,2',
+            'max_attempts'       => 'required|in:unlimited,1,2',
             'status'             => 'required|in:draft,published',
             'available_from'     => 'nullable|date',
             'available_until'    => 'nullable|date|after:available_from',
@@ -120,14 +120,17 @@ class QuizController extends Controller
             }
         }
 
-        DB::transaction(function () use ($validated, $guru) {
+        $maxAttemptsInput = $validated['max_attempts'];
+        $maxAttempts = $maxAttemptsInput === 'unlimited' ? null : (int) $maxAttemptsInput;
+
+        DB::transaction(function () use ($validated, $guru, $maxAttempts) {
             $quiz = Quiz::create([
                 'guru_id'           => $guru->id,
-                'mata_pelajaran_id' => $validated['mata_pelajaran_id'] ?? null,
+                'mata_pelajaran_id' => (int) $validated['mata_pelajaran_id'],
                 'judul'             => $validated['title'],
                 'deskripsi'         => $validated['description'] ?? null,
                 'durasi'            => $validated['duration'],
-                'max_attempts'      => $validated['max_attempts'] ?? null,
+                'max_attempts'      => $maxAttempts,
                 'status'            => $validated['status'],
                 'available_from'    => isset($validated['available_from'])
                     ? Carbon::parse($validated['available_from'])
@@ -172,9 +175,9 @@ class QuizController extends Controller
         $validated = $request->validate([
             'title'              => 'required|string|max:255',
             'description'        => 'nullable|string',
-            'mata_pelajaran_id'  => 'nullable|exists:mata_pelajarans,id',
+            'mata_pelajaran_id'  => 'required|exists:mata_pelajarans,id',
             'duration'           => 'required|integer|min:1|max:600',
-            'max_attempts'       => 'nullable|integer|in:1,2',
+            'max_attempts'       => 'required|in:unlimited,1,2',
             'status'             => 'required|in:draft,published',
             'available_from'     => 'nullable|date',
             'available_until'    => 'nullable|date|after:available_from',
@@ -193,13 +196,16 @@ class QuizController extends Controller
             }
         }
 
-        DB::transaction(function () use ($quiz, $validated) {
+        $maxAttemptsInput = $validated['max_attempts'];
+        $maxAttempts = $maxAttemptsInput === 'unlimited' ? null : (int) $maxAttemptsInput;
+
+        DB::transaction(function () use ($quiz, $validated, $maxAttempts) {
             $quiz->update([
-                'mata_pelajaran_id' => $validated['mata_pelajaran_id'] ?? null,
+                'mata_pelajaran_id' => (int) $validated['mata_pelajaran_id'],
                 'judul'             => $validated['title'],
                 'deskripsi'         => $validated['description'] ?? null,
                 'durasi'            => $validated['duration'],
-                'max_attempts'      => $validated['max_attempts'] ?? null,
+                'max_attempts'      => $maxAttempts,
                 'status'            => $validated['status'],
                 'available_from'    => isset($validated['available_from'])
                     ? Carbon::parse($validated['available_from'])

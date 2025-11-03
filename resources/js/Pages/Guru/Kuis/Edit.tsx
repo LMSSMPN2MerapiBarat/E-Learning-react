@@ -87,7 +87,9 @@ export default function EditQuiz({
     description: quiz.deskripsi ?? "",
     mata_pelajaran_id: quiz.mata_pelajaran_id ?? null,
     duration: quiz.durasi,
-    max_attempts: quiz.max_attempts ?? null,
+    max_attempts: quiz.max_attempts
+      ? (String(quiz.max_attempts) as QuizBaseForm["max_attempts"])
+      : "unlimited",
     status: quiz.status,
     kelas_ids: quiz.kelas_ids ?? [],
     questions: normalizeQuestions(quiz.questions),
@@ -104,7 +106,9 @@ export default function EditQuiz({
       description: quiz.deskripsi ?? "",
       mata_pelajaran_id: quiz.mata_pelajaran_id ?? null,
       duration: quiz.durasi,
-      max_attempts: quiz.max_attempts ?? null,
+      max_attempts: quiz.max_attempts
+        ? (String(quiz.max_attempts) as QuizBaseForm["max_attempts"])
+        : "unlimited",
       status: quiz.status,
       kelas_ids: quiz.kelas_ids ?? [],
       questions: normalizeQuestions(quiz.questions),

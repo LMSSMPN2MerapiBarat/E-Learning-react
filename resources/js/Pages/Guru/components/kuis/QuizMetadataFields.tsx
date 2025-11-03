@@ -9,7 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
-import type { Option, QuizBaseForm, QuizStatus } from "./formTypes";
+import type {
+  Option,
+  QuizAttemptLimitOption,
+  QuizBaseForm,
+  QuizStatus,
+} from "./formTypes";
 
 interface QuizMetadataFieldsProps {
   data: QuizBaseForm;
@@ -43,6 +48,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
         <Label htmlFor="title">Judul Kuis</Label>
         <Input
           id="title"
+          required
           value={data.title}
           onChange={(event) => setData("title", event.target.value)}
           placeholder="contoh: Kuis Bab 1 - Aljabar"
@@ -55,6 +61,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
         <Input
           id="duration"
           type="number"
+          required
           min={5}
           max={180}
           value={data.duration}
@@ -68,16 +75,15 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
       <div className="space-y-2">
         <Label>Limit Percobaan</Label>
         <Select
-          value={data.max_attempts !== null ? String(data.max_attempts) : "unlimited"}
-          onValueChange={(value) => {
-            if (value === "unlimited") {
-              setData("max_attempts", null);
-            } else {
-              setData("max_attempts", Number(value) as QuizBaseForm["max_attempts"]);
-            }
-          }}
+          value={data.max_attempts}
+          onValueChange={(value) =>
+            setData(
+              "max_attempts",
+              value as QuizAttemptLimitOption,
+            )
+          }
         >
-          <SelectTrigger>
+          <SelectTrigger aria-required="true">
             <SelectValue placeholder="Pilih batas percobaan" />
           </SelectTrigger>
           <SelectContent>
@@ -104,7 +110,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
             setData("mata_pelajaran_id", value ? Number(value) : null)
           }
         >
-          <SelectTrigger id="mapel">
+          <SelectTrigger id="mapel" aria-required="true">
             <SelectValue placeholder="Pilih mata pelajaran" />
           </SelectTrigger>
           <SelectContent>
@@ -126,7 +132,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
           value={data.status}
           onValueChange={(value) => setData("status", value as QuizStatus)}
         >
-          <SelectTrigger>
+          <SelectTrigger aria-required="true">
             <SelectValue placeholder="Pilih status" />
           </SelectTrigger>
           <SelectContent>

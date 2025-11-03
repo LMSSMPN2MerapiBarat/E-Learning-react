@@ -12,12 +12,14 @@ export type QuizQuestionForm = {
 
 export type QuizStatus = "draft" | "published";
 
+export type QuizAttemptLimitOption = "unlimited" | "1" | "2";
+
 export type QuizBaseForm = {
   title: string;
   description: string;
   mata_pelajaran_id: number | null;
   duration: number;
-  max_attempts: number | null;
+  max_attempts: QuizAttemptLimitOption;
   status: QuizStatus;
   kelas_ids: number[];
   questions: QuizQuestionForm[];

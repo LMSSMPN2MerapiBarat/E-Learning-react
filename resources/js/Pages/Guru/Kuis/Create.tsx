@@ -29,7 +29,7 @@ export default function CreateQuiz({
     description: "",
     mata_pelajaran_id: null,
     duration: 30,
-    max_attempts: null,
+    max_attempts: "unlimited",
     status: "draft",
     kelas_ids: [],
     questions: [],
