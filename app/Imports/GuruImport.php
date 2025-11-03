@@ -313,7 +313,6 @@ class GuruImport implements ToCollection, WithHeadingRow, WithValidation, WithCh
                     'kelas' => $namaKelas,
                     'tingkat' => $this->determineTingkat($namaKelas),
                     'tahun_ajaran' => date('Y') . '/' . (date('Y') + 1),
-                    'deskripsi' => 'Auto-generated from guru import',
                 ]);
                 $this->kelasCache[$key] = $kelas->id;
             }

@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Users,
 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { cn } from "@/Components/ui/utils";
@@ -22,6 +23,7 @@ const menuItems = [
     href: "/guru/materi",
     icon: BookOpen,
   },
+  { label: "Kelas Saya", href: "/guru/kelas", icon: Users },
   { label: "Kelola Kuis", href: "/guru/kuis", icon: FileQuestion },
 ];
 
@@ -109,4 +111,3 @@ export default function TeacherSidebar({ sidebarOpen, onToggle }: TeacherSidebar
     </>
   );
 }
-

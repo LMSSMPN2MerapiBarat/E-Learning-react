@@ -288,7 +288,6 @@ class SiswaImport implements
                 'kelas' => trim($kelasNama),
                 'tingkat' => $tingkat,
                 'tahun_ajaran' => date('Y') . '/' . (date('Y') + 1),
-                'deskripsi' => 'Auto-generated from import',
             ]);
 
             $this->kelasCache[$key] = $kelas->id;
