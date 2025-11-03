@@ -91,11 +91,44 @@ class AdminMapelController extends Controller
 
         MataPelajaran::whereIn('id', $ids)->delete();
 
-        // ✅ gunakan redirect agar Inertia tidak error JSON
+        // gunakan redirect agar Inertia tidak error JSON
         return back()->with('success', 'Beberapa mata pelajaran berhasil dihapus!');
     }
 
-    // 📘 untuk dropdown di form tambah guru
+    public function detail(MataPelajaran $mapel)
+    {
+        $mapel->load(['gurus.user', 'gurus.kelas']);
+
+        $gurus = $mapel->gurus->map(function ($guru) {
+            $user = $guru->user;
+
+            $kelas = $guru->kelas
+                ? $guru->kelas->map(function ($kelasItem) {
+                    $tingkat = trim((string) ($kelasItem->tingkat ?? ''));
+                    $nama = trim((string) ($kelasItem->kelas ?? ''));
+                    $label = trim($tingkat . ' ' . $nama);
+                    return $label !== '' ? $label : ($nama ?: ($tingkat ?: '-'));
+                })->filter()->values()
+                : collect();
+
+            return [
+                'id'      => $guru->id,
+                'name'    => $user->name ?? '-',
+                'email'   => $user->email ?? '-',
+                'no_telp' => $guru->no_telp ?? $user->no_telp ?? '-',
+                'kelas'   => $kelas->values()->all(),
+            ];
+        });
+
+        return response()->json([
+            'id'         => $mapel->id,
+            'nama_mapel' => $mapel->nama_mapel,
+            'total_guru' => $gurus->count(),
+            'gurus'      => $gurus,
+        ]);
+    }
+
+    // untuk dropdown di form tambah guru
     public function list()
     {
         return response()->json(MataPelajaran::select('id', 'nama_mapel')->get());

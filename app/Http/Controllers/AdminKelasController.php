@@ -96,6 +96,36 @@ class AdminKelasController extends Controller
         return Excel::download(new KelasExport(), $fileName);
     }
 
+    public function detail($id)
+    {
+        $kelas = Kelas::with(['siswa.user'])
+            ->withCount(['siswa', 'guru'])
+            ->findOrFail($id);
+
+        $students = $kelas->siswa->map(function ($siswa) {
+            $user = $siswa->user;
+
+            return [
+                'id'            => $siswa->id,
+                'name'          => $user->name ?? '-',
+                'email'         => $user->email ?? '-',
+                'nis'           => $siswa->nis ?? '-',
+                'jenis_kelamin' => $user->jenis_kelamin ?? '-',
+                'no_telp'       => $siswa->no_telp ?? '-',
+            ];
+        });
+
+        return response()->json([
+            'id'          => $kelas->id,
+            'tingkat'     => $kelas->tingkat,
+            'kelas'       => $kelas->kelas,
+            'tahun_ajaran'=> $kelas->tahun_ajaran,
+            'siswa_count' => $kelas->siswa_count,
+            'guru_count'  => $kelas->guru_count,
+            'students'    => $students,
+        ]);
+    }
+
     /**
      * Dipakai untuk dropdown di Create/Edit Siswa
      */

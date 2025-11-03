@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import SimplePagination from "@/Components/SimplePagination";
 
 interface MapelTableProps {
@@ -10,6 +10,7 @@ interface MapelTableProps {
   setSelectedMapel: (mapel: any) => void;
   setIsEditOpen: (value: boolean) => void;
   setDeleteConfirm: (value: number | null) => void;
+  onViewDetail: (id: number) => void;
 }
 
 const MapelTable: React.FC<MapelTableProps> = ({
@@ -19,6 +20,7 @@ const MapelTable: React.FC<MapelTableProps> = ({
   setSelectedMapel,
   setIsEditOpen,
   setDeleteConfirm,
+  onViewDetail,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -95,6 +97,13 @@ const MapelTable: React.FC<MapelTableProps> = ({
                   <td className="p-2">{mapel.nama_mapel}</td>
                   <td className="p-2">{mapel.gurus_count ?? 0}</td>
                   <td className="flex justify-center gap-2 p-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onViewDetail(mapel.id)}
+                    >
+                      <Eye className="h-4 w-4 text-gray-600" />
+                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
