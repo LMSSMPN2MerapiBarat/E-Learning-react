@@ -434,7 +434,7 @@ export default function DashboardOverview() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Nama Kelas</TableHead>
-                        <TableHead>Wali Kelas</TableHead>
+                        {/* <TableHead>Wali Kelas</TableHead> */}
                         <TableHead>Jumlah Pengajar</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -442,7 +442,7 @@ export default function DashboardOverview() {
                       {kelasPagination.data.map((k) => (
                         <TableRow key={k.id}>
                           <TableCell>{k.nama ?? "-"}</TableCell>
-                          <TableCell>{k.wali ?? "-"}</TableCell>
+                          {/* <TableCell>{k.wali ?? "-"}</TableCell> */}
                           <TableCell>{k.jumlah_pengajar ?? 0}</TableCell>
                         </TableRow>
                       ))}
@@ -457,7 +457,7 @@ export default function DashboardOverview() {
                       <div key={k.id} className="space-y-2 rounded-lg border bg-white p-4 shadow-sm">
                         <p className="text-base font-semibold">{k.nama ?? "-"}</p>
                         <div className="grid gap-1 text-sm">
-                          <p><span className="font-medium">Wali:</span> {k.wali ?? "-"}</p>
+                          {/* <p><span className="font-medium">Wali:</span> {k.wali ?? "-"}</p> */}
                           <p><span className="font-medium">Pengajar:</span> {k.jumlah_pengajar ?? 0}</p>
                         </div>
                       </div>
