@@ -29,6 +29,7 @@ export default function CreateQuiz({
     description: "",
     mata_pelajaran_id: null,
     duration: 30,
+    max_attempts: null,
     status: "draft",
     kelas_ids: [],
     questions: [],
@@ -130,6 +131,7 @@ export default function CreateQuiz({
         setData={setData}
         errors={errors}
         mapelOptions={mapelOptions}
+        attemptLimitError={errors.max_attempts}
       />
 
       <ClassSelector

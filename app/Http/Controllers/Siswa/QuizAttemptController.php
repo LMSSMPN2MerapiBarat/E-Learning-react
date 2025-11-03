@@ -32,6 +32,14 @@ class QuizAttemptController extends Controller
             abort(403, 'Anda tidak terdaftar pada kelas kuis ini.');
         }
 
+        $existingAttempts = $quiz->attempts()
+            ->where('siswa_id', $siswa->id)
+            ->count();
+
+        if ($quiz->max_attempts !== null && $existingAttempts >= $quiz->max_attempts) {
+            abort(403, 'Batas percobaan kuis telah tercapai.');
+        }
+
         $now = now();
         if (
             ($quiz->available_from && $now->lt($quiz->available_from)) ||
@@ -73,6 +81,11 @@ class QuizAttemptController extends Controller
                 ->filter()
                 ->values()
                 ->all(),
+            'maxAttempts' => $quiz->max_attempts,
+            'attemptsUsed' => $existingAttempts,
+            'remainingAttempts' => $quiz->max_attempts !== null
+                ? max($quiz->max_attempts - $existingAttempts, 0)
+                : null,
             'questions' => $quiz->questions
                 ->values()
                 ->map(function ($question) {
@@ -119,6 +132,16 @@ class QuizAttemptController extends Controller
         $kelasIds = $quiz->kelas->pluck('id');
         if ($kelasIds->isNotEmpty() && $siswa->kelas_id && !$kelasIds->contains($siswa->kelas_id)) {
             abort(403, 'Anda tidak terdaftar pada kelas kuis ini.');
+        }
+
+        $existingAttempts = $quiz->attempts()
+            ->where('siswa_id', $siswa->id)
+            ->count();
+
+        if ($quiz->max_attempts !== null && $existingAttempts >= $quiz->max_attempts) {
+            throw ValidationException::withMessages([
+                'quiz' => 'Batas percobaan kuis telah tercapai.',
+            ]);
         }
 
         $now = now();

@@ -21,6 +21,13 @@ export default function Quizzes() {
       toast.error("Kuis belum memiliki soal untuk dikerjakan.");
       return;
     }
+    if (quiz.maxAttempts !== undefined && quiz.maxAttempts !== null) {
+      const remaining = quiz.remainingAttempts ?? 0;
+      if (remaining <= 0) {
+        toast.error("Anda sudah menggunakan seluruh percobaan untuk kuis ini.");
+        return;
+      }
+    }
     if (quiz.isAvailable === false) {
       const now = Date.now();
       const isExpired =

@@ -15,6 +15,7 @@ class Quiz extends Model
         'judul',
         'deskripsi',
         'durasi',
+        'max_attempts',
         'status',
         'available_from',
         'available_until',
@@ -22,6 +23,7 @@ class Quiz extends Model
 
     protected $casts = [
         'durasi' => 'integer',
+        'max_attempts' => 'integer',
         'available_from' => 'datetime',
         'available_until' => 'datetime',
     ];

@@ -19,6 +19,7 @@ interface QuizMetadataFieldsProps {
   ) => void;
   errors: Record<string, string | undefined>;
   mapelOptions: Option[];
+  attemptLimitError?: string | undefined;
 }
 
 const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
@@ -26,6 +27,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
   setData,
   errors,
   mapelOptions,
+  attemptLimitError,
 }) => {
   const [schedulingEnabled, setSchedulingEnabled] = useState<boolean>(
     Boolean(data.available_from || data.available_until),
@@ -60,6 +62,37 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
         />
         {errors.duration && (
           <p className="text-xs text-red-500">{errors.duration}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label>Limit Percobaan</Label>
+        <Select
+          value={data.max_attempts !== null ? String(data.max_attempts) : "unlimited"}
+          onValueChange={(value) => {
+            if (value === "unlimited") {
+              setData("max_attempts", null);
+            } else {
+              setData("max_attempts", Number(value) as QuizBaseForm["max_attempts"]);
+            }
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Pilih batas percobaan" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="unlimited">Tanpa batas</SelectItem>
+            <SelectItem value="1">1 kali percobaan</SelectItem>
+            <SelectItem value="2">2 kali percobaan</SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-gray-500">
+          Batasi berapa kali siswa dapat mengerjakan kuis ini.
+        </p>
+        {(attemptLimitError ?? errors.max_attempts) && (
+          <p className="text-xs text-red-500">
+            {attemptLimitError ?? errors.max_attempts}
+          </p>
         )}
       </div>
 

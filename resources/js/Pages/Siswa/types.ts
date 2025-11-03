@@ -67,6 +67,9 @@ export interface QuizItem {
   availableUntil?: string | null;
   isAvailable?: boolean;
   latestAttempt?: QuizAttemptLite | null;
+  maxAttempts?: number | null;
+  attemptsUsed?: number;
+  remainingAttempts?: number | null;
 }
 
 export interface GradeItem {

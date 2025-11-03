@@ -34,6 +34,7 @@ class QuizController extends Controller
                     'judul'       => $quiz->judul,
                     'deskripsi'   => $quiz->deskripsi,
                     'durasi'      => $quiz->durasi,
+                    'max_attempts'=> $quiz->max_attempts,
                     'status'      => $quiz->status,
                     'mata_pelajaran_id' => $quiz->mata_pelajaran_id,
                     'mapel'       => $quiz->mataPelajaran ? [
@@ -100,6 +101,7 @@ class QuizController extends Controller
             'description'        => 'nullable|string',
             'mata_pelajaran_id'  => 'nullable|exists:mata_pelajarans,id',
             'duration'           => 'required|integer|min:1|max:600',
+            'max_attempts'       => 'nullable|integer|in:1,2',
             'status'             => 'required|in:draft,published',
             'available_from'     => 'nullable|date',
             'available_until'    => 'nullable|date|after:available_from',
@@ -125,6 +127,7 @@ class QuizController extends Controller
                 'judul'             => $validated['title'],
                 'deskripsi'         => $validated['description'] ?? null,
                 'durasi'            => $validated['duration'],
+                'max_attempts'      => $validated['max_attempts'] ?? null,
                 'status'            => $validated['status'],
                 'available_from'    => isset($validated['available_from'])
                     ? Carbon::parse($validated['available_from'])
@@ -171,6 +174,7 @@ class QuizController extends Controller
             'description'        => 'nullable|string',
             'mata_pelajaran_id'  => 'nullable|exists:mata_pelajarans,id',
             'duration'           => 'required|integer|min:1|max:600',
+            'max_attempts'       => 'nullable|integer|in:1,2',
             'status'             => 'required|in:draft,published',
             'available_from'     => 'nullable|date',
             'available_until'    => 'nullable|date|after:available_from',
@@ -195,6 +199,7 @@ class QuizController extends Controller
                 'judul'             => $validated['title'],
                 'deskripsi'         => $validated['description'] ?? null,
                 'durasi'            => $validated['duration'],
+                'max_attempts'      => $validated['max_attempts'] ?? null,
                 'status'            => $validated['status'],
                 'available_from'    => isset($validated['available_from'])
                     ? Carbon::parse($validated['available_from'])

@@ -80,6 +80,11 @@ const QuizList: React.FC<QuizListProps> = ({ quizzes, onEdit, onDelete }) => (
                     <Badge variant="outline">
                       {quiz.questions.length} Soal
                     </Badge>
+                    <Badge variant="outline">
+                      {quiz.max_attempts === null
+                        ? "Percobaan: Tak terbatas"
+                        : `Percobaan: ${quiz.max_attempts}x`}
+                    </Badge>
                     {quiz.created_at && (
                       <span>
                         Dibuat:{" "}

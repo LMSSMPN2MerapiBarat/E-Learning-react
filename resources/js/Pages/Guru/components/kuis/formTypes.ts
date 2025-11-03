@@ -17,6 +17,7 @@ export type QuizBaseForm = {
   description: string;
   mata_pelajaran_id: number | null;
   duration: number;
+  max_attempts: number | null;
   status: QuizStatus;
   kelas_ids: number[];
   questions: QuizQuestionForm[];
@@ -34,6 +35,7 @@ export interface QuizItem {
     nama: string;
   } | null;
   durasi: number;
+  max_attempts?: number | null;
   status: QuizStatus;
   kelas: { id: number; nama: string }[];
   kelas_ids?: number[];

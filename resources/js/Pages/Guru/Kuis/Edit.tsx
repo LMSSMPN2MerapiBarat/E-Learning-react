@@ -17,6 +17,7 @@ interface QuizData {
   deskripsi?: string | null;
   mata_pelajaran_id?: number | null;
   durasi: number;
+  max_attempts?: number | null;
   status: "draft" | "published";
   kelas_ids?: number[] | null;
   questions: QuizQuestionForm[];
@@ -86,6 +87,7 @@ export default function EditQuiz({
     description: quiz.deskripsi ?? "",
     mata_pelajaran_id: quiz.mata_pelajaran_id ?? null,
     duration: quiz.durasi,
+    max_attempts: quiz.max_attempts ?? null,
     status: quiz.status,
     kelas_ids: quiz.kelas_ids ?? [],
     questions: normalizeQuestions(quiz.questions),
@@ -102,6 +104,7 @@ export default function EditQuiz({
       description: quiz.deskripsi ?? "",
       mata_pelajaran_id: quiz.mata_pelajaran_id ?? null,
       duration: quiz.durasi,
+      max_attempts: quiz.max_attempts ?? null,
       status: quiz.status,
       kelas_ids: quiz.kelas_ids ?? [],
       questions: normalizeQuestions(quiz.questions),
@@ -207,6 +210,7 @@ export default function EditQuiz({
         setData={setData}
         errors={errors}
         mapelOptions={mapelOptions}
+        attemptLimitError={errors.max_attempts as string | undefined}
       />
 
       <ClassSelector

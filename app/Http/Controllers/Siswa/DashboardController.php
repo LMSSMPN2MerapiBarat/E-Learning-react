@@ -151,17 +151,30 @@ class DashboardController extends Controller
             ->latest('created_at')
             ->get();
 
-        $latestAttemptPerQuiz = $attempts
-            ->groupBy('quiz_id')
+        $attemptsGrouped = $attempts->groupBy('quiz_id');
+
+        $latestAttemptPerQuiz = $attemptsGrouped
             ->map(fn($group) => $group->sortByDesc(fn($attempt) => $attempt->submitted_at ?? $attempt->created_at)->first());
+
+        $attemptCounts = $attemptsGrouped
+            ->map->count();
 
         $now = now();
 
         $quizzes = $quizCollection
-            ->map(function ($quiz) use ($formatKelasLabel, $latestAttemptPerQuiz, $now) {
+            ->map(function ($quiz) use ($formatKelasLabel, $latestAttemptPerQuiz, $attemptCounts, $now) {
                 $latestAttempt = $latestAttemptPerQuiz->get($quiz->id);
-                $isAvailable = ($quiz->available_from === null || $quiz->available_from->lte($now))
+                $attemptCount = $attemptCounts->get($quiz->id, 0);
+
+                $withinSchedule = ($quiz->available_from === null || $quiz->available_from->lte($now))
                     && ($quiz->available_until === null || $quiz->available_until->gte($now));
+
+                $attemptsRemaining = $quiz->max_attempts !== null
+                    ? max($quiz->max_attempts - $attemptCount, 0)
+                    : null;
+
+                $isAvailable = $withinSchedule
+                    && ($quiz->max_attempts === null || $attemptsRemaining > 0);
 
                 return [
                     'id' => $quiz->id,
@@ -205,6 +218,9 @@ class DashboardController extends Controller
                     'availableFrom' => $quiz->available_from?->toIso8601String(),
                     'availableUntil' => $quiz->available_until?->toIso8601String(),
                     'isAvailable' => $isAvailable,
+                    'maxAttempts' => $quiz->max_attempts,
+                    'attemptsUsed' => $attemptCount,
+                    'remainingAttempts' => $attemptsRemaining,
                     'latestAttempt' => $latestAttempt ? [
                         'id' => $latestAttempt->id,
                         'score' => $latestAttempt->score,

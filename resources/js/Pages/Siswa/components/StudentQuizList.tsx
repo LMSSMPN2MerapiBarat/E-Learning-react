@@ -64,6 +64,13 @@ export default function StudentQuizList({
               quiz.availableUntil !== undefined &&
               quiz.availableUntil !== null &&
               new Date(quiz.availableUntil).getTime() < now;
+            const attemptsLimited =
+              quiz.maxAttempts !== undefined && quiz.maxAttempts !== null;
+            const attemptsUsed = quiz.attemptsUsed ?? 0;
+            const remainingAttempts =
+              quiz.remainingAttempts ?? (attemptsLimited ? 0 : null);
+            const limitReached =
+              attemptsLimited && (remainingAttempts ?? 0) <= 0;
 
             return (
               <Card
@@ -121,12 +128,15 @@ export default function StudentQuizList({
                   onClick={() => onStartQuiz(quiz)}
                   disabled={
                     quiz.questions.length === 0 ||
-                    (quiz.isAvailable !== undefined && !quiz.isAvailable)
+                    (quiz.isAvailable !== undefined && !quiz.isAvailable) ||
+                    limitReached
                   }
                 >
                   <CheckCircle className="mr-2 h-4 w-4" />
                   {quiz.questions.length === 0
                     ? "Belum ada soal"
+                    : limitReached
+                    ? "Batas percobaan habis"
                     : quiz.isAvailable === false && isExpired
                     ? "Sudah berakhir"
                     : quiz.isAvailable === false
@@ -135,6 +145,19 @@ export default function StudentQuizList({
                     ? "Kerjakan Lagi"
                     : "Mulai Kuis"}
                 </Button>
+                {attemptsLimited && (
+                  <div
+                    className={`rounded-lg border p-3 text-xs ${
+                      limitReached
+                        ? "border-red-200 bg-red-50 text-red-700"
+                        : "border-blue-200 bg-blue-50 text-blue-700"
+                    }`}
+                  >
+                    {limitReached
+                      ? "Anda telah menggunakan seluruh percobaan untuk kuis ini."
+                      : `Sisa percobaan: ${remainingAttempts} dari ${quiz.maxAttempts} percobaan.`}
+                  </div>
+                )}
                 {scheduleLabel && (
                   <div className="rounded-lg border border-blue-100 bg-blue-50 p-3 text-xs text-blue-700">
                     <p className="flex items-center gap-2">
