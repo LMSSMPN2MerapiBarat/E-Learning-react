@@ -1,5 +1,5 @@
-﻿import React, { useRef, useState } from "react";
-import { Upload, Download, Plus, Trash2 } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Upload, Download, Plus, Trash, Trash2 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
+
 interface Props {
   selectedIds: number[];
   setIsAddOpen: (v: boolean) => void;
@@ -20,19 +21,25 @@ interface Props {
   setIsLoading: (v: boolean) => void;
   reloadStudents: () => void;
   setSelectedIds: (v: number[]) => void;
+  hasStudents: boolean;
 }
+
 export default function SiswaHeader({
   selectedIds,
   setIsAddOpen,
   setIsDeleteDialogOpen,
   setIsLoading,
   reloadStudents,
+  setSelectedIds,
+  hasStudents,
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [isDeleteAllOpen, setIsDeleteAllOpen] = useState(false);
+  const [isClearingAll, setIsClearingAll] = useState(false);
 
   const resetImportState = () => {
     setSelectedFile(null);
@@ -60,7 +67,7 @@ export default function SiswaHeader({
     setIsLoading(true);
     setIsConfirmOpen(false);
 
-    const toastId = toast.loading("📤 Mengimpor data siswa...");
+    const toastId = toast.loading("?? Mengimpor data siswa...");
     const formData = new FormData();
     formData.append("file", fileToUpload);
     formData.append("role", "siswa");
@@ -73,13 +80,13 @@ export default function SiswaHeader({
           setErrorMessage(flashError);
           toast.error(flashError, { id: toastId });
         } else {
-          toast.success("✅ Data siswa berhasil diimpor!", { id: toastId });
+          toast.success("? Data siswa berhasil diimpor!", { id: toastId });
           reloadStudents();
         }
       },
       onError: (errors) => {
         const message =
-          (errors && (errors.file || errors.role)) || "❌ Gagal mengimpor data siswa.";
+          (errors && (errors.file || errors.role)) || "? Gagal mengimpor data siswa.";
         setErrorMessage(message);
         toast.error(message, { id: toastId });
       },
@@ -102,12 +109,41 @@ export default function SiswaHeader({
 
   const handleExport = () => {
     setIsLoading(true);
-    const toastId = toast.loading("📤 Mengekspor data siswa...");
+    const toastId = toast.loading("?? Mengekspor data siswa...");
     window.location.href = "/admin/users/export/siswa";
     setTimeout(() => {
-      toast.success("✅ File berhasil diekspor!", { id: toastId });
+      toast.success("? File berhasil diekspor!", { id: toastId });
       setIsLoading(false);
     }, 1500);
+  };
+
+  const handleDeleteAll = () => {
+    setIsClearingAll(true);
+    setIsLoading(true);
+
+    router.delete("/admin/siswa/delete-all", {
+      preserveScroll: true,
+      onSuccess: (page) => {
+        const flash = (page.props as any)?.flash ?? {};
+        if (flash.success) {
+          toast.success(flash.success);
+        } else if (flash.info) {
+          toast.info(flash.info);
+        } else {
+          toast.success("Semua data siswa berhasil dihapus.");
+        }
+        setSelectedIds([]);
+        reloadStudents();
+        setIsDeleteAllOpen(false);
+      },
+      onError: () => {
+        toast.error("Gagal menghapus semua data siswa.");
+      },
+      onFinish: () => {
+        setTimeout(() => setIsLoading(false), 400);
+        setIsClearingAll(false);
+      },
+    });
   };
 
   return (
@@ -126,7 +162,7 @@ export default function SiswaHeader({
               type="file"
               accept=".xls,.xlsx"
               onChange={handleSelectFile}
-              className="absolute inset-0 opacity-0 cursor-pointer"
+              className="absolute inset-0 cursor-pointer opacity-0"
             />
           </label>
         </Button>
@@ -137,6 +173,17 @@ export default function SiswaHeader({
         >
           <Download className="w-4 h-4" /> Export
         </Button>
+        {hasStudents && (
+          <Button
+            variant="destructive"
+            onClick={() => setIsDeleteAllOpen(true)}
+            className="flex items-center gap-2 w-full sm:w-auto"
+            disabled={isClearingAll}
+          >
+            <Trash className="w-4 h-4" />
+            Hapus Semua
+          </Button>
+        )}
         {selectedIds.length > 0 && (
           <Button
             variant="destructive"
@@ -151,6 +198,7 @@ export default function SiswaHeader({
           <Plus className="w-4 h-4 mr-2" /> Tambah
         </Button>
       </div>
+
       <AlertDialog
         open={isConfirmOpen}
         onOpenChange={(open) => {
@@ -179,6 +227,39 @@ export default function SiswaHeader({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog
+        open={isDeleteAllOpen}
+        onOpenChange={(open) => {
+          if (!isClearingAll) {
+            setIsDeleteAllOpen(open);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Semua Data Siswa</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini akan menghapus seluruh data siswa beserta akun
+              penggunanya. Langkah ini tidak dapat dibatalkan. Apakah Anda yakin
+              ingin melanjutkan?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isClearingAll}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAll}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={isClearingAll}
+            >
+              {isClearingAll ? "Menghapus..." : "Ya, Hapus Semua"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog
         open={!!errorMessage}
         onOpenChange={(open) => {
@@ -204,4 +285,3 @@ export default function SiswaHeader({
     </>
   );
 }
-

@@ -62,6 +62,7 @@ Route::middleware(['auth', 'role:admin'])
         |--------------------------------------------------------------------------
         */
         Route::get('/siswa/Siswa', [AdminSiswaController::class, 'index'])->name('siswa.index');
+        Route::delete('/siswa/delete-all', [AdminSiswaController::class, 'destroyAll'])->name('siswa.delete-all');
 
         /*
         |--------------------------------------------------------------------------
@@ -88,6 +89,7 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/Kelas', [AdminKelasController::class, 'index'])->name('index');
             Route::get('/Create', [AdminKelasController::class, 'create'])->name('create');
             Route::post('/', [AdminKelasController::class, 'store'])->name('store');
+            Route::get('/export', [AdminKelasController::class, 'export'])->name('export');
             Route::delete('/bulk-delete', [AdminKelasController::class, 'bulkDelete'])->name('bulk-delete');
             Route::get('/{id}/Edit', [AdminKelasController::class, 'edit'])->whereNumber('id')->name('edit');
             Route::put('/{id}', [AdminKelasController::class, 'update'])->whereNumber('id')->name('update');

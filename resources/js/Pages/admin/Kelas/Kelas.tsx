@@ -44,10 +44,15 @@ export default function KelasPage() {
   };
 
   const handleExport = () => {
-    const toastId = toast.loading("📦 Mengekspor data kelas...");
-    window.location.href = "/admin/kelas/export";
+    const toastId = toast.loading("Mengekspor data kelas...");
+    const exportUrl =
+      typeof route === "function"
+        ? route("admin.kelas.export")
+        : "/admin/kelas/export";
+
+    window.location.href = exportUrl;
     setTimeout(() => {
-      toast.success("✅ File kelas berhasil diekspor!", { id: toastId });
+      toast.success("File kelas berhasil diekspor!", { id: toastId });
     }, 1000);
   };
 

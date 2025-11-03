@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminSiswaController extends Controller
@@ -70,5 +71,39 @@ class AdminSiswaController extends Controller
         }
 
         return back()->with('success', count($ids) . ' siswa berhasil dihapus beserta akunnya.');
+    }
+
+    /**
+     * Hapus seluruh data siswa dan akunnya.
+     */
+    public function destroyAll()
+    {
+        $total = Siswa::count();
+
+        if ($total === 0) {
+            return back()->with('info', 'Tidak ada data siswa yang perlu dihapus.');
+        }
+
+        $deleted = 0;
+
+        DB::transaction(function () use (&$deleted) {
+            Siswa::query()
+                ->with('user')
+                ->chunkById(200, function ($chunk) use (&$deleted) {
+                    foreach ($chunk as $siswa) {
+                        if ($siswa->user) {
+                            $siswa->user->delete();
+                        }
+
+                        if ($siswa->exists) {
+                            $siswa->delete();
+                        }
+
+                        $deleted++;
+                    }
+                });
+        });
+
+        return back()->with('success', $deleted . ' siswa beserta akun terkait berhasil dihapus.');
     }
 }

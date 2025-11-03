@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\KelasExport;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminKelasController extends Controller
 {
@@ -85,6 +87,13 @@ class AdminKelasController extends Controller
         Kelas::whereIn('id', $ids)->delete();
 
         return redirect()->back()->with('success', 'Beberapa kelas berhasil dihapus.');
+    }
+
+    public function export()
+    {
+        $fileName = 'data_kelas_' . now()->format('Y_m_d_His') . '.xlsx';
+
+        return Excel::download(new KelasExport(), $fileName);
     }
 
     /**

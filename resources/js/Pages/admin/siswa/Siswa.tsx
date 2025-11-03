@@ -99,6 +99,7 @@ export default function SiswaPage() {
               setIsLoading,
               reloadStudents,
               setSelectedIds,
+              hasStudents: studentsList.length > 0,
             }}
           />
         </CardHeader>

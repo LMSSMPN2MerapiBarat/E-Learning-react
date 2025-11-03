@@ -357,13 +357,32 @@ class AdminUserController extends Controller
         ]);
 
         try {
+            $summary = null;
+
             if ($request->role === 'guru') {
-                Excel::import(new GuruImport, $request->file('file'));
+                $importer = new GuruImport();
+                Excel::import($importer, $request->file('file'));
+                $summary = $importer->summary();
             } elseif ($request->role === 'siswa') {
-                Excel::import(new SiswaImport, $request->file('file'));
+                $importer = new SiswaImport();
+                Excel::import($importer, $request->file('file'));
+                $summary = $importer->summary();
             }
 
-            return back()->with('success', '✅ Data ' . ucfirst($request->role) . ' berhasil diimpor!');
+            $message = '?o. Data ' . ucfirst($request->role) . ' berhasil diimpor!';
+            if ($summary) {
+                $message .= sprintf(
+                    ' %d baris diproses, %d berhasil, %d dilewati.',
+                    $summary['processed'] ?? 0,
+                    $summary['created'] ?? 0,
+                    $summary['skipped'] ?? 0
+                );
+            }
+
+            return back()->with([
+                'success' => $message,
+                'import_summary' => $summary,
+            ]);
         } catch (ValidationException $e) {
             $firstError = collect($e->errors())->flatten()->first();
             return back()->with('error', '❌ Gagal mengimpor: ' . ($firstError ?? $e->getMessage()));
