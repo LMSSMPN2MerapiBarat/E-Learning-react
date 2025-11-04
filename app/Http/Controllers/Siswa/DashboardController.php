@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClassSchedule;
 use App\Models\Guru;
 use App\Models\Materi;
 use App\Models\Quiz;
@@ -81,6 +82,18 @@ class DashboardController extends Controller
         ]));
     }
 
+    public function schedule()
+    {
+        $data = $this->composeStudentData();
+
+        return Inertia::render('Siswa/Schedule', Arr::only($data, [
+            'student',
+            'hasClass',
+            'schedule',
+            'notifications',
+        ]));
+    }
+
     /**
      * Kumpulkan data dasar siswa yang dibutuhkan di seluruh halaman.
      */
@@ -128,6 +141,31 @@ class DashboardController extends Controller
 
         $materiCollection = $materiQuery->latest()->get();
 
+        $classScheduleCollection = $this->fetchClassSchedules($kelas);
+        $scheduleLookup = $this->buildScheduleLookup($kelas, $classScheduleCollection);
+
+        $scheduleItems = $classScheduleCollection
+            ->map(function ($schedule) use ($formatKelasLabel) {
+                return [
+                    'id' => $schedule->id,
+                    'day' => $schedule->day,
+                    'startTime' => substr((string) $schedule->start_time, 0, 5),
+                    'endTime' => substr((string) $schedule->end_time, 0, 5),
+                    'subject' => $schedule->mataPelajaran?->nama_mapel,
+                    'subjectId' => $schedule->mata_pelajaran_id,
+                    'teacher' => $schedule->guru?->user?->name,
+                    'teacherId' => $schedule->guru_id,
+                    'className' => $formatKelasLabel($schedule->kelas),
+                    'room' => $schedule->room,
+                ];
+            })
+            ->values();
+
+        $scheduleByDay = $scheduleItems
+            ->groupBy(fn($item) => $item['day'] ?? '')
+            ->map(fn($items) => $items->values()->all())
+            ->all();
+
         $recentMaterialCount = $materiCollection
             ->filter(
                 fn($materi) => $materi->created_at
@@ -136,8 +174,10 @@ class DashboardController extends Controller
             ->count();
 
         $materials = $materiCollection
-            ->map(function ($materi) use ($formatKelasLabel) {
+            ->map(function ($materi) use ($formatKelasLabel, $scheduleLookup) {
                 $youtubeEmbedUrl = $this->buildYoutubeEmbedUrl($materi->youtube_url);
+                $scheduleSlots = $this->extractScheduleSlots($scheduleLookup, $materi->mata_pelajaran_id, $materi->guru_id);
+
                 return [
                     'id' => $materi->id,
                     'title' => $materi->judul,
@@ -158,6 +198,7 @@ class DashboardController extends Controller
                     'videoMime' => $materi->video_mime,
                     'videoSize' => $materi->video_size,
                     'createdAt' => $materi->created_at?->toIso8601String(),
+                    'scheduleSlots' => $scheduleSlots,
                 ];
             })
             ->values();
@@ -404,8 +445,8 @@ class DashboardController extends Controller
                     ->get();
 
                 $classSubjects = $guruModels
-                    ->flatMap(function (Guru $guru) use ($materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel) {
-                        return $guru->mataPelajaran->map(function ($subject) use ($guru, $materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel) {
+                    ->flatMap(function (Guru $guru) use ($materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel, $scheduleLookup) {
+                        return $guru->mataPelajaran->map(function ($subject) use ($guru, $materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel, $scheduleLookup) {
                             $subjectMaterials = $materialsBySubject
                                 ->get($subject->id, collect())
                                 ->values()
@@ -417,6 +458,8 @@ class DashboardController extends Controller
                                 ->all();
 
                             $sampleMaterial = $subjectMaterials[0] ?? null;
+                            $subjectScheduleSlots = $this->extractScheduleSlots($scheduleLookup, $subject->id, $guru->id);
+
                             return [
                                 'id' => $subject->id,
                                 'name' => $subject->nama_mapel,
@@ -425,7 +468,8 @@ class DashboardController extends Controller
                                 'teacherId' => $guru->id,
                                 'className' => $formatKelasLabel($kelas),
                                 'description' => $sampleMaterial['description'] ?? null,
-                                'schedule' => null,
+                                'schedule' => $this->summarizeScheduleSlots($subjectScheduleSlots),
+                                'scheduleSlots' => $subjectScheduleSlots,
                                 'materialCount' => count($subjectMaterials),
                                 'quizCount' => count($subjectQuizzes),
                                 'materials' => $subjectMaterials,
@@ -455,6 +499,11 @@ class DashboardController extends Controller
             'gradeSubjects' => $gradeSubjects,
             'gradeSummary' => $gradeSummary,
             'classSubjects' => $classSubjects->all(),
+            'schedule' => [
+                'days' => ClassSchedule::DAY_OPTIONS,
+                'items' => $scheduleItems->all(),
+                'byDay' => $scheduleByDay,
+            ],
             'notifications' => [
                 'items' => $notificationItems->all(),
                 'unreadCount' => $unreadNotificationCount,
@@ -462,6 +511,82 @@ class DashboardController extends Controller
                 'recentQuizCount' => $recentQuizCount,
             ],
         ];
+    }
+
+    protected function fetchClassSchedules($kelas)
+    {
+        if (!$kelas) {
+            return collect();
+        }
+
+        $dayOrder = ClassSchedule::DAY_OPTIONS;
+
+        return ClassSchedule::with(['guru.user', 'mataPelajaran', 'kelas'])
+            ->where('kelas_id', $kelas->id)
+            ->orderByRaw("FIELD(day, '" . implode("','", $dayOrder) . "')")
+            ->orderBy('start_time')
+            ->get();
+    }
+
+    protected function buildScheduleLookup($kelas, $scheduleCollection = null)
+    {
+        if (!$kelas) {
+            return collect();
+        }
+
+        $schedules = $scheduleCollection ?? $this->fetchClassSchedules($kelas);
+
+        if ($schedules->isEmpty()) {
+            return collect();
+        }
+
+        return $schedules
+            ->groupBy('mata_pelajaran_id')
+            ->map(function ($items) {
+                return $items->map(function ($schedule) {
+                    return [
+                        'id' => $schedule->id,
+                        'day' => $schedule->day,
+                        'startTime' => substr((string) $schedule->start_time, 0, 5),
+                        'endTime' => substr((string) $schedule->end_time, 0, 5),
+                        'room' => $schedule->room,
+                        'teacherName' => $schedule->guru?->user?->name,
+                        'teacherId' => $schedule->guru_id,
+                    ];
+                });
+            });
+    }
+
+    protected function extractScheduleSlots($scheduleLookup, ?int $subjectId, ?int $guruId = null): array
+    {
+        if (!$subjectId) {
+            return [];
+        }
+
+        return $scheduleLookup
+            ->get($subjectId, collect())
+            ->filter(function ($slot) use ($guruId) {
+                return $guruId ? ($slot['teacherId'] ?? null) === $guruId : true;
+            })
+            ->map(function ($slot) {
+                return Arr::except($slot, ['teacherId']);
+            })
+            ->values()
+            ->all();
+    }
+
+    protected function summarizeScheduleSlots(array $slots): ?string
+    {
+        if (empty($slots)) {
+            return null;
+        }
+
+        return collect($slots)
+            ->map(function ($slot) {
+                $base = sprintf('%s %s-%s', $slot['day'], $slot['startTime'], $slot['endTime']);
+                return !empty($slot['room']) ? $base . ' (' . $slot['room'] . ')' : $base;
+            })
+            ->implode(', ');
     }
 
     private function buildYoutubeEmbedUrl(?string $url): ?string

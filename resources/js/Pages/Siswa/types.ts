@@ -37,6 +37,35 @@ export interface StudentNotificationsPayload {
   recentQuizCount?: number;
 }
 
+export interface ScheduleSlot {
+  id: number;
+  day: string;
+  startTime: string;
+  endTime: string;
+  room?: string | null;
+  teacherName?: string | null;
+  teacherId?: number | null;
+}
+
+export interface StudentScheduleItem {
+  id: number;
+  day: string;
+  startTime: string;
+  endTime: string;
+  subject?: string | null;
+  subjectId?: number | null;
+  teacher?: string | null;
+  teacherId?: number | null;
+  className?: string | null;
+  room?: string | null;
+}
+
+export interface StudentSchedulePayload {
+  days: string[];
+  items: StudentScheduleItem[];
+  byDay: Record<string, StudentScheduleItem[]>;
+}
+
 export interface MaterialItem {
   id: number;
   title: string;
@@ -57,6 +86,7 @@ export interface MaterialItem {
   videoMime?: string | null;
   videoSize?: number | null;
   createdAt?: string | null;
+  scheduleSlots?: ScheduleSlot[];
 }
 
 export interface QuizQuestionOption {
@@ -112,6 +142,7 @@ export interface StudentSubject {
   className?: string | null;
   description?: string | null;
   schedule?: string | null;
+  scheduleSlots?: ScheduleSlot[];
   materialCount: number;
   quizCount: number;
   materials: MaterialItem[];
@@ -152,5 +183,6 @@ export interface SiswaPageProps extends InertiaPageProps {
   gradeSubjects?: string[];
   gradeSummary?: GradeSummary;
   classSubjects?: StudentSubject[];
+  schedule?: StudentSchedulePayload;
   notifications?: StudentNotificationsPayload;
 }

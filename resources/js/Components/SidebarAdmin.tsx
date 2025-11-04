@@ -8,6 +8,7 @@ import {
   LibraryBig,
   LogOut,
   X,
+  CalendarClock,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -24,6 +25,7 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
     { name: "Kelola Mata Pelajaran", icon: BookOpen, href: "/admin/mapel/Mapel" },
     { name: "Kelola Siswa", icon: Users, href: "/admin/siswa/Siswa" },
     { name: "Kelola Kelas", icon: LibraryBig, href: "/admin/kelas/Kelas" },
+    { name: "Kelola Jadwal Kelas", icon: CalendarClock, href: "/admin/jadwal-kelas/Jadwal" },
   ];
 
   const handleLogout = () => {

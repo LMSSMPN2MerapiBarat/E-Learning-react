@@ -3,6 +3,7 @@ import { Link, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
 import {
   BookOpen,
+  CalendarDays,
   ClipboardList,
   Home,
   Layers,
@@ -18,7 +19,13 @@ interface StudentLayoutProps {
   subtitle?: string;
 }
 
-type StudentNavKey = "dashboard" | "materials" | "subjects" | "quizzes" | "grades";
+type StudentNavKey =
+  | "dashboard"
+  | "materials"
+  | "subjects"
+  | "schedule"
+  | "quizzes"
+  | "grades";
 
 const NAV_ITEMS: Array<{
   key: StudentNavKey;
@@ -43,6 +50,12 @@ const NAV_ITEMS: Array<{
     label: "Materi",
     routeName: "siswa.materials",
     icon: BookOpen,
+  },
+  {
+    key: "schedule",
+    label: "Jadwal",
+    routeName: "siswa.schedule",
+    icon: CalendarDays,
   },
   
   {
@@ -120,6 +133,7 @@ export default function StudentLayout({
     const component = page.component.toLowerCase();
     if (component.includes("siswa/grades")) return "grades";
     if (component.includes("siswa/subjects")) return "subjects";
+    if (component.includes("siswa/schedule")) return "schedule";
     if (component.includes("siswa/quizzes")) return "quizzes";
     if (component.includes("siswa/materials")) return "materials";
 
@@ -132,6 +146,7 @@ export default function StudentLayout({
     dashboard: "/siswa/dashboard",
     materials: "/siswa/materi",
     subjects: "/siswa/mata-pelajaran",
+    schedule: "/siswa/jadwal",
     quizzes: "/siswa/kuis",
     grades: "/siswa/nilai",
   };

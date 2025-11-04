@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminKelasController;
 use App\Http\Controllers\AdminMapelController;
 use App\Http\Controllers\AdminGuruController;
 use App\Http\Controllers\AdminSiswaController;
+use App\Http\Controllers\AdminClassScheduleController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\MateriController as GuruMateriController;
 use App\Http\Controllers\Guru\QuizController as GuruQuizController;
@@ -124,6 +125,26 @@ Route::middleware(['auth', 'role:admin'])
 
         /*
         |--------------------------------------------------------------------------
+        | KELOLA JADWAL KELAS
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('jadwal-kelas')->name('jadwal-kelas.')->group(function () {
+            Route::get('/Jadwal', [AdminClassScheduleController::class, 'index'])->name('index');
+            Route::get('/Create', [AdminClassScheduleController::class, 'create'])->name('create');
+            Route::post('/', [AdminClassScheduleController::class, 'store'])->name('store');
+            Route::get('/{schedule}/Edit', [AdminClassScheduleController::class, 'edit'])
+                ->whereNumber('schedule')
+                ->name('edit');
+            Route::put('/{schedule}', [AdminClassScheduleController::class, 'update'])
+                ->whereNumber('schedule')
+                ->name('update');
+            Route::delete('/{schedule}', [AdminClassScheduleController::class, 'destroy'])
+                ->whereNumber('schedule')
+                ->name('destroy');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
         | USER MANAGEMENT (Import / Export / Bulk Delete)
         |--------------------------------------------------------------------------
         */
@@ -181,6 +202,7 @@ Route::middleware(['auth', 'role:siswa'])
         Route::get('/dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
         Route::get('/materi', [SiswaDashboardController::class, 'materials'])->name('materials');
         Route::get('/kuis', [SiswaDashboardController::class, 'quizzes'])->name('quizzes');
+        Route::get('/jadwal', [SiswaDashboardController::class, 'schedule'])->name('schedule');
         Route::get('/quizzes/{quiz}', [SiswaQuizAttemptController::class, 'show'])
             ->whereNumber('quiz')
             ->name('quizzes.show');

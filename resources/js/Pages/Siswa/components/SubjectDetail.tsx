@@ -16,6 +16,7 @@ import {
   PlayCircle,
   User,
   Youtube,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { Card, CardContent } from "@/Components/ui/card";
@@ -45,6 +46,8 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
   }, [subject.materials]);
 
   const formattedQuizzes = useMemo(() => subject.quizzes, [subject.quizzes]);
+  const scheduleSlots = subject.scheduleSlots ?? [];
+  const hasScheduleSlots = scheduleSlots.length > 0;
 
   return (
     <div className="space-y-6">
@@ -115,6 +118,42 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                     {subject.quizCount} Kuis
                   </Badge>
                 </div>
+                {hasScheduleSlots && (
+                  <div className="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
+                    <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                      <Calendar className="h-3 w-3" />
+                      Jadwal Pelajaran
+                    </p>
+                    <div className="mt-3 grid gap-3 md:grid-cols-2">
+                      {scheduleSlots.map((slot) => (
+                        <div
+                          key={`${slot.id}-${slot.day}-${slot.startTime}`}
+                          className="rounded-xl bg-white/70 p-3 text-xs text-indigo-900 shadow-sm"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold">{slot.day}</span>
+                            {slot.room && (
+                              <span className="flex items-center gap-1 text-[11px] text-indigo-600">
+                                <MapPin className="h-3 w-3" />
+                                {slot.room}
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-1 flex items-center gap-2">
+                            <Clock className="h-3 w-3" />
+                            {slot.startTime} - {slot.endTime}
+                          </div>
+                          {slot.teacherName && (
+                            <div className="mt-1 flex items-center gap-2">
+                              <User className="h-3 w-3" />
+                              {slot.teacherName}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
@@ -218,6 +257,41 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                                   )}
                                 </div>
                               )}
+
+                              {material.scheduleSlots?.length ? (
+                                <div className="rounded-lg border border-indigo-100 bg-indigo-50/70 p-3 text-xs text-indigo-900">
+                                  <div className="flex items-center gap-2 font-semibold uppercase tracking-wide text-indigo-600">
+                                    <Calendar className="h-3 w-3" />
+                                    Jadwal Kelas
+                                  </div>
+                                  <div className="mt-2 space-y-1">
+                                    {material.scheduleSlots.map((slot) => (
+                                      <div
+                                        key={`${material.id}-${slot.id}-${slot.startTime}`}
+                                        className="flex flex-wrap items-center gap-3"
+                                      >
+                                        <span className="font-semibold">{slot.day}</span>
+                                        <span className="flex items-center gap-1">
+                                          <Clock className="h-3 w-3" />
+                                          {slot.startTime} - {slot.endTime}
+                                        </span>
+                                        {slot.room && (
+                                          <span className="flex items-center gap-1">
+                                            <MapPin className="h-3 w-3" />
+                                            {slot.room}
+                                          </span>
+                                        )}
+                                        {slot.teacherName && (
+                                          <span className="flex items-center gap-1">
+                                            <User className="h-3 w-3" />
+                                            {slot.teacherName}
+                                          </span>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ) : null}
 
                               <div className="mt-4 flex flex-wrap gap-2">
                                 {previewHref && (

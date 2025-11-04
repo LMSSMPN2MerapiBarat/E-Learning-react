@@ -25,6 +25,8 @@ import {
   Calendar,
   PlayCircle,
   Youtube,
+  Clock,
+  MapPin,
 } from "lucide-react";
 import type { MaterialItem } from "../types";
 
@@ -191,6 +193,8 @@ export default function StudentMaterialBrowser({
               const hasDocumentLinks = Boolean(previewHref || downloadHref);
               const hasVideoFile = Boolean(material.videoUrl);
               const hasYoutube = Boolean(material.youtubeEmbedUrl);
+              const scheduleSlots = material.scheduleSlots ?? [];
+              const hasScheduleSlots = scheduleSlots.length > 0;
 
               return (
                 <Card
@@ -231,6 +235,41 @@ export default function StudentMaterialBrowser({
                           <source src={material.videoUrl} />
                           Browser Anda tidak mendukung pemutaran video.
                         </video>
+                      )}
+
+                      {hasScheduleSlots && (
+                        <div className="rounded-lg border border-indigo-100 bg-indigo-50/70 p-3 text-indigo-900">
+                          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                            <Calendar className="h-3 w-3" />
+                            Jadwal Mata Pelajaran
+                          </div>
+                          <div className="mt-2 space-y-1 text-xs">
+                            {scheduleSlots.map((slot) => (
+                              <div
+                                key={`${slot.id}-${slot.day}-${slot.startTime}`}
+                                className="flex flex-wrap items-center gap-3"
+                              >
+                                <span className="font-semibold">{slot.day}</span>
+                                <span className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  {slot.startTime} - {slot.endTime}
+                                </span>
+                                {slot.room && (
+                                  <span className="flex items-center gap-1">
+                                    <MapPin className="h-3 w-3" />
+                                    {slot.room}
+                                  </span>
+                                )}
+                                {slot.teacherName && (
+                                  <span className="flex items-center gap-1">
+                                    <User className="h-3 w-3" />
+                                    {slot.teacherName}
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       )}
 
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
