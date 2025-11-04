@@ -28,6 +28,7 @@ class DashboardController extends Controller
             'hasClass',
             'materials',
             'materialSubjects',
+            'notifications',
         ]));
     }
 
@@ -40,6 +41,7 @@ class DashboardController extends Controller
             'hasClass',
             'quizzes',
             'quizSubjects',
+            'notifications',
         ]));
     }
 
@@ -53,6 +55,7 @@ class DashboardController extends Controller
             'grades',
             'gradeSubjects',
             'gradeSummary',
+            'notifications',
         ]));
     }
 
@@ -97,12 +100,16 @@ class DashboardController extends Controller
             $materiQuery->whereNull('kelas_id');
         }
 
+        $now = now();
+        $notificationWindowDays = 7;
+        $notificationCutoff = $now->copy()->subDays($notificationWindowDays);
+
         $materiCollection = $materiQuery->latest()->get();
 
         $recentMaterialCount = $materiCollection
             ->filter(
                 fn($materi) => $materi->created_at
-                    && $materi->created_at->greaterThanOrEqualTo(now()->subDays(7))
+                    && $materi->created_at->greaterThanOrEqualTo($notificationCutoff)
             )
             ->count();
 
@@ -151,6 +158,13 @@ class DashboardController extends Controller
 
         $quizCollection = $quizQuery->latest()->get();
 
+        $recentQuizCount = $quizCollection
+            ->filter(
+                fn($quiz) => $quiz->created_at
+                    && $quiz->created_at->greaterThanOrEqualTo($notificationCutoff)
+            )
+            ->count();
+
         $attempts = QuizAttempt::with(['quiz.mataPelajaran'])
             ->where('siswa_id', $siswa->id)
             ->latest('submitted_at')
@@ -164,8 +178,6 @@ class DashboardController extends Controller
 
         $attemptCounts = $attemptsGrouped
             ->map->count();
-
-        $now = now();
 
         $quizzes = $quizCollection
             ->map(function ($quiz) use ($formatKelasLabel, $latestAttemptPerQuiz, $attemptCounts, $now) {
@@ -247,6 +259,59 @@ class DashboardController extends Controller
             'classmateCount' => $classmateCount,
         ];
 
+        $materialNotifications = $materiCollection
+            ->filter(
+                fn($materi) => $materi->created_at
+                    && $materi->created_at->greaterThanOrEqualTo($notificationCutoff)
+            )
+            ->map(function ($materi) use ($formatKelasLabel) {
+                return [
+                    'id' => 'material-' . $materi->id,
+                    'type' => 'material',
+                    'title' => $materi->judul,
+                    'meta' => array_values(array_filter([
+                        $materi->mataPelajaran?->nama_mapel,
+                        $materi->guru?->user?->name,
+                        $formatKelasLabel($materi->kelas),
+                    ])),
+                    'createdAt' => $materi->created_at?->toIso8601String(),
+                    'url' => route('siswa.materials', ['highlight' => $materi->id]),
+                    'sortTimestamp' => $materi->created_at?->getTimestamp() ?? 0,
+                ];
+            });
+
+        $quizNotifications = $quizCollection
+            ->filter(
+                fn($quiz) => $quiz->created_at
+                    && $quiz->created_at->greaterThanOrEqualTo($notificationCutoff)
+            )
+            ->map(function ($quiz) {
+                return [
+                    'id' => 'quiz-' . $quiz->id,
+                    'type' => 'quiz',
+                    'title' => $quiz->judul,
+                    'meta' => array_values(array_filter([
+                        $quiz->mataPelajaran?->nama_mapel,
+                        $quiz->guru?->user?->name,
+                    ])),
+                    'createdAt' => $quiz->created_at?->toIso8601String(),
+                    'url' => route('siswa.quizzes.show', $quiz),
+                    'sortTimestamp' => $quiz->created_at?->getTimestamp() ?? 0,
+                ];
+            });
+
+        $unreadNotificationCount = $materialNotifications->count() + $quizNotifications->count();
+
+        $notificationItems = $materialNotifications
+            ->merge($quizNotifications)
+            ->sortByDesc('sortTimestamp')
+            ->take(8)
+            ->values()
+            ->map(function ($item) {
+                unset($item['sortTimestamp']);
+                return $item;
+            });
+
         $materialSubjects = $materials
             ->pluck('subject')
             ->filter()
@@ -309,6 +374,12 @@ class DashboardController extends Controller
             'grades' => $grades->all(),
             'gradeSubjects' => $gradeSubjects,
             'gradeSummary' => $gradeSummary,
+            'notifications' => [
+                'items' => $notificationItems->all(),
+                'unreadCount' => $unreadNotificationCount,
+                'windowDays' => $notificationWindowDays,
+                'recentQuizCount' => $recentQuizCount,
+            ],
         ];
     }
 

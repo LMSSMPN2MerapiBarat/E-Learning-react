@@ -3,7 +3,8 @@ import { Link, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
 import { BookOpen, ClipboardList, Home, LogOut, Trophy } from "lucide-react";
 import { Button } from "@/Components/ui/button";
-import type { PageProps } from "@/types";
+import StudentNotificationBell from "@/Pages/Siswa/components/StudentNotificationBell";
+import type { SiswaPageProps } from "@/Pages/Siswa/types";
 
 interface StudentLayoutProps {
   title?: string;
@@ -60,8 +61,8 @@ export default function StudentLayout({
   subtitle,
   children,
 }: PropsWithChildren<StudentLayoutProps>) {
-  const page = usePage<PageProps>();
-  const { auth } = page.props;
+  const page = usePage<SiswaPageProps>();
+  const { auth, notifications } = page.props;
   const displayName = auth?.user?.name?.trim() || "Siswa";
   const initials = getInitials(auth?.user?.name, "S");
 
@@ -124,6 +125,7 @@ export default function StudentLayout({
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <StudentNotificationBell notifications={notifications} />
             <div className="hidden text-right sm:block">
               <p className="text-xs text-gray-500">Halo</p>
               <p className="text-sm font-semibold text-gray-900">

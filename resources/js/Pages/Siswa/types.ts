@@ -5,11 +5,36 @@ export interface StudentInfo {
   className?: string | null;
 }
 
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export interface StatsPayload {
   materialCount: number;
   quizCount: number;
   recentMaterialCount: number;
   classmateCount: number;
+}
+
+export type StudentNotificationType = "material" | "quiz";
+
+export interface StudentNotificationItem {
+  id: string;
+  type: StudentNotificationType;
+  title: string;
+  meta?: string[];
+  createdAt?: string | null;
+  url: string;
+}
+
+export interface StudentNotificationsPayload {
+  items: StudentNotificationItem[];
+  unreadCount: number;
+  windowDays: number;
+  recentQuizCount?: number;
 }
 
 export interface MaterialItem {
@@ -97,6 +122,9 @@ export interface GradeSummary {
 }
 
 export interface SiswaPageProps extends InertiaPageProps {
+  auth: {
+    user: AuthUser;
+  };
   student: StudentInfo;
   hasClass: boolean;
   stats: StatsPayload;
@@ -107,4 +135,5 @@ export interface SiswaPageProps extends InertiaPageProps {
   grades: GradeItem[];
   gradeSubjects?: string[];
   gradeSummary?: GradeSummary;
+  notifications?: StudentNotificationsPayload;
 }
