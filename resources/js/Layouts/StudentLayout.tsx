@@ -1,7 +1,14 @@
 import type { PropsWithChildren } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
-import { BookOpen, ClipboardList, Home, LogOut, Trophy } from "lucide-react";
+import {
+  BookOpen,
+  ClipboardList,
+  Home,
+  Layers,
+  LogOut,
+  Trophy,
+} from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import StudentNotificationBell from "@/Pages/Siswa/components/StudentNotificationBell";
 import type { SiswaPageProps } from "@/Pages/Siswa/types";
@@ -11,7 +18,7 @@ interface StudentLayoutProps {
   subtitle?: string;
 }
 
-type StudentNavKey = "dashboard" | "materials" | "quizzes" | "grades";
+type StudentNavKey = "dashboard" | "materials" | "subjects" | "quizzes" | "grades";
 
 const NAV_ITEMS: Array<{
   key: StudentNavKey;
@@ -26,11 +33,18 @@ const NAV_ITEMS: Array<{
     icon: Home,
   },
   {
+    key: "subjects",
+    label: "Mata Pelajaran",
+    routeName: "siswa.subjects",
+    icon: Layers,
+  },
+  {
     key: "materials",
     label: "Materi",
     routeName: "siswa.materials",
     icon: BookOpen,
   },
+  
   {
     key: "quizzes",
     label: "Kuis",
@@ -76,21 +90,36 @@ export default function StudentLayout({
         ) => string)
       : undefined;
 
+  const ziggyHasRoute =
+    routeHelper && typeof (routeHelper as unknown as { has?: unknown }).has === "function"
+      ? ((routeHelper as unknown as { has: (name: string) => boolean }).has.bind(routeHelper))
+      : undefined;
+
   const hasCurrentMethod =
     routeHelper && typeof (routeHelper as unknown as { current?: unknown }).current === "function";
 
   const resolveActiveKey = (): StudentNavKey => {
     if (hasCurrentMethod) {
-      const matched = NAV_ITEMS.find(({ routeName }) =>
-        (routeHelper as unknown as { current: (name: string) => boolean }).current(routeName),
-      );
-      if (matched) {
-        return matched.key;
+      for (const item of NAV_ITEMS) {
+        const { routeName, key } = item;
+        if (ziggyHasRoute && !ziggyHasRoute(routeName)) continue;
+        try {
+          if (
+            (routeHelper as unknown as { current: (name: string) => boolean }).current(
+              routeName,
+            )
+          ) {
+            return key;
+          }
+        } catch {
+          continue;
+        }
       }
     }
 
     const component = page.component.toLowerCase();
     if (component.includes("siswa/grades")) return "grades";
+    if (component.includes("siswa/subjects")) return "subjects";
     if (component.includes("siswa/quizzes")) return "quizzes";
     if (component.includes("siswa/materials")) return "materials";
 
@@ -102,8 +131,20 @@ export default function StudentLayout({
   const fallbackPaths: Record<StudentNavKey, string> = {
     dashboard: "/siswa/dashboard",
     materials: "/siswa/materi",
+    subjects: "/siswa/mata-pelajaran",
     quizzes: "/siswa/kuis",
     grades: "/siswa/nilai",
+  };
+
+  const resolveHref = (name: string, fallback: string) => {
+    if (routeHelper && (!ziggyHasRoute || ziggyHasRoute(name))) {
+      try {
+        return routeHelper(name);
+      } catch {
+        return fallback;
+      }
+    }
+    return fallback;
   };
 
   return (
@@ -151,10 +192,11 @@ export default function StudentLayout({
           <nav className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3">
             {NAV_ITEMS.map(({ key, label, routeName, icon: Icon }) => {
               const isActive = key === activeKey;
+              const href = resolveHref(routeName, fallbackPaths[key]);
               return (
                 <Link
                   key={key}
-                  href={routeHelper ? routeHelper(routeName) : fallbackPaths[key]}
+                  href={href}
                   className="relative inline-flex"
                 >
                   <motion.span

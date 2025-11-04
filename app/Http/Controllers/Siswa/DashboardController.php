@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
+use App\Models\Guru;
 use App\Models\Materi;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -41,6 +43,26 @@ class DashboardController extends Controller
             'hasClass',
             'quizzes',
             'quizSubjects',
+            'notifications',
+        ]));
+    }
+
+    public function subjects()
+    {
+        $data = $this->composeStudentData();
+
+        return Inertia::render('Siswa/Subjects', Arr::only($data, [
+            'student',
+            'hasClass',
+            'classSubjects',
+            'stats',
+            'materials',
+            'materialSubjects',
+            'quizzes',
+            'quizSubjects',
+            'grades',
+            'gradeSubjects',
+            'gradeSummary',
             'notifications',
         ]));
     }
@@ -239,6 +261,7 @@ class DashboardController extends Controller
                     'maxAttempts' => $quiz->max_attempts,
                     'attemptsUsed' => $attemptCount,
                     'remainingAttempts' => $attemptsRemaining,
+                    'entryUrl' => route('siswa.quizzes.show', $quiz),
                     'latestAttempt' => $latestAttempt ? [
                         'id' => $latestAttempt->id,
                         'score' => $latestAttempt->score,
@@ -360,6 +383,63 @@ class DashboardController extends Controller
             'totalAssessments' => $grades->count(),
         ];
 
+        $materialsBySubject = $materials
+            ->filter(fn($item) => !empty($item['subjectId']))
+            ->groupBy('subjectId');
+
+        $quizzesBySubject = $quizzes
+            ->filter(fn($item) => !empty($item['subjectId']))
+            ->groupBy('subjectId');
+
+        $classSubjects = collect();
+
+        if ($kelas) {
+            $guruUserIds = DB::table('guru_kelas')
+                ->where('kelas_id', $kelas->id)
+                ->pluck('user_id');
+
+            if ($guruUserIds->isNotEmpty()) {
+                $guruModels = Guru::with(['user', 'mataPelajaran'])
+                    ->whereIn('user_id', $guruUserIds)
+                    ->get();
+
+                $classSubjects = $guruModels
+                    ->flatMap(function (Guru $guru) use ($materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel) {
+                        return $guru->mataPelajaran->map(function ($subject) use ($guru, $materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel) {
+                            $subjectMaterials = $materialsBySubject
+                                ->get($subject->id, collect())
+                                ->values()
+                                ->all();
+
+                            $subjectQuizzes = $quizzesBySubject
+                                ->get($subject->id, collect())
+                                ->values()
+                                ->all();
+
+                            $sampleMaterial = $subjectMaterials[0] ?? null;
+                            return [
+                                'id' => $subject->id,
+                                'name' => $subject->nama_mapel,
+                                'teacher' => $guru->user?->name,
+                                'teacherEmail' => $guru->user?->email,
+                                'teacherId' => $guru->id,
+                                'className' => $formatKelasLabel($kelas),
+                                'description' => $sampleMaterial['description'] ?? null,
+                                'schedule' => null,
+                                'materialCount' => count($subjectMaterials),
+                                'quizCount' => count($subjectQuizzes),
+                                'materials' => $subjectMaterials,
+                                'quizzes' => $subjectQuizzes,
+                            ];
+                        });
+                    })
+                    ->unique(function ($subject) {
+                        return ($subject['id'] ?? '0') . '|' . ($subject['teacherId'] ?? '0');
+                    })
+                    ->values();
+            }
+        }
+
         return [
             'student' => [
                 'name' => $user->name,
@@ -374,6 +454,7 @@ class DashboardController extends Controller
             'grades' => $grades->all(),
             'gradeSubjects' => $gradeSubjects,
             'gradeSummary' => $gradeSummary,
+            'classSubjects' => $classSubjects->all(),
             'notifications' => [
                 'items' => $notificationItems->all(),
                 'unreadCount' => $unreadNotificationCount,

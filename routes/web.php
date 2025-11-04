@@ -188,6 +188,7 @@ Route::middleware(['auth', 'role:siswa'])
         Route::get('/materi/{materi}/preview', [SiswaMateriController::class, 'preview'])->name('materials.preview');
         Route::get('/materi/{materi}/download', [SiswaMateriController::class, 'download'])->name('materials.download');
         Route::post('/quizzes/{quiz}/attempts', [SiswaQuizAttemptController::class, 'store'])->name('quizzes.attempts.store');
+        Route::get('/mata-pelajaran', [SiswaDashboardController::class, 'subjects'])->name('subjects');
     });
 
 require __DIR__ . '/auth.php';

@@ -96,10 +96,26 @@ export interface QuizItem {
   availableFrom?: string | null;
   availableUntil?: string | null;
   isAvailable?: boolean;
+  entryUrl?: string;
   latestAttempt?: QuizAttemptLite | null;
   maxAttempts?: number | null;
   attemptsUsed?: number;
   remainingAttempts?: number | null;
+}
+
+export interface StudentSubject {
+  id: number;
+  name: string;
+  teacher?: string | null;
+  teacherEmail?: string | null;
+  teacherId?: number | null;
+  className?: string | null;
+  description?: string | null;
+  schedule?: string | null;
+  materialCount: number;
+  quizCount: number;
+  materials: MaterialItem[];
+  quizzes: QuizItem[];
 }
 
 export interface GradeItem {
@@ -135,5 +151,6 @@ export interface SiswaPageProps extends InertiaPageProps {
   grades: GradeItem[];
   gradeSubjects?: string[];
   gradeSummary?: GradeSummary;
+  classSubjects?: StudentSubject[];
   notifications?: StudentNotificationsPayload;
 }
