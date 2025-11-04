@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/Components/ui/card";
 import AdminLayout from "@/Layouts/AdminLayout";
-import MapelHeader from "@/Pages/admin/components/ComponentsMapel/MapelHeader";
-import MapelTable from "@/Pages/admin/components/ComponentsMapel/MapelTable";
-import MapelDialogs from "@/Pages/admin/components/ComponentsMapel/MapelDialogs";
+import MapelHeader from "@/Pages/Admin/components/ComponentsMapel/MapelHeader";
+import MapelTable from "@/Pages/Admin/components/ComponentsMapel/MapelTable";
+import MapelDialogs from "@/Pages/Admin/components/ComponentsMapel/MapelDialogs";
 
 export default function MapelPage() {
   const { props }: any = usePage();
@@ -161,3 +161,4 @@ export default function MapelPage() {
     </AdminLayout>
   );
 }
+

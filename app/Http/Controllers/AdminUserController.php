@@ -151,7 +151,7 @@ class AdminUserController extends Controller
             })
             ->values();
 
-        return Inertia::render('admin/dashboard', [
+        return Inertia::render('admin/Dashboard', [
             'totalGuru'   => $totalGuru,
             'totalSiswa'  => $totalSiswa,
             'totalMateri' => $kelas->count(),

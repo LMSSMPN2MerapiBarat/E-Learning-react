@@ -13,7 +13,7 @@ class AdminMapelController extends Controller
     {
         $mapels = MataPelajaran::withCount('gurus')->get();
 
-        return Inertia::render('admin/Mapel/Mapel', [
+        return Inertia::render('admin/Mapel/MapelPage', [
             'mapels' => $mapels,
         ]);
     }

@@ -10,31 +10,31 @@
 
 ### Admin
 
-#### Dashboard Admin (`resources/js/Pages/admin/dashboard.tsx` + `Components/DashboardOverview.tsx`)
+#### Dashboard Admin (`resources/js/Pages/Admin/Dashboard.tsx` + `Components/DashboardOverview.tsx`)
 - Menyajikan ringkasan total guru, siswa, materi, dan kuis dalam kartu statistik serta tab terpisah untuk melihat daftar siswa, guru, kelas, dan mata pelajaran.
 - Setiap tab menyediakan pencarian instan, tampilan tabel responsif, dan kartu mobile sehingga data tetap mudah dibaca di berbagai ukuran layar.
 - Fitur pagination internal menjaga performa saat menelusuri data panjang, dengan tombol navigasi halaman dan indikator jumlah total halaman.
 - Data yang ditampilkan diambil langsung dari props Inertia sehingga selalu sinkron setelah aksi CRUD di halaman lain.
 
-#### Manajemen Guru (`resources/js/Pages/admin/Guru/Guru.tsx`)
+#### Manajemen Guru (`resources/js/Pages/Admin/Guru/GuruPage.tsx`)
 - Tabel guru interaktif dengan seleksi baris untuk pengeditan cepat, bulk delete, dan penghapusan individual.
 - Dialog `Create/Edit` menampilkan formulir lengkap untuk biodata, pemetaan mata pelajaran, serta memberikan validasi sisi-klien.
 - Tombol import dan export Excel memanfaatkan FormData untuk unggah file dan `window.location.href` untuk unduhan, disertai indikator progres dan hasil di toast.
 - Konfirmasi berlapis (dialog) memastikan tindakan berisiko seperti bulk delete dan import data tidak dilakukan tanpa persetujuan.
 
-#### Manajemen Siswa (`resources/js/Pages/admin/siswa/Siswa.tsx`)
+#### Manajemen Siswa (`resources/js/Pages/Admin/Siswa/SiswaPage.tsx`)
 - Header aksi menyediakan import/export Excel, hapus semua data, hapus terpilih, dan tambah data baru dengan dialog konfirmasi berbeda untuk tiap jenis tindakan.
 - Fitur pencarian, filter kelas, dan pagination manual memudahkan admin memusatkan perhatian pada subset data yang relevan.
 - Komponen `SiswaTable` mendukung checkbox multi-seleksi dan tombol tindakan baris untuk edit/hapus.
 - Overlay loading dan toast memberi umpan balik selama proses CRUD, import, maupun bulk delete berlangsung.
 
-#### Manajemen Kelas (`resources/js/Pages/admin/Kelas/Kelas.tsx`)
+#### Manajemen Kelas (`resources/js/Pages/Admin/Kelas/KelasPage.tsx`)
 - Daftar kelas dilengkapi checkbox multi-seleksi untuk bulk delete, serta dialog edit per kelas dengan pemilihan wali dan parameter lain.
 - Ekspor data kelas ke Excel hanya membutuhkan satu klik, disertai toast keberhasilan setelah file siap diunduh.
 - Dialog konfirmasi hadir untuk setiap penghapusan (single ataupun bulk) sehingga admin dapat meninjau ulang sebelum mengeksekusi.
 - Refresh data dilakukan via `router.reload` setelah setiap aksi, menjaga tabel tetap mutakhir tanpa reload halaman penuh.
 
-#### Manajemen Mata Pelajaran (`resources/js/Pages/admin/Mapel/Mapel.tsx`)
+#### Manajemen Mata Pelajaran (`resources/js/Pages/Admin/Mapel/MapelPage.tsx`)
 - Header menyediakan tombol tambah mapel (dialog modal) dan bulk delete ketika ada data terpilih.
 - Tabel mapel menampilkan nama mapel dan guru pengampu dengan tombol edit/hapus di baris, memastikan CRUD berjalan cepat.
 - Dialog `MapelDialogs` mengatur flow edit, konfirmasi hapus, serta aksi bulk delete melalui state yang terpusat.
@@ -42,7 +42,7 @@
 
 ### Guru
 
-#### Dashboard Guru (`resources/js/Pages/Guru/dashboard.tsx`)
+#### Dashboard Guru (`resources/js/Pages/Guru/Dashboard.tsx`)
 - Kartu statistik (`StatOverview`) menunjukkan ringkasan materi dan kuis yang dikelola guru, lengkap dengan ikon dan tren ringkas.
 - `SubjectsCard` merangkum daftar mata pelajaran yang diajarkan, membantu guru melacak fokus pengajaran dengan cepat.
 - Bagian materi dan kuis terbaru ditampilkan dalam grid dua kolom (`RecentMateriCard`, `RecentQuizzesCard`) untuk melihat aktivitas terkini.

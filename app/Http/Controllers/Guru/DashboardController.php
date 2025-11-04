@@ -68,7 +68,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        return Inertia::render('Guru/dashboard', [
+        return Inertia::render('Guru/Dashboard', [
             'stats' => [
                 'kelas'    => $kelasCount,
                 'materi'   => $materiCount,

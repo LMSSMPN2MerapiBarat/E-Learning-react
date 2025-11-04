@@ -17,8 +17,8 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
-import CreateSiswa from "@/Pages/admin/siswa/Create";
-import EditSiswa from "@/Pages/admin/siswa/Edit";
+import CreateSiswa from "@/Pages/Admin/Siswa/Create";
+import EditSiswa from "@/Pages/Admin/Siswa/Edit";
 
 interface Props {
   isAddOpen: boolean;
@@ -160,3 +160,4 @@ export default function SiswaDialogs({
     </>
   );
 }
+

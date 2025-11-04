@@ -15,7 +15,7 @@ class AdminKelasController extends Controller
     {
         $kelas = Kelas::withCount(['siswa', 'guru'])->get();
 
-        return Inertia::render('admin/Kelas/Kelas', [
+        return Inertia::render('admin/Kelas/KelasPage', [
             'kelas' => $kelas,
         ]);
     }

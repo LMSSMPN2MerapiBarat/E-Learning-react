@@ -18,8 +18,8 @@ import {
 import CreateGuru from "./Create";
 import EditGuru from "./Edit";
 import AdminLayout from "@/Layouts/AdminLayout";
-import GuruTable from "@/Pages/admin/components/ComponentsGuru/GuruTable";
-import GuruDialogs from "@/Pages/admin/components/ComponentsGuru/GuruDialogs";
+import GuruTable from "@/Pages/Admin/components/ComponentsGuru/GuruTable";
+import GuruDialogs from "@/Pages/Admin/components/ComponentsGuru/GuruDialogs";
 
 export default function GuruPage() {
   const { props }: any = usePage();
@@ -293,4 +293,5 @@ export default function GuruPage() {
     </AdminLayout>
   );
 }
+
 

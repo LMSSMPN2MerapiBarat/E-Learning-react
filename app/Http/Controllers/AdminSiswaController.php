@@ -31,7 +31,7 @@ class AdminSiswaController extends Controller
                 ];
             });
 
-        return Inertia::render('admin/siswa/Siswa', [
+        return Inertia::render('admin/siswa/SiswaPage', [
             'students' => $siswas,
         ]);
     }

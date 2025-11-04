@@ -47,7 +47,7 @@ class AdminGuruController extends Controller
 
         $mapels = MataPelajaran::all(['id', 'nama_mapel']);
 
-        return Inertia::render('admin/Guru/Guru', [
+        return Inertia::render('admin/Guru/GuruPage', [
             'gurus'  => $gurus,
             'mapels' => $mapels,
         ]);

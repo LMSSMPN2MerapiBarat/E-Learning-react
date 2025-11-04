@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/Components/ui/dialog";
-import CreateMapel from "@/Pages/admin/Mapel/Create";
+import CreateMapel from "@/Pages/Admin/Mapel/Create";
 
 interface MapelHeaderProps {
   selectedIds: number[];
@@ -77,3 +77,4 @@ const MapelHeader: React.FC<MapelHeaderProps> = ({
 };
 
 export default MapelHeader;
+

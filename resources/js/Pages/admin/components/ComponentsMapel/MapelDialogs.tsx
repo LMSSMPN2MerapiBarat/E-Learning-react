@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
-import EditMapel from "@/Pages/admin/Mapel/Edit";
+import EditMapel from "@/Pages/Admin/Mapel/Edit";
 import {
   Table,
   TableBody,
@@ -301,3 +301,4 @@ const MapelDialogs: React.FC<MapelDialogsProps> = ({
 };
 
 export default MapelDialogs;
+

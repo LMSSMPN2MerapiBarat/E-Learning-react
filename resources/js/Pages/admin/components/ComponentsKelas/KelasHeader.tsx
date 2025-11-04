@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/Components/ui/dialog";
-import CreateKelas from "@/Pages/admin/Kelas/Create";
+import CreateKelas from "@/Pages/Admin/Kelas/Create";
 
 interface KelasHeaderProps {
   selectedIds: number[];
@@ -89,3 +89,4 @@ const KelasHeader: React.FC<KelasHeaderProps> = ({
 };
 
 export default KelasHeader;
+
