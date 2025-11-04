@@ -67,7 +67,6 @@ export default function CreateMateri({
     post("/guru/materi", {
       forceFormData: true,
       onSuccess: () => {
-        toast.success("Materi berhasil ditambahkan.");
         reset();
         onSuccess();
       },

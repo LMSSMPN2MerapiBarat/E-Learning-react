@@ -1,5 +1,5 @@
 import { useForm } from "@inertiajs/react";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -38,6 +38,7 @@ type EditMateriForm = {
   file: File | null;
   video: File | null;
   youtube_url: string;
+  remove_video: boolean;
   _method: "PUT";
 };
 
@@ -64,9 +65,11 @@ export default function EditMateri({
     file: null,
     video: null,
     youtube_url: materi.youtube_url ?? "",
+    remove_video: false,
     _method: "PUT",
   });
   const { data, setData, post, processing, errors } = form;
+  const videoInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -76,6 +79,20 @@ export default function EditMateri({
   const handleVideoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setData("video", file ?? null);
+    if (file) {
+      setData("remove_video", false);
+    }
+  };
+
+  const toggleRemoveCurrentVideo = () => {
+    const nextValue = !data.remove_video;
+    setData("remove_video", nextValue);
+    if (nextValue) {
+      setData("video", null);
+      if (videoInputRef.current) {
+        videoInputRef.current.value = "";
+      }
+    }
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -84,7 +101,6 @@ export default function EditMateri({
     post(`/guru/materi/${materi.id}`, {
       forceFormData: true,
       onSuccess: () => {
-        toast.success("Materi berhasil diperbarui.");
         onSuccess();
       },
       onError: () =>
@@ -200,19 +216,38 @@ export default function EditMateri({
           type="file"
           accept="video/*"
           onChange={handleVideoChange}
+          ref={videoInputRef}
+          disabled={data.remove_video}
         />
         {materi.video_name && materi.video_url && (
-          <p className="text-xs text-gray-500">
-            Video saat ini:{" "}
-            <a
-              className="text-blue-600 underline"
-              href={materi.video_url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {materi.video_name}
-            </a>
-          </p>
+          <div className="space-y-1 text-xs text-gray-500">
+            <p>
+              Video saat ini:{" "}
+              <a
+                className="text-blue-600 underline"
+                href={materi.video_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {materi.video_name}
+              </a>
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant={data.remove_video ? "outline" : "destructive"}
+                onClick={toggleRemoveCurrentVideo}
+              >
+                {data.remove_video ? "Batalkan penghapusan" : "Hapus video saat ini"}
+              </Button>
+              {data.remove_video && (
+                <span className="text-amber-600">
+                  Video akan dihapus ketika Anda menyimpan perubahan.
+                </span>
+              )}
+            </div>
+          </div>
         )}
         {errors.video && (
           <p className="text-xs text-red-500">{errors.video}</p>

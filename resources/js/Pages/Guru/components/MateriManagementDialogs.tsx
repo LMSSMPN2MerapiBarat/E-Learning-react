@@ -23,8 +23,10 @@ import type { MateriItem } from "@/Pages/Guru/components/materiTypes";
 interface MateriManagementDialogsProps {
   isCreateOpen: boolean;
   onCreateClose: () => void;
+  onCreateSuccess: () => void;
   editItem: MateriItem | null;
   onEditClose: () => void;
+  onEditSuccess: () => void;
   deleteId: number | null;
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
@@ -35,8 +37,10 @@ interface MateriManagementDialogsProps {
 const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
   isCreateOpen,
   onCreateClose,
+  onCreateSuccess,
   editItem,
   onEditClose,
+  onEditSuccess,
   deleteId,
   onDeleteConfirm,
   onDeleteCancel,
@@ -55,7 +59,7 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
         <CreateMateri
           kelasOptions={kelasOptions}
           mapelOptions={mapelOptions}
-          onSuccess={onCreateClose}
+          onSuccess={onCreateSuccess}
           onCancel={onCreateClose}
         />
       </DialogContent>
@@ -74,7 +78,7 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
             materi={editItem}
             kelasOptions={kelasOptions}
             mapelOptions={mapelOptions}
-            onSuccess={onEditClose}
+            onSuccess={onEditSuccess}
             onCancel={onEditClose}
           />
         )}

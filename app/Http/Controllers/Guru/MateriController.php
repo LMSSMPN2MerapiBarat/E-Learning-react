@@ -93,6 +93,7 @@ class MateriController extends Controller
             'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,pps,ppsx,txt,zip,rar|max:20480',
             'video'             => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm|max:204800',
             'youtube_url'       => 'nullable|url|max:500',
+            'remove_video'      => 'sometimes|boolean',
         ]);
 
         $kelasId = $validated['kelas_id'] !== null ? (int) $validated['kelas_id'] : null;
@@ -203,12 +204,13 @@ class MateriController extends Controller
         }
 
         $videoData = [];
+        $shouldRemoveVideo = $request->boolean('remove_video');
+
+        if (($shouldRemoveVideo || $request->hasFile('video')) && $materi->video_path) {
+            Storage::disk('public')->delete($materi->video_path);
+        }
 
         if ($request->hasFile('video')) {
-            if ($materi->video_path) {
-                Storage::disk('public')->delete($materi->video_path);
-            }
-
             $video = $request->file('video');
             $storedVideoPath = $video->store("materi/{$guru->id}/video", 'public');
 
@@ -217,6 +219,13 @@ class MateriController extends Controller
                 'video_name' => $video->getClientOriginalName(),
                 'video_mime' => $video->getClientMimeType(),
                 'video_size' => $video->getSize(),
+            ];
+        } elseif ($shouldRemoveVideo) {
+            $videoData = [
+                'video_path' => null,
+                'video_name' => null,
+                'video_mime' => null,
+                'video_size' => null,
             ];
         }
 

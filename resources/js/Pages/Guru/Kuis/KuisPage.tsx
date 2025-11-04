@@ -1,12 +1,21 @@
 import React, { useMemo, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import type { PageProps as InertiaPageProps } from "@inertiajs/core";
-import { toast } from "sonner";
 import TeacherLayout from "@/Layouts/TeacherLayout";
 import { Card, CardContent, CardHeader } from "@/Components/ui/card";
 import QuizListHeader from "@/Pages/Guru/components/kuis/QuizListHeader";
 import QuizList from "@/Pages/Guru/components/kuis/QuizList";
 import QuizManagementDialogs from "@/Pages/Guru/components/kuis/QuizManagementDialogs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
+import { toast } from "sonner";
 import type {
   Option,
   QuizItem,
@@ -28,6 +37,10 @@ export default function KuisPage() {
   const [editItem, setEditItem] = useState<QuizItem | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [feedback, setFeedback] = useState<{
+    title: string;
+    description: string;
+  } | null>(null);
 
   const filteredQuizzes = useMemo(() => {
     if (!searchTerm) return quizzes;
@@ -49,12 +62,34 @@ export default function KuisPage() {
     if (!deleteId) return;
     router.delete(`/guru/kuis/${deleteId}`, {
       onSuccess: () => {
-        toast.success("Kuis berhasil dihapus.");
+        setFeedback({
+          title: "Kuis berhasil dihapus",
+          description:
+            "Kuis dan seluruh pertanyaannya telah dihapus dari daftar.",
+        });
         setDeleteId(null);
       },
       onError: () => toast.error("Terjadi kesalahan saat menghapus kuis."),
     });
   };
+
+  const handleCreateSuccess = () => {
+    setIsCreateOpen(false);
+    setFeedback({
+      title: "Kuis baru siap digunakan",
+      description: "Silakan bagikan kode akses kepada kelas pilihan Anda.",
+    });
+  };
+
+  const handleEditSuccess = () => {
+    setEditItem(null);
+    setFeedback({
+      title: "Perubahan kuis disimpan",
+      description: "Semua pengaturan kuis telah diperbarui dengan sukses.",
+    });
+  };
+
+  const closeFeedback = () => setFeedback(null);
 
   return (
     <TeacherLayout title="Kelola Kuis">
@@ -80,14 +115,32 @@ export default function KuisPage() {
       <QuizManagementDialogs
         isCreateOpen={isCreateOpen}
         onCreateClose={() => setIsCreateOpen(false)}
+        onCreateSuccess={handleCreateSuccess}
         editItem={editItem}
         onEditClose={() => setEditItem(null)}
+        onEditSuccess={handleEditSuccess}
         deleteId={deleteId}
         onDeleteConfirm={handleDelete}
         onDeleteCancel={() => setDeleteId(null)}
         kelasOptions={kelasOptions}
         mapelOptions={mapelOptions}
       />
+
+      <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{feedback?.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {feedback?.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={closeFeedback}>
+              Tutup
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </TeacherLayout>
   );
 }

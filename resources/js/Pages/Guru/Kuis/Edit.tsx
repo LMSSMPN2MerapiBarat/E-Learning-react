@@ -195,7 +195,6 @@ export default function EditQuiz({
     post(`/guru/kuis/${quiz.id}`, {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success("Kuis berhasil diperbarui!");
         onSuccess();
       },
       onError: (formErrors) => {

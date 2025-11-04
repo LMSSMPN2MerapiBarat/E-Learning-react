@@ -111,7 +111,6 @@ export default function CreateQuiz({
 
     form.post("/guru/kuis", {
       onSuccess: () => {
-        toast.success("Kuis berhasil dibuat!");
         form.reset();
         onSuccess();
       },

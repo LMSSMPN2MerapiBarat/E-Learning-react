@@ -22,8 +22,10 @@ import type { Option, QuizItem } from "@/Pages/Guru/components/kuis/formTypes";
 interface QuizManagementDialogsProps {
   isCreateOpen: boolean;
   onCreateClose: () => void;
+  onCreateSuccess: () => void;
   editItem: QuizItem | null;
   onEditClose: () => void;
+  onEditSuccess: () => void;
   deleteId: number | null;
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
@@ -34,8 +36,10 @@ interface QuizManagementDialogsProps {
 const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
   isCreateOpen,
   onCreateClose,
+  onCreateSuccess,
   editItem,
   onEditClose,
+  onEditSuccess,
   deleteId,
   onDeleteConfirm,
   onDeleteCancel,
@@ -54,7 +58,7 @@ const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
         <CreateQuiz
           kelasOptions={kelasOptions}
           mapelOptions={mapelOptions}
-          onSuccess={onCreateClose}
+          onSuccess={onCreateSuccess}
           onCancel={onCreateClose}
         />
       </DialogContent>
@@ -73,7 +77,7 @@ const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
             quiz={editItem}
             kelasOptions={kelasOptions}
             mapelOptions={mapelOptions}
-            onSuccess={onEditClose}
+            onSuccess={onEditSuccess}
             onCancel={onEditClose}
           />
         )}
