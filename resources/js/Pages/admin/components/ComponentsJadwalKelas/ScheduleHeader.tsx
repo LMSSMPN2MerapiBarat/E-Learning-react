@@ -1,4 +1,3 @@
-import { Link } from "@inertiajs/react";
 import { motion } from "motion/react";
 import { Calendar, Layers, Users, Plus, Clock } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/Components/ui/card";
@@ -7,10 +6,10 @@ import type { ScheduleStats } from "@/Pages/Admin/JadwalKelas/types";
 
 interface ScheduleHeaderProps {
   stats?: ScheduleStats | null;
-  createHref: string;
+  onCreate?: () => void;
 }
 
-export default function ScheduleHeader({ stats, createHref }: ScheduleHeaderProps) {
+export default function ScheduleHeader({ stats, onCreate }: ScheduleHeaderProps) {
   const safeStats: ScheduleStats = stats ?? {
     total: 0,
     distinctClass: 0,
@@ -51,11 +50,9 @@ export default function ScheduleHeader({ stats, createHref }: ScheduleHeaderProp
               Atur hubungan guru, mata pelajaran, kelas, dan jam belajar.
             </CardDescription>
           </div>
-          <Button asChild>
-            <Link href={createHref}>
-              <Plus className="mr-2 h-4 w-4" />
-              Tambah Jadwal
-            </Link>
+          <Button type="button" onClick={onCreate}>
+            <Plus className="mr-2 h-4 w-4" />
+            Tambah Jadwal
           </Button>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-3">

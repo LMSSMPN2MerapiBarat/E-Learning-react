@@ -1,11 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, useForm, router, usePage } from "@inertiajs/react";
 import { toast } from "sonner";
 import AdminLayout from "@/Layouts/AdminLayout";
 import ScheduleHeader from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleHeader";
 import ScheduleFilters from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleFilters";
 import ScheduleTabs from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleTabs";
-import type { ScheduleItem, ScheduleReference, ScheduleStats } from "./types";
+import ScheduleForm from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/Components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
+import type { ScheduleFormValues, ScheduleItem, ScheduleReference, ScheduleStats } from "./types";
 import type { PageProps } from "@/types";
 
 interface JadwalPageProps extends PageProps {
@@ -30,6 +47,23 @@ export default function Jadwal() {
   const [filterClass, setFilterClass] = useState<string>("all");
   const [filterDay, setFilterDay] = useState<string>("all");
   const [activeDay, setActiveDay] = useState<string>(dayList[0] ?? "Senin");
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ScheduleItem | null>(null);
+
+  const defaultFormValues: ScheduleFormValues = {
+    guru_id: "",
+    mata_pelajaran_id: "",
+    kelas_id: "",
+    day: "",
+    start_time: "",
+    end_time: "",
+    room: "",
+  };
+
+  const createForm = useForm<ScheduleFormValues>(defaultFormValues);
+  const editForm = useForm<ScheduleFormValues>(defaultFormValues);
 
   useEffect(() => {
     if (filterDay !== "all") {
@@ -61,21 +95,58 @@ export default function Jadwal() {
     }, {});
   }, [filteredSchedules, dayList]);
 
-  const handleEdit = (schedule: ScheduleItem) => {
-    router.visit(`/admin/jadwal-kelas/${schedule.id}/Edit`);
+  const openCreateModal = () => {
+    createForm.reset();
+    setIsCreateOpen(true);
   };
 
-  const handleDelete = (schedule: ScheduleItem) => {
-    const confirmed = window.confirm(
-      `Hapus jadwal ${schedule.subject.name} untuk kelas ${schedule.class.label}?`,
-    );
+  const openEditModal = (schedule: ScheduleItem) => {
+    setSelectedSchedule(schedule);
+    editForm.setData({
+      guru_id: schedule.teacher.id,
+      mata_pelajaran_id: schedule.subject.id,
+      kelas_id: schedule.class.id,
+      day: schedule.day,
+      start_time: schedule.startTime,
+      end_time: schedule.endTime,
+      room: schedule.room ?? "",
+    });
+    setIsEditOpen(true);
+  };
 
-    if (!confirmed) return;
+  const handleCreateSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    createForm.post("/admin/jadwal-kelas", {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success("Jadwal baru berhasil ditambahkan.");
+        setIsCreateOpen(false);
+        createForm.reset();
+      },
+      onError: () => toast.error("Gagal menyimpan jadwal."),
+    });
+  };
 
-    router.delete(`/admin/jadwal-kelas/${schedule.id}`, {
+  const handleEditSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedSchedule) return;
+    editForm.put(`/admin/jadwal-kelas/${selectedSchedule.id}`, {
+      preserveScroll: true,
+      onSuccess: () => {
+        toast.success("Jadwal berhasil diperbarui.");
+        setIsEditOpen(false);
+      },
+      onError: () => toast.error("Gagal memperbarui jadwal."),
+    });
+  };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    router.delete(`/admin/jadwal-kelas/${deleteTarget.id}`, {
       preserveScroll: true,
       onSuccess: () => toast.success("Jadwal berhasil dihapus."),
       onError: () => toast.error("Gagal menghapus jadwal."),
+      onFinish: () => setDeleteTarget(null),
     });
   };
 
@@ -84,7 +155,7 @@ export default function Jadwal() {
       <Head title="Kelola Jadwal Kelas" />
 
       <div className="space-y-6">
-        <ScheduleHeader stats={props.stats} createHref="/admin/jadwal-kelas/Create" />
+        <ScheduleHeader stats={props.stats} onCreate={openCreateModal} />
         <ScheduleFilters
           classes={reference.classes}
           days={dayList}
@@ -98,10 +169,70 @@ export default function Jadwal() {
           groupedSchedules={groupedSchedules}
           activeDay={activeDay}
           onDayChange={setActiveDay}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          onEdit={openEditModal}
+          onDelete={setDeleteTarget}
         />
       </div>
+
+      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <DialogContent className="w-full max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Tambah Jadwal Baru</DialogTitle>
+          </DialogHeader>
+          <ScheduleForm
+            reference={reference}
+            values={createForm.data}
+            errors={createForm.errors}
+            processing={createForm.processing}
+            submitLabel="Simpan Jadwal"
+            onChange={(field, value) => createForm.setData(field, value)}
+            onSubmit={handleCreateSubmit}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="w-full max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Jadwal</DialogTitle>
+          </DialogHeader>
+          {selectedSchedule && (
+            <ScheduleForm
+              reference={reference}
+              values={editForm.data}
+              errors={editForm.errors}
+              processing={editForm.processing}
+              submitLabel="Perbarui Jadwal"
+              onChange={(field, value) => editForm.setData(field, value)}
+              onSubmit={handleEditSubmit}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hapus Jadwal</AlertDialogTitle>
+            <AlertDialogDescription>
+              Hapus jadwal{" "}
+              <span className="font-semibold">
+                {deleteTarget?.subject.name} - {deleteTarget?.class.label}
+              </span>
+              ? Tindakan ini tidak dapat dibatalkan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-700"
+              onClick={handleDelete}
+            >
+              Hapus
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }

@@ -39,6 +39,12 @@ const NAV_ITEMS: Array<{
     routeName: "siswa.dashboard",
     icon: Home,
   },
+   {
+    key: "schedule",
+    label: "Jadwal",
+    routeName: "siswa.schedule",
+    icon: CalendarDays,
+  },
   {
     key: "subjects",
     label: "Mata Pelajaran",
@@ -51,12 +57,7 @@ const NAV_ITEMS: Array<{
     routeName: "siswa.materials",
     icon: BookOpen,
   },
-  {
-    key: "schedule",
-    label: "Jadwal",
-    routeName: "siswa.schedule",
-    icon: CalendarDays,
-  },
+ 
   
   {
     key: "quizzes",
@@ -204,7 +205,7 @@ export default function StudentLayout({
           </div>
         </div>
         <div className="border-t">
-          <nav className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3">
+          <nav className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3 sm:flex-wrap sm:justify-start sm:overflow-visible">
             {NAV_ITEMS.map(({ key, label, routeName, icon: Icon }) => {
               const isActive = key === activeKey;
               const href = resolveHref(routeName, fallbackPaths[key]);
@@ -212,7 +213,7 @@ export default function StudentLayout({
                 <Link
                   key={key}
                   href={href}
-                  className="relative inline-flex"
+                  className="relative inline-flex shrink-0"
                 >
                   <motion.span
                     className={`relative flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 font-medium transition ${
