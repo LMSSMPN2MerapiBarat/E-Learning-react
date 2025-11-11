@@ -24,6 +24,8 @@ class AdminSiswaController extends Controller
                     'email'    => $s->user->email,
                     'nis'      => $s->nis,
                     'no_telp'  => $s->no_telp,
+                    'tempat_lahir' => $s->tempat_lahir,
+                    'tanggal_lahir' => $s->tanggal_lahir,
                     'kelas'    => $s->kelas?->kelas ?? '-',
                     'kelas_id' => $s->kelas?->id,
                     'siswa_id' => $s->id,

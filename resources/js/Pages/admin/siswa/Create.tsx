@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -42,11 +42,17 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
     nis: "",
     kelas_id: "",
     no_telp: "",
+    tempat_lahir: "",
+    tanggal_lahir: "",
   });
 
   const [kelasList, setKelasList] = useState<Kelas[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [errorDialog, setErrorDialog] = useState<string | null>(null);
+  const today = useMemo(
+    () => new Date().toISOString().split("T")[0],
+    []
+  );
 
   useEffect(() => {
     fetch("/admin/kelas/list")
@@ -93,6 +99,11 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
     setData("no_telp", digitsOnly);
   };
 
+  const handleBirthPlaceChange = (value: string) => {
+    const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
+    setData("tempat_lahir", lettersOnly);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
@@ -127,6 +138,33 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           </Select>
           {errors.jenis_kelamin && (
             <p className="text-red-500 text-sm">{errors.jenis_kelamin}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tempat Lahir</Label>
+          <Input
+            value={data.tempat_lahir}
+            onChange={(e) => handleBirthPlaceChange(e.target.value)}
+            placeholder="Contoh: Jakarta"
+            pattern="[A-Za-z\s]+"
+            title="Tempat lahir hanya boleh berisi huruf dan spasi."
+          />
+          {errors.tempat_lahir && (
+            <p className="text-red-500 text-sm">{errors.tempat_lahir}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tanggal Lahir</Label>
+          <Input
+            type="date"
+            value={data.tanggal_lahir}
+            onChange={(e) => setData("tanggal_lahir", e.target.value)}
+            max={today}
+          />
+          {errors.tanggal_lahir && (
+            <p className="text-red-500 text-sm">{errors.tanggal_lahir}</p>
           )}
         </div>
 

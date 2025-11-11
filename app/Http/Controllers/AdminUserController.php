@@ -194,6 +194,8 @@ class AdminUserController extends Controller
                 'nis'      => 'required_if:role,siswa|digits:10|unique:siswas,nis',
                 'kelas_id' => 'nullable|exists:kelas,id',
                 'no_telp'  => ['nullable', 'digits_between:9,12'],
+                'tempat_lahir' => ['nullable', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+                'tanggal_lahir' => ['nullable', 'date', 'before_or_equal:today'],
             ],
             [
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
@@ -201,6 +203,8 @@ class AdminUserController extends Controller
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
                 'nip.unique'                => 'NIP sudah terdaftar.',
                 'nis.unique'                => 'NIS sudah terdaftar.',
+                'tempat_lahir.regex'        => 'Tempat lahir hanya boleh berisi huruf dan spasi.',
+                'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak boleh melebihi hari ini.',
             ]
         );
 
@@ -225,6 +229,8 @@ class AdminUserController extends Controller
                 'nis'      => $normalizedNis,
                 'kelas_id' => $validated['kelas_id'] ?? null,
                 'no_telp'  => $validated['no_telp'] ?? null,
+                'tempat_lahir' => $validated['tempat_lahir'] ?? null,
+                'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
             ]);
         }
 
@@ -267,6 +273,8 @@ class AdminUserController extends Controller
                 ],
                 'mapel'    => 'nullable|string|max:255',
                 'no_telp'  => ['nullable', 'digits_between:9,12'],
+                'tempat_lahir' => ['nullable', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+                'tanggal_lahir' => ['nullable', 'date', 'before_or_equal:today'],
             ],
             [
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
@@ -274,6 +282,8 @@ class AdminUserController extends Controller
                 'no_telp.digits_between'    => 'No. telepon harus terdiri dari 9 sampai 12 digit angka.',
                 'nip.unique'                => 'NIP sudah terdaftar.',
                 'nis.unique'                => 'NIS sudah terdaftar.',
+                'tempat_lahir.regex'        => 'Tempat lahir hanya boleh berisi huruf dan spasi.',
+                'tanggal_lahir.before_or_equal' => 'Tanggal lahir tidak boleh melebihi hari ini.',
             ]
         );
 
@@ -304,6 +314,8 @@ class AdminUserController extends Controller
                 'nis'      => $normalizedNis ?? $profil->nis,
                 'kelas_id' => $validated['kelas_id'] ?? $profil->kelas_id,
                 'no_telp'  => $validated['no_telp'] ?? $profil->no_telp,
+                'tempat_lahir' => $validated['tempat_lahir'] ?? $profil->tempat_lahir,
+                'tanggal_lahir' => $validated['tanggal_lahir'] ?? $profil->tanggal_lahir,
             ]);
         } elseif ($user->role === 'guru') {
             $profil = Guru::firstOrCreate(['user_id' => $user->id]);

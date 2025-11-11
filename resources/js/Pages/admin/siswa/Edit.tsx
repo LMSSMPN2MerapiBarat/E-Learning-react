@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
@@ -38,6 +38,8 @@ interface StudentData {
   no_telp: string;
   nis: string;
   jenis_kelamin?: string;
+  tempat_lahir?: string | null;
+  tanggal_lahir?: string | null;
 }
 
 interface EditSiswaProps {
@@ -62,10 +64,16 @@ export default function EditSiswa({
     nis: student.nis || "",
     jenis_kelamin: student.jenis_kelamin || "",
     password: "",
+    tempat_lahir: student.tempat_lahir || "",
+    tanggal_lahir: student.tanggal_lahir || "",
   });
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const today = useMemo(
+    () => new Date().toISOString().split("T")[0],
+    []
+  );
 
   const handleNisChange = (value: string) => {
     const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
@@ -83,6 +91,12 @@ export default function EditSiswa({
     const digitsOnly = value.replace(/\D/g, "").slice(0, 12);
     setForm({ ...form, no_telp: digitsOnly });
     clearFieldError("no_telp");
+  };
+
+  const handleBirthPlaceChange = (value: string) => {
+    const lettersOnly = value.replace(/[^A-Za-z\s]/g, "");
+    setForm({ ...form, tempat_lahir: lettersOnly });
+    clearFieldError("tempat_lahir");
   };
 
   const clearFieldError = (field: string) => {
@@ -123,6 +137,8 @@ export default function EditSiswa({
       nis: form.nis,
       jenis_kelamin: form.jenis_kelamin,
       role: "siswa",
+      tempat_lahir: form.tempat_lahir || null,
+      tanggal_lahir: form.tanggal_lahir || null,
     };
 
     if (form.password.trim() !== "") {
@@ -169,6 +185,30 @@ export default function EditSiswa({
             pattern="[A-Za-z\s]+"
             title="Nama hanya boleh berisi huruf dan spasi."
             required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tempat Lahir</Label>
+          <Input
+            value={form.tempat_lahir}
+            onChange={(e) => handleBirthPlaceChange(e.target.value)}
+            placeholder="Contoh: Jakarta"
+            pattern="[A-Za-z\s]+"
+            title="Tempat lahir hanya boleh berisi huruf dan spasi."
+          />
+          {fieldErrors.tempat_lahir && (
+            <p className="text-red-500 text-sm">{fieldErrors.tempat_lahir}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tanggal Lahir</Label>
+          <Input
+            type="date"
+            value={form.tanggal_lahir || ""}
+            onChange={(e) => setForm({ ...form, tanggal_lahir: e.target.value })}
+            max={today}
           />
         </div>
 
