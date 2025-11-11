@@ -287,21 +287,21 @@ class SiswaImport implements
 
         $nama = mb_strtolower($kelasNama);
 
-        if (str_contains($nama, 'xii') || str_contains($nama, '12')) {
-            return 'Kelas 12';
-        }
+        // if (str_contains($nama, 'xii') || str_contains($nama, '12')) {
+        //     return 'Kelas 12';
+        // }
 
-        if (str_contains($nama, 'xi') || str_contains($nama, '11')) {
-            return 'Kelas 11';
-        }
-
-        if (str_contains($nama, 'x') || str_contains($nama, '10')) {
-            return 'Kelas 10';
-        }
+        // if (str_contains($nama, 'xi') || str_contains($nama, '11')) {
+        //     return 'Kelas 11';
+        // }
 
         if (str_contains($nama, 'ix') || str_contains($nama, '9')) {
             return 'Kelas 9';
         }
+
+        // if (str_contains($nama, 'x') || str_contains($nama, '10')) {
+        //     return 'Kelas 10';
+        // }
 
         if (str_contains($nama, 'viii') || str_contains($nama, '8')) {
             return 'Kelas 8';
