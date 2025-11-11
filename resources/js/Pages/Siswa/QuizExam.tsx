@@ -36,7 +36,7 @@ import type {
   QuizQuestion,
   QuizQuestionOption,
 } from "./types";
-import type { InertiaPageProps } from "@inertiajs/core";
+import type { PageProps as InertiaPageProps } from "@inertiajs/core";
 
 interface QuizExamPageProps extends InertiaPageProps {
   quiz: QuizItem;
@@ -307,10 +307,10 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                     }`}
                   >
                     {effectiveScore >= 80
-                      ? "🎉 Luar biasa!"
+                      ? "Luar biasa!"
                       : effectiveScore >= 60
-                      ? "👍 Bagus!"
-                      : "💪 Tetap semangat!"}
+                      ? "Bagus!"
+                      : "Tetap semangat!"}
                   </Badge>
                 </motion.div>
 
