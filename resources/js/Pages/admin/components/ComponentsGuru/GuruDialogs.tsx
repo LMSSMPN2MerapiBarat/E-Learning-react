@@ -56,7 +56,7 @@ export default function GuruDialogs({
       data: { ids: selectedIds },
       preserveScroll: true,
       onSuccess: () => {
-        toast.success("✅ Beberapa guru berhasil dihapus!", { id: toastId });
+        toast.success("Beberapa guru berhasil dihapus!", { id: toastId });
         reloadGurus();
       },
       onError: () => toast.error("❌ Gagal menghapus beberapa data.", { id: toastId }),

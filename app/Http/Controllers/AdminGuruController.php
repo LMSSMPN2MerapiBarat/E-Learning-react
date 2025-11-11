@@ -170,6 +170,6 @@ class AdminGuruController extends Controller
             $guru->delete();
         }
 
-        return back()->with('success', '✅ Beberapa guru berhasil dihapus beserta akunnya.');
+        return back()->with('success', 'Beberapa guru berhasil dihapus beserta akunnya.');
     }
 }

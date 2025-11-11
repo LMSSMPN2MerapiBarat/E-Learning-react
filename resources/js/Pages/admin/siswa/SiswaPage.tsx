@@ -25,7 +25,16 @@ export default function SiswaPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [detailStudent, setDetailStudent] = useState<any | null>(null);
   const itemsPerPage = 10;
+
+  const handleDetailToggle = (open: boolean) => {
+    setIsDetailOpen(open);
+    if (!open) {
+      setDetailStudent(null);
+    }
+  };
 
   const sortedStudents = useMemo(() => {
     return [...studentsList].sort((a, b) =>
@@ -48,7 +57,7 @@ export default function SiswaPage() {
   // ✅ Handler success CRUD
   const handleAddSuccess = () => {
     setIsAddOpen(false);
-    toast.success("✅ Siswa berhasil ditambahkan!");
+    toast.success("Siswa berhasil ditambahkan!");
     reloadStudents();
   };
 
@@ -128,6 +137,10 @@ export default function SiswaPage() {
             setSelectedStudent={setSelectedStudent}
             setIsEditOpen={setIsEditOpen}
             setDeleteConfirm={setDeleteConfirm}
+            onViewDetail={(student) => {
+              setDetailStudent(student);
+              setIsDetailOpen(true);
+            }}
             startIndex={(currentPage - 1) * itemsPerPage}
           />
 
@@ -155,6 +168,9 @@ export default function SiswaPage() {
           selectedIds,
           reloadStudents,
           setIsLoading,
+          isDetailOpen,
+          setIsDetailOpen: handleDetailToggle,
+          detailStudent,
         }}
       />
     </AdminLayout>

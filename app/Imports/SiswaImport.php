@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class SiswaImport implements
     ToCollection,
@@ -86,6 +88,8 @@ class SiswaImport implements
             $nis = $row['nis'] ?? $row['NIS'] ?? null;
             $kelasNama = $row['kelas'] ?? $row['Kelas'] ?? null;
             $noTelp = $row['no_telepon'] ?? $row['No. Telepon'] ?? null;
+            $tempatLahir = $this->sanitizeBirthPlace($row['tempat_lahir'] ?? $row['Tempat Lahir'] ?? null);
+            $tanggalLahir = $this->normalizeDateValue($row['tanggal_lahir'] ?? $row['Tanggal Lahir'] ?? null);
 
             $emailKey = $this->normalizeKey($email);
             if ($emailKey !== null && isset($this->existingEmails[$emailKey])) {
@@ -126,6 +130,8 @@ class SiswaImport implements
                 'nis' => $normalizedNis,
                 'kelas_id' => $kelasId,
                 'no_telp' => $noTelp,
+                'tempat_lahir' => $tempatLahir,
+                'tanggal_lahir' => $tanggalLahir,
             ];
         }
 
@@ -162,6 +168,8 @@ class SiswaImport implements
                     'nis' => $entry['nis'],
                     'kelas_id' => $entry['kelas_id'],
                     'no_telp' => $entry['no_telp'],
+                    'tempat_lahir' => $entry['tempat_lahir'],
+                    'tanggal_lahir' => $entry['tanggal_lahir'],
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
@@ -187,6 +195,8 @@ class SiswaImport implements
             '*.nama' => 'required|string',
             '*.email' => 'nullable|email|unique:users,email',
             '*.nis' => 'nullable|unique:siswas,nis',
+            '*.tempat_lahir' => 'nullable|string',
+            '*.tanggal_lahir' => 'nullable|date',
         ];
     }
 
@@ -203,6 +213,35 @@ class SiswaImport implements
             'skipped' => $this->skipped,
             'notes' => $this->skippedNotes,
         ];
+    }
+
+    protected function sanitizeBirthPlace(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $clean = preg_replace('/[^\pL\s]/u', ' ', (string) $value);
+        $clean = trim(preg_replace('/\s+/', ' ', $clean));
+
+        return $clean !== '' ? $clean : null;
+    }
+
+    protected function normalizeDateValue($value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        try {
+            if (is_numeric($value)) {
+                return Carbon::instance(ExcelDate::excelToDateTimeObject((float) $value))->format('Y-m-d');
+            }
+
+            return Carbon::parse((string) $value)->format('Y-m-d');
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     protected function defaultPasswordHash(): string

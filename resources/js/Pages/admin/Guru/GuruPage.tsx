@@ -57,7 +57,7 @@ export default function GuruPage() {
 
   // ✅ Tambah, edit, hapus
   const handleAddSuccess = () => {
-    toast.success("✅ Guru berhasil ditambahkan!");
+    toast.success("Guru berhasil ditambahkan!");
     setIsAddOpen(false);
     reloadGurus();
   };
@@ -134,7 +134,7 @@ export default function GuruPage() {
     const toastId = toast.loading("📦 Mengekspor data guru...");
     window.location.href = "/admin/users/export/guru";
     setTimeout(() => {
-      toast.success("✅ File guru berhasil diekspor!", { id: toastId });
+      toast.success("File guru berhasil diekspor!", { id: toastId });
       setIsLoading(false);
     }, 1500);
   };

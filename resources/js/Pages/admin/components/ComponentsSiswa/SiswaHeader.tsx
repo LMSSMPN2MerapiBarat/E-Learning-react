@@ -67,7 +67,7 @@ export default function SiswaHeader({
     setIsLoading(true);
     setIsConfirmOpen(false);
 
-    const toastId = toast.loading("?? Mengimpor data siswa...");
+    const toastId = toast.loading("Mengimpor data siswa...");
     const formData = new FormData();
     formData.append("file", fileToUpload);
     formData.append("role", "siswa");
@@ -80,13 +80,13 @@ export default function SiswaHeader({
           setErrorMessage(flashError);
           toast.error(flashError, { id: toastId });
         } else {
-          toast.success("? Data siswa berhasil diimpor!", { id: toastId });
+          toast.success("Data siswa berhasil diimpor!", { id: toastId });
           reloadStudents();
         }
       },
       onError: (errors) => {
         const message =
-          (errors && (errors.file || errors.role)) || "? Gagal mengimpor data siswa.";
+          (errors && (errors.file || errors.role)) || "Gagal mengimpor data siswa.";
         setErrorMessage(message);
         toast.error(message, { id: toastId });
       },

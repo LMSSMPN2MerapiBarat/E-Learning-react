@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Siswa;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -24,6 +25,15 @@ class SiswaExport implements FromCollection, WithHeadings
                     $kelasName = $kelas->kelas ?? null;
                 }
 
+                $formattedBirthDate = '-';
+                if (!empty($siswa->tanggal_lahir)) {
+                    try {
+                        $formattedBirthDate = Carbon::parse($siswa->tanggal_lahir)->format('Y-m-d');
+                    } catch (\Throwable $e) {
+                        $formattedBirthDate = (string) $siswa->tanggal_lahir;
+                    }
+                }
+
                 return [
                     'Nama'           => $siswa->user->name ?? '-',
                     'Jenis Kelamin'  => $siswa->user->jenis_kelamin
@@ -31,6 +41,8 @@ class SiswaExport implements FromCollection, WithHeadings
                         : '-',
                     'Email'          => $siswa->user->email ?? '-',
                     'NISN'           => $siswa->nis ?? '-',
+                    'Tempat Lahir'   => $siswa->tempat_lahir ?? '-',
+                    'Tanggal Lahir'  => $formattedBirthDate,
                     'Kelas'          => $kelasName ?? '-',
                     'Tahun Ajaran'   => optional($kelas)->tahun_ajaran ?? '-',
                     'No. Telepon'    => $siswa->no_telp ?? '-',
@@ -45,6 +57,8 @@ class SiswaExport implements FromCollection, WithHeadings
             'Jenis Kelamin',
             'Email',
             'NISN',
+            'Tempat Lahir',
+            'Tanggal Lahir',
             'Kelas',
             'Tahun Ajaran',
             'No. Telepon',

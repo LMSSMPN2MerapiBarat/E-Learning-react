@@ -19,6 +19,9 @@ import { router } from "@inertiajs/react";
 import { toast } from "sonner";
 import CreateSiswa from "@/Pages/Admin/Siswa/Create";
 import EditSiswa from "@/Pages/Admin/Siswa/Edit";
+import { ScrollArea } from "@/Components/ui/scroll-area";
+import { Badge } from "@/Components/ui/badge";
+import { Separator } from "@/Components/ui/separator";
 
 interface Props {
   isAddOpen: boolean;
@@ -35,6 +38,9 @@ interface Props {
   selectedIds: number[];
   reloadStudents: () => void;
   setIsLoading: (v: boolean) => void;
+  isDetailOpen: boolean;
+  setIsDetailOpen: (v: boolean) => void;
+  detailStudent: any | null;
 }
 
 export default function SiswaDialogs({
@@ -52,13 +58,16 @@ export default function SiswaDialogs({
   selectedIds,
   reloadStudents,
   setIsLoading,
+  isDetailOpen,
+  setIsDetailOpen,
+  detailStudent,
 }: Props) {
   const handleDelete = () => {
     if (!deleteConfirm) return;
     setIsLoading(true);
     const toastId = toast.loading("Menghapus data siswa...");
     router.delete(`/admin/users/${deleteConfirm}`, {
-      onSuccess: () => toast.success("✅ Data siswa berhasil dihapus!", { id: toastId }),
+      onSuccess: () => toast.success("Data siswa berhasil dihapus!", { id: toastId }),
       onError: () => toast.error("❌ Gagal menghapus data siswa.", { id: toastId }),
       onFinish: () => {
         reloadStudents();
@@ -74,7 +83,7 @@ export default function SiswaDialogs({
     const toastId = toast.loading("Menghapus data siswa terpilih...");
     router.post("/admin/users/bulk-delete", { ids: selectedIds }, {
       forceFormData: true,
-      onSuccess: () => toast.success(`✅ ${selectedIds.length} data siswa dihapus!`, { id: toastId }),
+      onSuccess: () => toast.success(`${selectedIds.length} data siswa dihapus!`, { id: toastId }),
       onError: () => toast.error("❌ Gagal menghapus data siswa.", { id: toastId }),
       onFinish: () => {
         reloadStudents();
@@ -86,6 +95,80 @@ export default function SiswaDialogs({
 
   return (
     <>
+      {/* Detail */}
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent className="max-w-2xl border-0 p-0 shadow-2xl overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="px-6 pt-6 text-2xl font-semibold">
+              Detail Siswa
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[70vh]">
+            {detailStudent ? (
+              <div className="space-y-6 px-6 pb-6">
+                <div className="rounded-2xl border bg-white p-5 shadow-sm">
+                  <p className="text-2xl font-semibold text-gray-900">
+                    {detailStudent.name ?? "-"}
+                  </p>
+                  <p className="text-sm text-gray-600">{detailStudent.email ?? "-"}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {detailStudent.jenis_kelamin && (
+                      <Badge variant="secondary" className="capitalize">
+                        {detailStudent.jenis_kelamin.replace("-", " ")}
+                      </Badge>
+                    )}
+                    {detailStudent.kelas && (
+                      <Badge variant="outline">{detailStudent.kelas}</Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-4 rounded-2xl border bg-white p-5 shadow-sm">
+                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                    Informasi Siswa
+                  </p>
+                  <Separator />
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {[
+                      { label: "NIS", value: detailStudent.nis ?? "-" },
+                      { label: "No. Telepon", value: detailStudent.no_telp ?? "-" },
+                      { label: "Tempat Lahir", value: detailStudent.tempat_lahir ?? "-" },
+                      {
+                        label: "Tanggal Lahir",
+                        value: detailStudent.tanggal_lahir
+                          ? new Date(detailStudent.tanggal_lahir).toLocaleDateString(
+                              "id-ID",
+                              {
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                              },
+                            )
+                          : "-",
+                      },
+                      { label: "Email", value: detailStudent.email ?? "-" },
+                      { label: "Kelas", value: detailStudent.kelas ?? "-" },
+                    ].map((item) => (
+                      <div key={item.label} className="rounded-xl border bg-gray-50 p-4">
+                        <p className="text-xs uppercase tracking-wide text-gray-500">
+                          {item.label}
+                        </p>
+                        <p className="text-base font-semibold text-gray-900">
+                          {item.value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="px-6 pb-6 text-center text-sm text-gray-500">
+                Data siswa tidak tersedia.
+              </p>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
       {/* Tambah */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent
