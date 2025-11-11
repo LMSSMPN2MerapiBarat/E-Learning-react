@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Search, Pencil, Trash2 } from "lucide-react";
 import { Input } from "@/Components/ui/input";
 import {
@@ -31,6 +31,11 @@ const formatKelasLabel = (value: unknown) => {
   return formatted.length ? formatted.join(", ") : "-";
 };
 
+interface MapelOption {
+  id?: number;
+  nama_mapel?: string | null;
+}
+
 export default function GuruTable({
   guruList,
   setSelectedGuru,
@@ -38,11 +43,45 @@ export default function GuruTable({
   setDeleteConfirm,
   selectedIds,
   setSelectedIds,
-}: any) {
+  mapelOptions,
+}: {
+  guruList: any[];
+  setSelectedGuru: (guru: any) => void;
+  setIsEditOpen: (open: boolean) => void;
+  setDeleteConfirm: (id: number | null) => void;
+  selectedIds: number[];
+  setSelectedIds: React.Dispatch<React.SetStateAction<number[]>>;
+  mapelOptions?: MapelOption[];
+}) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const subjectOptions = useMemo(() => {
+    const fromMapels =
+      mapelOptions?.map((m) => (m?.nama_mapel ?? "").trim()).filter(Boolean) ?? [];
+
+    const fromGurus = Array.isArray(guruList)
+      ? guruList
+          .flatMap((guru: any) =>
+            (guru.mapel ?? "")
+              .split(",")
+              .map((item: string) => item.trim())
+              .filter(Boolean),
+          )
+      : [];
+
+    const merged = [...fromMapels, ...fromGurus];
+    const unique: string[] = [];
+    merged.forEach((name) => {
+      const lower = name.toLowerCase();
+      if (!unique.some((existing) => existing.toLowerCase() === lower)) {
+        unique.push(name);
+      }
+    });
+    return unique;
+  }, [mapelOptions, guruList]);
 
   const filteredGurus = Array.isArray(guruList)
     ? guruList.filter((guru: any) => {
@@ -113,11 +152,11 @@ export default function GuruTable({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Semua Mapel</SelectItem>
-            <SelectItem value="matematika">Matematika</SelectItem>
-            <SelectItem value="ipa">IPA</SelectItem>
-            <SelectItem value="ips">IPS</SelectItem>
-            <SelectItem value="bahasa indonesia">Bahasa Indonesia</SelectItem>
-            <SelectItem value="bahasa inggris">Bahasa Inggris</SelectItem>
+            {subjectOptions.map((mapel) => (
+              <SelectItem key={mapel} value={mapel}>
+                {mapel}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

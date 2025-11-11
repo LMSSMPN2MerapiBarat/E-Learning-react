@@ -24,6 +24,7 @@ import GuruDialogs from "@/Pages/Admin/components/ComponentsGuru/GuruDialogs";
 export default function GuruPage() {
   const { props }: any = usePage();
   const initialGurus: any[] = props.gurus || [];
+  const mapelOptions: any[] = props.mapels || [];
 
   const [guruList, setGuruList] = useState(initialGurus);
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -227,6 +228,7 @@ export default function GuruPage() {
             setDeleteConfirm={setDeleteConfirm}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
+            mapelOptions={mapelOptions}
           />
         </CardContent>
       </Card>
