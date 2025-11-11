@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Head, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -8,6 +8,20 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import KelasHeader from "@/Pages/Admin/components/ComponentsKelas/KelasHeader";
 import KelasTable from "@/Pages/Admin/components/ComponentsKelas/KelasTable";
 import KelasDialogs from "@/Pages/Admin/components/ComponentsKelas/KelasDialogs";
+
+const TINGKAT_ORDER: Record<string, number> = {
+  "Kelas 7": 0,
+  "Kelas 8": 1,
+  "Kelas 9": 2,
+};
+
+const getTingkatOrder = (tingkat?: string) => {
+  if (!tingkat) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+  const order = TINGKAT_ORDER[tingkat];
+  return typeof order === "number" ? order : Number.MAX_SAFE_INTEGER;
+};
 
 export default function KelasPage() {
   const { props }: any = usePage();
@@ -24,6 +38,18 @@ export default function KelasPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detailData, setDetailData] = useState<any | null>(null);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
+
+  const sortedKelasList = useMemo(() => {
+    return [...kelasList].sort((a, b) => {
+      const tingkatDiff = getTingkatOrder(a?.tingkat) - getTingkatOrder(b?.tingkat);
+      if (tingkatDiff !== 0) {
+        return tingkatDiff;
+      }
+      return (a?.kelas ?? "").localeCompare(b?.kelas ?? "", "id", {
+        sensitivity: "base",
+      });
+    });
+  }, [kelasList]);
 
   const reloadKelas = () => {
     router.reload({
@@ -155,7 +181,7 @@ export default function KelasPage() {
         />
         <CardContent>
           <KelasTable
-            kelasList={kelasList}
+            kelasList={sortedKelasList}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             setSelectedKelas={setSelectedKelas}

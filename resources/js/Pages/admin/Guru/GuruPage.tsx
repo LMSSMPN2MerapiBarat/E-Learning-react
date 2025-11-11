@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Head, usePage, router } from "@inertiajs/react";
 import { toast } from "sonner";
 import { Plus, Upload, Download, Loader2, Trash2 } from "lucide-react";
@@ -38,6 +38,12 @@ export default function GuruPage() {
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const importInputRef = useRef<HTMLInputElement | null>(null);
+
+  const sortedGuruList = useMemo(() => {
+    return [...guruList].sort((a, b) =>
+      (a.name ?? "").localeCompare(b.name ?? "", "id", { sensitivity: "base" })
+    );
+  }, [guruList]);
 
   const reloadGurus = () => {
     router.reload({
@@ -215,7 +221,7 @@ export default function GuruPage() {
 
         <CardContent>
           <GuruTable
-            guruList={guruList}
+            guruList={sortedGuruList}
             setSelectedGuru={setSelectedGuru}
             setIsEditOpen={setIsEditOpen}
             setDeleteConfirm={setDeleteConfirm}

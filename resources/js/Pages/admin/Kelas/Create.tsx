@@ -18,6 +18,12 @@ import {
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
 
+const TINGKAT_PREFIX_MAP: Record<string, string> = {
+  "Kelas 7": "VII-",
+  "Kelas 8": "VIII-",
+  "Kelas 9": "IX-",
+};
+
 export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
   const { data, setData, post, processing, errors, reset } = useForm({
     tingkat: "",
@@ -26,14 +32,22 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const [prefix, setPrefix] = useState("");
+  const [classSuffix, setClassSuffix] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
-    if (data.tingkat === "Kelas 7") setPrefix("VII-");
-    else if (data.tingkat === "Kelas 8") setPrefix("VIII-");
-    else if (data.tingkat === "Kelas 9") setPrefix("IX-");
-    else setPrefix("");
+    setPrefix(TINGKAT_PREFIX_MAP[data.tingkat] ?? "");
   }, [data.tingkat]);
+
+  useEffect(() => {
+    if (!data.tingkat) {
+      setClassSuffix("");
+    }
+  }, [data.tingkat]);
+
+  useEffect(() => {
+    setData("kelas", prefix ? `${prefix}${classSuffix}` : classSuffix);
+  }, [prefix, classSuffix, setData]);
 
   useEffect(() => {
     const tahun = new Date().getFullYear();
@@ -51,6 +65,8 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
       onSuccess: () => {
         toast.success("Kelas berhasil disimpan!");
         reset();
+        setClassSuffix("");
+        setPrefix("");
         onSuccess();
       },
       onError: (formErrors) => {
@@ -101,16 +117,28 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
 
               <div>
                 <Label htmlFor="kelas">Nama Kelas</Label>
-                <Input
-                  id="kelas"
-                  type="text"
-                  placeholder="contoh: VII-A"
-                  value={`${prefix}${data.kelas.replace(prefix, "")}`}
-                  onChange={(e) =>
-                    setData("kelas", `${prefix}${e.target.value.replace(prefix, "")}`)
-                  }
-                  required
-                />
+                <div className="flex rounded-md shadow-sm">
+                  {prefix && (
+                    <span className="inline-flex items-center rounded-l-md border border-r-0 bg-gray-100 px-3 text-sm font-semibold text-gray-600">
+                      {prefix}
+                    </span>
+                  )}
+                  <Input
+                    id="kelas"
+                    type="text"
+                    placeholder={
+                      prefix ? "contoh: 1 atau 2" : "Pilih tingkat terlebih dahulu"
+                    }
+                    className={prefix ? "rounded-l-none" : undefined}
+                    value={classSuffix}
+                    onChange={(e) => setClassSuffix(e.target.value.toUpperCase())}
+                    disabled={!prefix}
+                    required
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Pilih tingkat untuk mendapatkan kode kelas (mis. VII-) lalu isi akhiran kelas.
+                </p>
                 {errors.kelas && (
                   <p className="text-sm text-red-500 mt-1">{errors.kelas}</p>
                 )}

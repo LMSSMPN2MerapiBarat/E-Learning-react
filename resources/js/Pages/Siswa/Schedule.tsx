@@ -9,6 +9,7 @@ import StudentScheduleList from "./components/StudentScheduleList";
 import type { SiswaPageProps } from "./types";
 
 const DEFAULT_DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+const PREFERRED_DAY = "Senin";
 const DAY_NAMES_ID = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
 const getCurrentDayName = () => DAY_NAMES_ID[new Date().getDay()];
@@ -32,20 +33,31 @@ export default function Schedule() {
   const groupedSchedules = schedule?.byDay ?? {};
 
   const initialDay = useMemo(() => {
-    const today = getCurrentDayName();
-    if (dayOptions.includes(today)) {
-      return today;
+    if (dayOptions.includes(PREFERRED_DAY)) {
+      return PREFERRED_DAY;
     }
-    return dayOptions[0] ?? "Senin";
+    return dayOptions[0] ?? PREFERRED_DAY;
   }, [dayOptions]);
 
   const [currentDay, setCurrentDay] = useState(initialDay);
 
   useEffect(() => {
-    if (!dayOptions.includes(currentDay) && dayOptions.length > 0) {
-      setCurrentDay(dayOptions[0]);
-    }
-  }, [dayOptions, currentDay]);
+    setCurrentDay((prev) => {
+      if (dayOptions.length === 0) {
+        return PREFERRED_DAY;
+      }
+
+      if (dayOptions.includes(PREFERRED_DAY)) {
+        return PREFERRED_DAY;
+      }
+
+      if (!dayOptions.includes(prev)) {
+        return dayOptions[0];
+      }
+
+      return prev;
+    });
+  }, [dayOptions]);
 
   const currentTime = formatTimeNow();
   const todayName = getCurrentDayName();

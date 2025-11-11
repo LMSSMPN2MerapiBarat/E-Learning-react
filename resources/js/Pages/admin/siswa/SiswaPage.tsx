@@ -27,6 +27,12 @@ export default function SiswaPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const sortedStudents = useMemo(() => {
+    return [...studentsList].sort((a, b) =>
+      (a.name ?? "").localeCompare(b.name ?? "", "id", { sensitivity: "base" })
+    );
+  }, [studentsList]);
+
   // 🔄 Reload data siswa
   const reloadStudents = () => {
     router.reload({
@@ -56,12 +62,12 @@ export default function SiswaPage() {
 
   // 🔍 Filter & Pagination
   const kelasOptions = useMemo(() => {
-    const allClasses = studentsList.map((s) => s.kelas).filter(Boolean);
+    const allClasses = sortedStudents.map((s) => s.kelas).filter(Boolean);
     return Array.from(new Set(allClasses)).sort();
-  }, [studentsList]);
+  }, [sortedStudents]);
 
   const filteredStudents = useMemo(() => {
-    return studentsList.filter((student) => {
+    return sortedStudents.filter((student) => {
       const lowerSearch = searchTerm.toLowerCase();
       const matchSearch =
         student.name?.toLowerCase().includes(lowerSearch) ||
@@ -71,7 +77,7 @@ export default function SiswaPage() {
         selectedClass === "all" || student.kelas === selectedClass;
       return matchSearch && matchKelas;
     });
-  }, [studentsList, searchTerm, selectedClass]);
+  }, [sortedStudents, searchTerm, selectedClass]);
 
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
   const paginatedStudents = filteredStudents.slice(

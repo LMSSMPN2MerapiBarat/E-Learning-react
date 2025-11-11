@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Head, usePage, router } from "@inertiajs/react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -24,6 +24,12 @@ export default function MapelPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detailData, setDetailData] = useState<any | null>(null);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
+
+  const sortedMapelList = useMemo(() => {
+    return [...mapelList].sort((a, b) =>
+      (a.nama ?? "").localeCompare(b.nama ?? "", "id", { sensitivity: "base" })
+    );
+  }, [mapelList]);
 
   const reloadMapel = () => {
     router.reload({
@@ -130,7 +136,7 @@ export default function MapelPage() {
         />
         <CardContent>
           <MapelTable
-            mapelList={mapelList}
+            mapelList={sortedMapelList}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             setSelectedMapel={setSelectedMapel}

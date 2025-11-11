@@ -7,6 +7,8 @@ import {
   FileText,
   GraduationCap,
   User,
+  ClipboardList,
+  Layers,
 } from "lucide-react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import { Card, CardContent } from "@/Components/ui/card";
@@ -124,19 +126,19 @@ export default function Subjects({
             className="grid gap-4 md:grid-cols-3"
           >
             <StatCard
-              icon={GraduationCap}
+              icon={Layers}
               label="Total Mata Pelajaran"
               value={stats.subjectCount}
               accent="border-l-indigo-500"
             />
             <StatCard
-              icon={FileText}
+              icon={BookOpen}
               label="Total Materi"
               value={stats.totalMaterials}
               accent="border-l-blue-500"
             />
             <StatCard
-              icon={FileQuestion}
+              icon={ClipboardList}
               label="Total Kuis"
               value={stats.totalQuizzes}
               accent="border-l-green-500"
