@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
+use App\Models\Assignment;
 use App\Models\ClassSchedule;
 use App\Models\Guru;
 use App\Models\Materi;
@@ -12,9 +13,15 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use App\Services\StudentNotificationService;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        protected StudentNotificationService $studentNotificationService,
+    ) {
+    }
+
     public function index()
     {
         $data = $this->composeStudentData();
@@ -141,6 +148,24 @@ class DashboardController extends Controller
 
         $materiCollection = $materiQuery->latest()->get();
 
+        $assignmentCollection = collect();
+        if ($kelas) {
+            $assignmentCollection = Assignment::with([
+                    'kelas',
+                    'mataPelajaran',
+                    'guru.user',
+                    'submissions' => fn($query) => $query
+                        ->where('siswa_id', $siswa->id)
+                        ->latest(),
+                ])
+                ->where('status', '!=', 'draft')
+                ->whereHas('kelas', fn($query) => $query->where('kelas.id', $kelas->id))
+                ->latest('created_at')
+                ->get()
+                ->values()
+                ->toBase();
+        }
+
         $classScheduleCollection = $this->fetchClassSchedules($kelas);
         $scheduleLookup = $this->buildScheduleLookup($kelas, $classScheduleCollection);
 
@@ -220,13 +245,6 @@ class DashboardController extends Controller
         }
 
         $quizCollection = $quizQuery->latest()->get();
-
-        $recentQuizCount = $quizCollection
-            ->filter(
-                fn($quiz) => $quiz->created_at
-                    && $quiz->created_at->greaterThanOrEqualTo($notificationCutoff)
-            )
-            ->count();
 
         $attempts = QuizAttempt::with(['quiz.mataPelajaran'])
             ->where('siswa_id', $siswa->id)
@@ -342,7 +360,9 @@ class DashboardController extends Controller
                     'url' => route('siswa.materials', ['highlight' => $materi->id]),
                     'sortTimestamp' => $materi->created_at?->getTimestamp() ?? 0,
                 ];
-            });
+            })
+            ->values()
+            ->toBase();
 
         $quizNotifications = $quizCollection
             ->filter(
@@ -362,19 +382,24 @@ class DashboardController extends Controller
                     'url' => route('siswa.quizzes.show', $quiz),
                     'sortTimestamp' => $quiz->created_at?->getTimestamp() ?? 0,
                 ];
-            });
-
-        $unreadNotificationCount = $materialNotifications->count() + $quizNotifications->count();
-
-        $notificationItems = $materialNotifications
-            ->merge($quizNotifications)
-            ->sortByDesc('sortTimestamp')
-            ->take(8)
+            })
             ->values()
-            ->map(function ($item) {
-                unset($item['sortTimestamp']);
-                return $item;
-            });
+            ->toBase();
+
+        $notificationPayload = $this->studentNotificationService->build(
+            $siswa,
+            $kelas,
+            $formatKelasLabel,
+            $materiCollection,
+            $quizCollection,
+            $assignmentCollection,
+            $notificationWindowDays,
+            $notificationCutoff,
+        );
+
+        $notificationItems = collect($notificationPayload['items']);
+        $unreadNotificationCount = $notificationPayload['unreadCount'];
+        $recentQuizCount = $notificationPayload['recentQuizCount'];
 
         $materialSubjects = $materials
             ->pluck('subject')
@@ -390,7 +415,7 @@ class DashboardController extends Controller
             ->values()
             ->all();
 
-        $grades = $attempts
+        $quizGrades = $attempts
             ->map(function (QuizAttempt $attempt) {
                 return [
                     'id' => $attempt->id,
@@ -404,6 +429,34 @@ class DashboardController extends Controller
                     'feedback' => null,
                 ];
             })
+            ->values()
+            ->toBase();
+
+        $assignmentGrades = $assignmentCollection
+            ->map(function (Assignment $assignment) {
+                $submission = $assignment->submissions->first();
+                if (!$submission || $submission->status !== 'graded') {
+                    return null;
+                }
+
+                return [
+                    'id' => $submission->id,
+                    'title' => $assignment->judul,
+                    'subject' => $assignment->mataPelajaran?->nama_mapel ?? 'Mata Pelajaran',
+                    'type' => 'assignment',
+                    'score' => $submission->score ?? 0,
+                    'maxScore' => $assignment->max_score ?? 100,
+                    'date' => optional($submission->graded_at ?? $submission->submitted_at ?? $submission->created_at)->toDateString(),
+                    'status' => 'graded',
+                    'feedback' => $submission->feedback,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->toBase();
+
+        $grades = $quizGrades
+            ->merge($assignmentGrades)
             ->values();
 
         $gradeSubjects = $grades

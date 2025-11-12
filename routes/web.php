@@ -11,11 +11,14 @@ use App\Http\Controllers\AdminMapelController;
 use App\Http\Controllers\AdminGuruController;
 use App\Http\Controllers\AdminSiswaController;
 use App\Http\Controllers\AdminClassScheduleController;
+use App\Http\Controllers\Guru\AssignmentController as GuruAssignmentController;
+use App\Http\Controllers\Guru\AssignmentSubmissionController as GuruAssignmentSubmissionController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\MateriController as GuruMateriController;
 use App\Http\Controllers\Guru\QuizController as GuruQuizController;
 use App\Http\Controllers\Guru\KelasController as GuruKelasController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
+use App\Http\Controllers\Siswa\AssignmentController as SiswaAssignmentController;
 use App\Http\Controllers\Siswa\MateriController as SiswaMateriController;
 use App\Http\Controllers\Siswa\QuizAttemptController as SiswaQuizAttemptController;
 
@@ -188,6 +191,24 @@ Route::middleware(['auth', 'role:guru'])
         Route::post('/kuis', [GuruQuizController::class, 'store'])->name('kuis.store');
         Route::put('/kuis/{quiz}', [GuruQuizController::class, 'update'])->name('kuis.update');
         Route::delete('/kuis/{quiz}', [GuruQuizController::class, 'destroy'])->name('kuis.destroy');
+
+        Route::prefix('tugas')->name('tugas.')->group(function () {
+            Route::get('/', [GuruAssignmentController::class, 'index'])->name('index');
+            Route::post('/', [GuruAssignmentController::class, 'store'])->name('store');
+            Route::get('/{assignment}', [GuruAssignmentController::class, 'show'])
+                ->whereNumber('assignment')
+                ->name('show');
+            Route::put('/{assignment}', [GuruAssignmentController::class, 'update'])
+                ->whereNumber('assignment')
+                ->name('update');
+            Route::delete('/{assignment}', [GuruAssignmentController::class, 'destroy'])
+                ->whereNumber('assignment')
+                ->name('destroy');
+        });
+
+        Route::put('/tugas/submissions/{submission}', [GuruAssignmentSubmissionController::class, 'update'])
+            ->whereNumber('submission')
+            ->name('tugas.submissions.update');
     });
 
 /*
@@ -211,6 +232,16 @@ Route::middleware(['auth', 'role:siswa'])
         Route::get('/materi/{materi}/download', [SiswaMateriController::class, 'download'])->name('materials.download');
         Route::post('/quizzes/{quiz}/attempts', [SiswaQuizAttemptController::class, 'store'])->name('quizzes.attempts.store');
         Route::get('/mata-pelajaran', [SiswaDashboardController::class, 'subjects'])->name('subjects');
+        Route::get('/tugas', [SiswaAssignmentController::class, 'index'])->name('tugas.index');
+        Route::post('/tugas/{assignment}/draft', [SiswaAssignmentController::class, 'saveDraft'])
+            ->whereNumber('assignment')
+            ->name('tugas.draft');
+        Route::post('/tugas/{assignment}/submit', [SiswaAssignmentController::class, 'submit'])
+            ->whereNumber('assignment')
+            ->name('tugas.submit');
+        Route::post('/tugas/{assignment}/cancel', [SiswaAssignmentController::class, 'cancel'])
+            ->whereNumber('assignment')
+            ->name('tugas.cancel');
     });
 
 require __DIR__ . '/auth.php';

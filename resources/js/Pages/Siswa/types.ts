@@ -19,7 +19,7 @@ export interface StatsPayload {
   classmateCount: number;
 }
 
-export type StudentNotificationType = "material" | "quiz";
+export type StudentNotificationType = "material" | "quiz" | "assignment";
 
 export interface StudentNotificationItem {
   id: string;
@@ -168,6 +168,41 @@ export interface GradeSummary {
   totalAssessments: number;
 }
 
+export type StudentAssignmentStatus = "pending" | "submitted" | "graded" | "late";
+
+export interface StudentAssignmentFile {
+  id: number;
+  name: string;
+  url: string | null;
+}
+
+export interface StudentAssignmentItem {
+  id: number;
+  title: string;
+  description?: string | null;
+  subject?: string | null;
+  teacher?: string | null;
+  classes: (string | null)[];
+  openDate?: string | null;
+  closeDate?: string | null;
+  maxScore: number;
+  passingGrade?: number | null;
+  allowTextAnswer: boolean;
+  allowFileUpload: boolean;
+  allowedFileTypes: string[];
+  allowCancelSubmit: boolean;
+  attachments: StudentAssignmentFile[];
+  status: StudentAssignmentStatus;
+  submittedDate?: string | null;
+  score?: number | null;
+  feedback?: string | null;
+  textAnswer?: string | null;
+  files: StudentAssignmentFile[];
+  submissionId?: number | null;
+  isOpen?: boolean;
+  isClosed?: boolean;
+}
+
 export interface SiswaPageProps extends InertiaPageProps {
   auth: {
     user: AuthUser;
@@ -182,6 +217,7 @@ export interface SiswaPageProps extends InertiaPageProps {
   grades: GradeItem[];
   gradeSubjects?: string[];
   gradeSummary?: GradeSummary;
+  assignments?: StudentAssignmentItem[];
   classSubjects?: StudentSubject[];
   schedule?: StudentSchedulePayload;
   notifications?: StudentNotificationsPayload;

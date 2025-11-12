@@ -271,8 +271,12 @@ class MateriController extends Controller
         abort_if(!$guru || $materi->guru_id !== $guru->id, 403);
         abort_if(!$materi->file_path, 404);
 
-        return Storage::disk('public')->download(
-            $materi->file_path,
+        $storage = Storage::disk('public');
+
+        abort_unless($storage->exists($materi->file_path), 404);
+
+        return response()->download(
+            $storage->path($materi->file_path),
             $materi->file_name ?? basename($materi->file_path)
         );
     }

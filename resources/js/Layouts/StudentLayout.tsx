@@ -8,6 +8,7 @@ import {
   Home,
   Layers,
   LogOut,
+  PenSquare,
   Trophy,
 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
@@ -21,6 +22,7 @@ interface StudentLayoutProps {
 
 type StudentNavKey =
   | "dashboard"
+  | "assignments"
   | "materials"
   | "subjects"
   | "schedule"
@@ -44,6 +46,12 @@ const NAV_ITEMS: Array<{
     label: "Jadwal",
     routeName: "siswa.schedule",
     icon: CalendarDays,
+  },
+  {
+    key: "assignments",
+    label: "Tugas",
+    routeName: "siswa.tugas.index",
+    icon: PenSquare,
   },
   {
     key: "subjects",
@@ -137,6 +145,7 @@ export default function StudentLayout({
     if (component.includes("siswa/schedule")) return "schedule";
     if (component.includes("siswa/quizzes")) return "quizzes";
     if (component.includes("siswa/materials")) return "materials";
+    if (component.includes("siswa/tugas")) return "assignments";
 
     return "dashboard";
   };
@@ -145,6 +154,7 @@ export default function StudentLayout({
 
   const fallbackPaths: Record<StudentNavKey, string> = {
     dashboard: "/siswa/dashboard",
+    assignments: "/siswa/tugas",
     materials: "/siswa/materi",
     subjects: "/siswa/mata-pelajaran",
     schedule: "/siswa/jadwal",

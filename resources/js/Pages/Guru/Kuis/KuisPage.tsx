@@ -77,7 +77,7 @@ export default function KuisPage() {
     setIsCreateOpen(false);
     setFeedback({
       title: "Kuis baru siap digunakan",
-      description: "Silakan bagikan kode akses kepada kelas pilihan Anda.",
+      description: "Silahkan beritahu kelas Anda untuk mengikuti kuis.",
     });
   };
 

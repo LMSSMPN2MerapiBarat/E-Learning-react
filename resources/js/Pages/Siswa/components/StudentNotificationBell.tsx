@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@inertiajs/react";
-import { Bell, BookOpen, ClipboardList } from "lucide-react";
+import { Bell, BookOpen, ClipboardList, FileText } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
 import {
@@ -20,11 +20,13 @@ import type {
 const ICON_MAP: Record<StudentNotificationType, typeof BookOpen> = {
   material: BookOpen,
   quiz: ClipboardList,
+  assignment: FileText,
 };
 
 const TYPE_LABEL: Record<StudentNotificationType, string> = {
   material: "Materi",
   quiz: "Kuis",
+  assignment: "Tugas",
 };
 
 interface StudentNotificationBellProps {
@@ -32,6 +34,7 @@ interface StudentNotificationBellProps {
 }
 
 const MAX_BADGE_COUNT = 9;
+const PAGE_SIZE = 5;
 
 const formatRelativeTime = (value?: string | null) => {
   if (!value) {
@@ -111,24 +114,27 @@ const NotificationList = ({
           <DropdownMenuItem
             key={item.id}
             asChild
-            className="px-3 py-2"
+            className="px-2 py-1"
           >
             <Link
               href={item.url}
-              className="flex w-full items-start gap-3 rounded-md transition hover:bg-muted/60"
+              className="flex w-full items-start gap-3 rounded-md p-2 text-xs transition hover:bg-muted/60"
             >
-              <div className="mt-0.5 rounded-md bg-blue-100 p-2 text-blue-600">
-                <Icon className="h-4 w-4" />
+              <div className="mt-0.5 rounded-md bg-blue-100 p-1.5 text-blue-600">
+                <Icon className="h-3.5 w-3.5" />
               </div>
               <div className="flex-1 space-y-1">
                 <p className="text-sm font-medium text-gray-900">
                   {item.title}
                 </p>
-                <Badge variant="secondary" className="px-2 py-0 text-[10px] uppercase tracking-wide">
+                <Badge
+                  variant="secondary"
+                  className="px-2 py-0 text-[9px] uppercase tracking-wide"
+                >
                   {TYPE_LABEL[item.type] ?? item.type}
                 </Badge>
                 {renderNotificationMeta(item.meta)}
-                <p className="text-xs text-gray-400">
+                <p className="text-[11px] text-gray-400">
                   {formatRelativeTime(item.createdAt)}
                 </p>
               </div>
@@ -148,6 +154,21 @@ export default function StudentNotificationBell({
     if (typeof window === "undefined") return null;
     return window.localStorage.getItem("studentNotificationsSeenAt");
   });
+  const [page, setPage] = useState(0);
+
+  const totalItems = visibleItems.length;
+  useEffect(() => {
+    setPage(0);
+  }, [totalItems]);
+
+  const totalPages = Math.max(1, Math.ceil(Math.max(totalItems, 1) / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages - 1);
+  const paginatedItems = totalItems
+    ? visibleItems.slice(
+        currentPage * PAGE_SIZE,
+        currentPage * PAGE_SIZE + PAGE_SIZE,
+      )
+    : [];
 
   const latestCreatedAt = useMemo(() => {
     if (!visibleItems.length) return null;
@@ -196,22 +217,52 @@ export default function StudentNotificationBell({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 p-0">
-        <DropdownMenuLabel className="flex items-center justify-between px-4 py-3 text-sm font-semibold">
+      <DropdownMenuContent align="end" className="w-64 p-0">
+        <DropdownMenuLabel className="flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide">
           <span>Notifikasi</span>
           {unreadCount > 0 && (
-            <span className="text-xs font-normal text-gray-500">
+            <span className="text-[11px] font-normal text-gray-500">
               {unreadCount} baru
             </span>
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <NotificationList items={visibleItems} />
+        <NotificationList items={paginatedItems} />
         {notifications && (
           <>
             <DropdownMenuSeparator />
-            <p className="px-4 py-2 text-xs text-gray-400">
-              Menampilkan {visibleItems.length} notifikasi terbaru dalam{" "}
+            <div className="flex items-center justify-between px-3 py-2 text-[11px] text-gray-400">
+              <span>
+                Halaman {totalItems ? currentPage + 1 : 0} dari{" "}
+                {totalItems ? totalPages : 0}
+              </span>
+              {totalItems > PAGE_SIZE && (
+                <div className="flex items-center gap-1">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6"
+                    disabled={currentPage === 0}
+                    onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+                  >
+                    {"<"}
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6"
+                    disabled={currentPage >= totalPages - 1}
+                    onClick={() =>
+                      setPage((prev) => Math.min(prev + 1, totalPages - 1))
+                    }
+                  >
+                    {">"}
+                  </Button>
+                </div>
+              )}
+            </div>
+            <p className="px-3 pb-2 text-[11px] text-gray-400">
+              Menampilkan maks. {PAGE_SIZE} notifikasi terbaru dalam{" "}
               {notifications.windowDays} hari terakhir.
             </p>
           </>

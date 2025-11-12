@@ -42,4 +42,14 @@ class Kelas extends Model
             'quiz_id'
         )->withTimestamps();
     }
+
+    public function assignments()
+    {
+        return $this->belongsToMany(
+            Assignment::class,
+            'assignment_kelas',
+            'kelas_id',
+            'assignment_id'
+        )->withTimestamps();
+    }
 }

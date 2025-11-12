@@ -2,6 +2,7 @@ import React, { PropsWithChildren, useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { Menu } from "lucide-react";
 import TeacherSidebar from "@/Components/TeacherSidebar";
+import { Toaster } from "@/Components/ui/toaster";
 import { cn } from "@/Components/ui/utils";
 import type { PageProps } from "@/types";
 
@@ -92,6 +93,7 @@ export default function TeacherLayout({
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <Toaster />
       </div>
     </div>
   );

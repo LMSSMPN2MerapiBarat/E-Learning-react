@@ -33,6 +33,11 @@ class Siswa extends Model
         return $this->hasMany(QuizAttempt::class);
     }
 
+    public function assignmentSubmissions()
+    {
+        return $this->hasMany(AssignmentSubmission::class);
+    }
+
     protected static function boot()
     {
         parent::boot();

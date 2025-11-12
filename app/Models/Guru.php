@@ -47,4 +47,9 @@ class Guru extends Model
     {
         return $this->hasMany(Quiz::class);
     }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
+    }
 }

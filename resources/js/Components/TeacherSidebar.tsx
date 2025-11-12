@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  NotebookPen,
   Users,
 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
@@ -24,6 +25,7 @@ const menuItems = [
     icon: BookOpen,
   },
   { label: "Kelas Saya", href: "/guru/kelas", icon: Users },
+  { label: "Kelola Tugas", href: "/guru/tugas", icon: NotebookPen },
   { label: "Kelola Kuis", href: "/guru/kuis", icon: ClipboardList },
 ];
 
