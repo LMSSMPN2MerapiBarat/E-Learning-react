@@ -66,6 +66,22 @@ class AdminUserController extends Controller
         $totalGuru  = User::where('role', 'guru')->count();
         $totalSiswa = User::where('role', 'siswa')->count();
 
+        // Statistik gender untuk siswa
+        $siswaLakiLaki = User::where('role', 'siswa')
+            ->where('jenis_kelamin', 'laki-laki')
+            ->count();
+        $siswaPerempuan = User::where('role', 'siswa')
+            ->where('jenis_kelamin', 'perempuan')
+            ->count();
+
+        // Statistik gender untuk guru
+        $guruLakiLaki = User::where('role', 'guru')
+            ->where('jenis_kelamin', 'laki-laki')
+            ->count();
+        $guruPerempuan = User::where('role', 'guru')
+            ->where('jenis_kelamin', 'perempuan')
+            ->count();
+
         $students = Siswa::with(['user', 'kelas'])
             ->get()
             ->map(function ($s) {
@@ -156,6 +172,10 @@ class AdminUserController extends Controller
             'totalSiswa'  => $totalSiswa,
             'totalMateri' => $kelas->count(),
             'totalKuis'   => $mapels->count(),
+            'siswaLakiLaki' => $siswaLakiLaki,
+            'siswaPerempuan' => $siswaPerempuan,
+            'guruLakiLaki' => $guruLakiLaki,
+            'guruPerempuan' => $guruPerempuan,
             'students'    => $students,
             'gurus'       => $gurus,
             'kelas'       => $kelas,

@@ -75,6 +75,10 @@ interface PageProps extends InertiaPageProps {
   totalSiswa: number;
   totalMateri: number;
   totalKuis: number;
+  siswaLakiLaki: number;
+  siswaPerempuan: number;
+  guruLakiLaki: number;
+  guruPerempuan: number;
 }
 
 // ==== Utils ====
@@ -112,6 +116,10 @@ export default function DashboardOverview() {
     totalSiswa = 0,
     totalMateri = 0,
     totalKuis = 0,
+    siswaLakiLaki = 0,
+    siswaPerempuan = 0,
+    guruLakiLaki = 0,
+    guruPerempuan = 0,
   } = usePage<PageProps>().props;
 
   const [searchStudents, setSearchStudents] = useState("");
@@ -237,6 +245,69 @@ export default function DashboardOverview() {
             </div>
             <div className="bg-orange-500 p-3 rounded-lg">
               <School className="w-6 h-6 text-white" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* === Statistik Jenis Kelamin === */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        {/* Statistik Siswa berdasarkan Gender */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Jenis Kelamin Siswa</CardTitle>
+            <CardDescription>Distribusi siswa berdasarkan jenis kelamin</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-gray-600">Laki-laki</p>
+                  <p className="text-2xl font-bold text-blue-600">{siswaLakiLaki}</p>
+                </div>
+                <div className="text-right text-sm text-gray-500">
+                  {totalSiswa > 0 ? ((siswaLakiLaki / totalSiswa) * 100).toFixed(1) : 0}%
+                </div>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-gray-600">Perempuan</p>
+                  <p className="text-2xl font-bold text-pink-600">{siswaPerempuan}</p>
+                </div>
+                <div className="text-right text-sm text-gray-500">
+                  {totalSiswa > 0 ? ((siswaPerempuan / totalSiswa) * 100).toFixed(1) : 0}%
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Statistik Guru berdasarkan Gender */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Jenis Kelamin Guru</CardTitle>
+            <CardDescription>Distribusi guru berdasarkan jenis kelamin</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-gray-600">Laki-laki</p>
+                  <p className="text-2xl font-bold text-green-600">{guruLakiLaki}</p>
+                </div>
+                <div className="text-right text-sm text-gray-500">
+                  {totalGuru > 0 ? ((guruLakiLaki / totalGuru) * 100).toFixed(1) : 0}%
+                </div>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-gray-600">Perempuan</p>
+                  <p className="text-2xl font-bold text-purple-600">{guruPerempuan}</p>
+                </div>
+                <div className="text-right text-sm text-gray-500">
+                  {totalGuru > 0 ? ((guruPerempuan / totalGuru) * 100).toFixed(1) : 0}%
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
