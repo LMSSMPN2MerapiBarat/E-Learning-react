@@ -105,6 +105,7 @@ export default function KuisPage() {
           <CardContent>
             <QuizList
               quizzes={filteredQuizzes}
+              onView={(quiz) => router.visit(`/guru/kuis/${quiz.id}`)}
               onEdit={setEditItem}
               onDelete={setDeleteId}
             />

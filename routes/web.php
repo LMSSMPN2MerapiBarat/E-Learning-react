@@ -188,6 +188,9 @@ Route::middleware(['auth', 'role:guru'])
         Route::get('/kelas', [GuruKelasController::class, 'index'])->name('kelas.index');
 
         Route::get('/kuis', [GuruQuizController::class, 'index'])->name('kuis.index');
+        Route::get('/kuis/{quiz}', [GuruQuizController::class, 'show'])
+            ->whereNumber('quiz')
+            ->name('kuis.show');
         Route::post('/kuis', [GuruQuizController::class, 'store'])->name('kuis.store');
         Route::put('/kuis/{quiz}', [GuruQuizController::class, 'update'])->name('kuis.update');
         Route::delete('/kuis/{quiz}', [GuruQuizController::class, 'destroy'])->name('kuis.destroy');

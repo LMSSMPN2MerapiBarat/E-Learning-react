@@ -90,6 +90,48 @@ class QuizController extends Controller
         ]);
     }
 
+    public function show(Quiz $quiz)
+    {
+        $user = auth()->user();
+        $guru = $user->guru()->firstOrFail();
+
+        abort_if($quiz->guru_id !== $guru->id, 403);
+
+        $quiz->load(['kelas', 'mataPelajaran', 'attempts.siswa.user', 'attempts.siswa.kelas']);
+
+        $attempts = $quiz->attempts->map(function ($attempt) {
+            $siswa = $attempt->siswa;
+            $user = $siswa ? $siswa->user : null;
+            $kelas = $siswa ? $siswa->kelas : null;
+            
+            $kelasLabel = $kelas ? trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? '')) : '-';
+
+            return [
+                'id' => $attempt->id,
+                'student_name' => $user ? $user->name : '-',
+                'student_class' => $kelasLabel,
+                'score' => $attempt->score,
+                'duration_minutes' => $attempt->duration_seconds ? round($attempt->duration_seconds / 60) : 0,
+                'submitted_at' => $attempt->submitted_at ? $attempt->submitted_at->format('d/m/Y H:i') : '-',
+            ];
+        });
+
+        return Inertia::render('Guru/Kuis/Detail', [
+            'quiz' => [
+                'id' => $quiz->id,
+                'title' => $quiz->judul,
+                'description' => $quiz->deskripsi,
+                'duration' => $quiz->durasi,
+                'status' => $quiz->status,
+                'mapel' => $quiz->mataPelajaran ? $quiz->mataPelajaran->nama_mapel : '-',
+                'kelas' => $quiz->kelas->map(function ($k) {
+                     return trim(($k->tingkat ?? '') . ' ' . ($k->kelas ?? ''));
+                }),
+                'attempts' => $attempts,
+            ]
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = auth()->user();

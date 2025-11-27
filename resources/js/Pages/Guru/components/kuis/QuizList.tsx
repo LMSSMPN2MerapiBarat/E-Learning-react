@@ -7,6 +7,7 @@ import type { QuizItem } from "@/Pages/Guru/components/kuis/formTypes";
 
 interface QuizListProps {
   quizzes: QuizItem[];
+  onView: (quiz: QuizItem) => void;
   onEdit: (quiz: QuizItem) => void;
   onDelete: (id: number) => void;
 }
@@ -34,7 +35,7 @@ const formatSchedule = (from?: string | null, until?: string | null) => {
   return null;
 };
 
-const QuizList: React.FC<QuizListProps> = ({ quizzes, onEdit, onDelete }) => (
+const QuizList: React.FC<QuizListProps> = ({ quizzes, onView, onEdit, onDelete }) => (
   <div className="space-y-4">
     {quizzes.length === 0 ? (
       <Card>
@@ -109,6 +110,9 @@ const QuizList: React.FC<QuizListProps> = ({ quizzes, onEdit, onDelete }) => (
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => onView(quiz)}>
+                  Detail
+                </Button>
                 <Button variant="outline" size="sm" onClick={() => onEdit(quiz)}>
                   <Pencil className="mr-2 h-4 w-4" />
                   Edit
