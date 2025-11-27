@@ -11,7 +11,7 @@ import type {
   AssignmentSubmission,
 } from "@/Pages/Guru/components/tugas/types";
 import type { PageProps } from "@/types";
-import { CalendarDays, FileText, Users } from "lucide-react";
+import { CalendarDays, Download, FileText, Users, ArrowLeft } from "lucide-react";
 
 const statusLabel: Record<string, string> = {
   draft: "Draft",
@@ -35,25 +35,42 @@ export default function AssignmentDetailPage() {
   return (
     <TeacherLayout title="Detail Tugas">
       <div className="space-y-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              {assignment.mapel?.nama ?? "Tanpa mata pelajaran"}
-            </p>
-            <h1 className="text-2xl font-semibold leading-tight">{assignment.title}</h1>
-            <div className="flex flex-wrap gap-2">
-              <Badge>{statusLabel[assignment.status] ?? assignment.status}</Badge>
-              {assignment.kelas.map((kelas) => (
-                <Badge key={kelas.id} variant="outline">
-                  {kelas.nama}
-                </Badge>
-              ))}
+        <div className="flex flex-col gap-4">
+          <Button
+            variant="ghost"
+            className="w-fit gap-2 pl-0 hover:bg-transparent hover:text-blue-600"
+            onClick={() => router.visit("/guru/tugas")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Kembali ke daftar tugas
+          </Button>
+
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                {assignment.mapel?.nama ?? "Tanpa mata pelajaran"}
+              </p>
+              <h1 className="text-2xl font-semibold leading-tight">{assignment.title}</h1>
+              <div className="flex flex-wrap gap-2">
+                <Badge>{statusLabel[assignment.status] ?? assignment.status}</Badge>
+                {assignment.kelas.map((kelas) => (
+                  <Badge key={kelas.id} variant="outline">
+                    {kelas.nama}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={() => router.visit("/guru/tugas")}>
-              Kembali ke daftar
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                onClick={() =>
+                  window.open(`/guru/tugas/${assignment.id}/export`, "_blank")
+                }
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export Nilai
+              </Button>
+            </div>
           </div>
         </div>
 

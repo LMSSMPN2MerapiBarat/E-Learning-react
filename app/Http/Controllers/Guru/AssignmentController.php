@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AssignmentSubmissionsExport;
 
 class AssignmentController extends Controller
 {
@@ -83,6 +85,15 @@ class AssignmentController extends Controller
         return Inertia::render('Guru/Tugas/Detail', [
             'assignment' => $this->formatAssignmentPayload($assignment),
         ]);
+    }
+
+    public function exportGrades(Assignment $assignment)
+    {
+        $guru = $this->resolveGuruWithKelas();
+
+        abort_if($assignment->guru_id !== $guru->id, 403);
+
+        return Excel::download(new AssignmentSubmissionsExport($assignment->id), 'nilai-tugas-' . $assignment->judul . '.xlsx');
     }
 
     public function store(Request $request)

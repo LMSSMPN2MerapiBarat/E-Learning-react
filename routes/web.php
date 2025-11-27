@@ -195,6 +195,9 @@ Route::middleware(['auth', 'role:guru'])
         Route::prefix('tugas')->name('tugas.')->group(function () {
             Route::get('/', [GuruAssignmentController::class, 'index'])->name('index');
             Route::post('/', [GuruAssignmentController::class, 'store'])->name('store');
+            Route::get('/{assignment}/export', [GuruAssignmentController::class, 'exportGrades'])
+                ->whereNumber('assignment')
+                ->name('export');
             Route::get('/{assignment}', [GuruAssignmentController::class, 'show'])
                 ->whereNumber('assignment')
                 ->name('show');
