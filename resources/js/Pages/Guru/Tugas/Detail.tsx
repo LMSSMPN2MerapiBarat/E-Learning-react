@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Separator } from "@/Components/ui/separator";
 import TeacherLayout from "@/Layouts/TeacherLayout";
@@ -11,7 +12,7 @@ import type {
   AssignmentSubmission,
 } from "@/Pages/Guru/components/tugas/types";
 import type { PageProps } from "@/types";
-import { CalendarDays, Download, FileText, Users, ArrowLeft } from "lucide-react";
+import { CalendarDays, Download, FileText, Users, ArrowLeft, Search, ChevronLeft, ChevronRight } from "lucide-react";
 
 const statusLabel: Record<string, string> = {
   draft: "Draft",
@@ -22,6 +23,29 @@ const statusLabel: Record<string, string> = {
 export default function AssignmentDetailPage() {
   const { assignment } = usePage<PageProps<{ assignment: AssignmentItem }>>().props;
   const [gradingSubmission, setGradingSubmission] = useState<AssignmentSubmission | null>(null);
+  
+  // Pagination & Search State
+  const [submissionSearch, setSubmissionSearch] = useState("");
+  const [submissionPage, setSubmissionPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const filteredSubmissions = useMemo(() => {
+    return assignment.submissions.filter((sub) =>
+      sub.studentName.toLowerCase().includes(submissionSearch.toLowerCase()) ||
+      (sub.studentClass ?? "").toLowerCase().includes(submissionSearch.toLowerCase())
+    );
+  }, [assignment.submissions, submissionSearch]);
+
+  const totalPages = Math.ceil(filteredSubmissions.length / ITEMS_PER_PAGE);
+  const paginatedSubmissions = filteredSubmissions.slice(
+    (submissionPage - 1) * ITEMS_PER_PAGE,
+    submissionPage * ITEMS_PER_PAGE
+  );
+
+  // Reset page when search changes
+  useEffect(() => {
+    setSubmissionPage(1);
+  }, [submissionSearch]);
 
   const schedule = useMemo(() => {
     const toReadable = (value?: string | null) =>
@@ -198,16 +222,27 @@ export default function AssignmentDetailPage() {
         </div>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle>Pengumpulan Siswa</CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Cari siswa..."
+                value={submissionSearch}
+                onChange={(e) => setSubmissionSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {assignment.submissions.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                Belum ada pengumpulan dari siswa.
+            {paginatedSubmissions.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {submissionSearch
+                  ? "Tidak ada siswa yang ditemukan."
+                  : "Belum ada pengumpulan dari siswa."}
               </p>
             )}
-            {assignment.submissions.map((submission) => (
+            {paginatedSubmissions.map((submission) => (
               <div
                 key={submission.id}
                 className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4"
@@ -234,6 +269,35 @@ export default function AssignmentDetailPage() {
                 </div>
               </div>
             ))}
+
+            {filteredSubmissions.length > 0 && (
+              <div className="flex items-center justify-between pt-4 border-t">
+                <p className="text-sm text-muted-foreground">
+                  Halaman {submissionPage} dari {totalPages} | Menampilkan{" "}
+                  {paginatedSubmissions.length} dari {filteredSubmissions.length} siswa
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSubmissionPage((p) => Math.max(1, p - 1))}
+                    disabled={submissionPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Sebelumnya
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSubmissionPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={submissionPage === totalPages}
+                  >
+                    Berikutnya
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
