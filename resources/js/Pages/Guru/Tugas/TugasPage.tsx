@@ -1,8 +1,10 @@
 // cspell:ignore Tugas
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { router, usePage } from "@inertiajs/react";
 import TeacherLayout from "@/Layouts/TeacherLayout";
 import { Card, CardContent } from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +44,10 @@ export default function TugasPage() {
   const [deleteAssignment, setDeleteAssignment] = useState<AssignmentItem | null>(null);
   const { toast } = useToast();
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
   const filteredAssignments = useMemo(() => {
     return assignments.filter((assignment) => {
       const matchSearch =
@@ -56,6 +62,17 @@ export default function TugasPage() {
       return matchSearch && matchStatus && matchKelas;
     });
   }, [assignments, search, statusFilter, kelasFilter]);
+
+  const totalPages = Math.ceil(filteredAssignments.length / ITEMS_PER_PAGE);
+  const paginatedAssignments = filteredAssignments.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, kelasFilter]);
 
   const handleDelete = () => {
     if (!deleteAssignment) return;
@@ -93,13 +110,42 @@ export default function TugasPage() {
               onCreate={() => setIsCreateOpen(true)}
             />
             <AssignmentTable
-              assignments={filteredAssignments}
+              assignments={paginatedAssignments}
               onView={(item) => {
                 router.visit(`/guru/tugas/${item.id}`);
               }}
               onEdit={(item) => setEditAssignment(item)}
               onDelete={(item) => setDeleteAssignment(item)}
             />
+
+            {filteredAssignments.length > 0 && (
+              <div className="flex items-center justify-between pt-4 border-t">
+                <p className="text-sm text-muted-foreground">
+                  Halaman {currentPage} dari {totalPages} | Menampilkan{" "}
+                  {paginatedAssignments.length} dari {filteredAssignments.length} tugas
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Sebelumnya
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Berikutnya
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
