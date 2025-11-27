@@ -168,6 +168,10 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
             <p className="text-xs text-gray-500">
               Atur dari tanggal dan jam berapa kuis boleh diakses sampai
               kapan. Biarkan nonaktif jika kuis tersedia kapan saja.
+              <br />
+              <span className="text-blue-600 font-medium">
+                Catatan: Waktu yang dipilih akan disimpan sebagai Waktu Indonesia Barat (WIB).
+              </span>
             </p>
           </div>
           <label className="inline-flex items-center gap-2 text-sm font-medium text-gray-700">

@@ -175,10 +175,10 @@ class QuizController extends Controller
                 'max_attempts'      => $maxAttempts,
                 'status'            => $validated['status'],
                 'available_from'    => isset($validated['available_from'])
-                    ? Carbon::parse($validated['available_from'])
+                    ? Carbon::parse($validated['available_from'], 'Asia/Jakarta')->setTimezone('UTC')
                     : null,
                 'available_until'   => isset($validated['available_until'])
-                    ? Carbon::parse($validated['available_until'])
+                    ? Carbon::parse($validated['available_until'], 'Asia/Jakarta')->setTimezone('UTC')
                     : null,
             ]);
 
@@ -250,10 +250,10 @@ class QuizController extends Controller
                 'max_attempts'      => $maxAttempts,
                 'status'            => $validated['status'],
                 'available_from'    => isset($validated['available_from'])
-                    ? Carbon::parse($validated['available_from'])
+                    ? Carbon::parse($validated['available_from'], 'Asia/Jakarta')->setTimezone('UTC')
                     : null,
                 'available_until'   => isset($validated['available_until'])
-                    ? Carbon::parse($validated['available_until'])
+                    ? Carbon::parse($validated['available_until'], 'Asia/Jakarta')->setTimezone('UTC')
                     : null,
             ]);
 
