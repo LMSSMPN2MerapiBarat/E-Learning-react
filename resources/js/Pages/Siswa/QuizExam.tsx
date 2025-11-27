@@ -71,13 +71,14 @@ const slideVariants = {
 };
 
 export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
+  const [hasStarted, setHasStarted] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [showResults, setShowResults] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [timeLeft, setTimeLeft] = useState(Math.max(quiz.duration, 1) * 60);
-  const [isTimerActive, setIsTimerActive] = useState(true);
+  const [isTimerActive, setIsTimerActive] = useState(false);
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -85,12 +86,13 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
   const [shouldAutoSubmit, setShouldAutoSubmit] = useState(false);
 
   useEffect(() => {
+    setHasStarted(false);
     setCurrentQuestionIndex(0);
     setAnswers({});
     setShowResults(false);
     setShowExitConfirm(false);
     setShowSubmitConfirm(false);
-    setIsTimerActive(true);
+    setIsTimerActive(false);
     setTimeLeft(Math.max(quiz.duration, 1) * 60);
     setDirection(1);
     setIsSubmitting(false);
@@ -100,7 +102,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
   }, [quiz.id, quiz.duration]);
 
   useEffect(() => {
-    if (!isTimerActive || showResults) {
+    if (!isTimerActive || showResults || !hasStarted) {
       return;
     }
 
@@ -117,7 +119,12 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [isTimerActive, showResults]);
+  }, [isTimerActive, showResults, hasStarted]);
+
+  const startQuiz = () => {
+    setHasStarted(true);
+    setIsTimerActive(true);
+  };
 
   const submitQuiz = useCallback(
     async (autoSubmit = false) => {
@@ -270,6 +277,76 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
         answers[question.id] === question.correctAnswer ? count + 1 : count,
       0,
     );
+
+  if (!hasStarted && !showResults) {
+    return (
+      <>
+        <Head title={quiz.title} />
+        <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+          <Card className="max-w-2xl w-full shadow-xl">
+            <CardContent className="p-8 space-y-6">
+              <div className="text-center space-y-2">
+                <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                  <ClipboardList className="w-8 h-8 text-blue-600" />
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900">{quiz.title}</h1>
+                {quiz.subject && (
+                  <p className="text-gray-600">{quiz.subject}</p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 py-6 border-y border-gray-100">
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Guru Pengampu</p>
+                  <p className="font-medium">{quiz.teacher || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Durasi Pengerjaan</p>
+                  <p className="font-medium flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-orange-500" />
+                    {quiz.duration} Menit
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Jumlah Soal</p>
+                  <p className="font-medium">{quiz.questions.length} Soal</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-500">Batas Percobaan</p>
+                  <p className="font-medium">
+                    {quiz.maxAttempts ? `${quiz.maxAttempts}x` : "Tidak terbatas"}
+                  </p>
+                </div>
+              </div>
+
+              {quiz.description && (
+                <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
+                  <p className="font-semibold mb-1">Deskripsi:</p>
+                  <p>{quiz.description}</p>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <Button 
+                  className="w-full text-lg h-12" 
+                  onClick={startQuiz}
+                >
+                  Mulai Kerjakan Sekarang
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => router.visit(backUrl)}
+                >
+                  Kembali
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

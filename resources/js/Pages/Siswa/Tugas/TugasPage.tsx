@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import AssignmentStatsGrid from "@/Pages/Siswa/components/assignments/AssignmentStatsGrid";
@@ -14,6 +14,17 @@ export default function TugasPage() {
     usePage<SiswaPageProps>().props;
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const highlightId = params.get("highlight");
+    if (highlightId) {
+      const id = Number(highlightId);
+      if (!isNaN(id)) {
+        setSelectedId(id);
+      }
+    }
+  }, []);
 
   const selectedAssignment = useMemo(
     () => assignments.find((assignment) => assignment.id === selectedId) ?? null,
