@@ -3,6 +3,16 @@ import { Head, router, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/Components/ui/alert-dialog";
 import StudentQuizList from "./components/StudentQuizList";
 import type { QuizItem, SiswaPageProps } from "./types";
 import { toast } from "sonner";
@@ -11,6 +21,8 @@ export default function Quizzes() {
   const { props } = usePage<SiswaPageProps>();
   const { student, hasClass, quizzes = [] } = props;
   const [quizList, setQuizList] = useState<QuizItem[]>(quizzes);
+  const [pendingQuiz, setPendingQuiz] = useState<QuizItem | null>(null);
+  const [pendingTargetUrl, setPendingTargetUrl] = useState<string | null>(null);
 
   useEffect(() => {
     setQuizList(quizzes);
@@ -50,7 +62,23 @@ export default function Quizzes() {
       console.warn("Ziggy route siswa.quizzes.show tidak ditemukan, fallback ke URL manual.", error);
     }
 
-    router.visit(targetUrl);
+    setPendingQuiz(quiz);
+    setPendingTargetUrl(targetUrl);
+  };
+
+  const closeConfirmation = () => {
+    setPendingQuiz(null);
+    setPendingTargetUrl(null);
+  };
+
+  const confirmStartQuiz = () => {
+    if (!pendingTargetUrl) {
+      closeConfirmation();
+      return;
+    }
+
+    router.visit(pendingTargetUrl);
+    closeConfirmation();
   };
 
   return (
@@ -82,6 +110,36 @@ export default function Quizzes() {
           <StudentQuizList quizzes={quizList} onStartQuiz={startQuiz} />
         </motion.div>
       </div>
+
+      <AlertDialog
+        open={pendingQuiz !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeConfirmation();
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Mulai mengerjakan kuis?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Anda akan membuka kuis
+              {pendingQuiz?.title ? ` "${pendingQuiz.title}"` : ""}. Pastikan
+              sudah siap mengerjakan karena waktu akan berjalan setelah Anda
+              masuk.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeConfirmation}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmStartQuiz}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Ya, mulai
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </StudentLayout>
   );
 }
