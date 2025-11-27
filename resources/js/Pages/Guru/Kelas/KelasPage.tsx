@@ -51,6 +51,8 @@ export default function KelasPage() {
     classes.length > 0 ? classes[0].id : null,
   );
   const [studentSearchTerm, setStudentSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredClasses = useMemo<TeacherClassItem[]>(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -116,7 +118,13 @@ export default function KelasPage() {
 
   useEffect(() => {
     setStudentSearchTerm("");
+    setCurrentPage(1);
   }, [selectedId]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [studentSearchTerm]);
 
   const filteredStudents = useMemo(() => {
     if (!selectedClass) {
@@ -139,6 +147,14 @@ export default function KelasPage() {
         matches(student.no_telp),
     );
   }, [selectedClass, studentSearchTerm]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedStudents = filteredStudents.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   return (
     <TeacherLayout title="Kelas Saya">
@@ -329,7 +345,7 @@ export default function KelasPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 bg-white">
-                      {filteredStudents.map((student) => (
+                      {paginatedStudents.map((student, index) => (
                         <tr key={student.id} className="hover:bg-gray-50">
                           <td className="px-4 py-2 font-medium text-gray-900">
                             {student.nama ?? "-"}
@@ -347,6 +363,37 @@ export default function KelasPage() {
                       ))}
                     </tbody>
                   </table>
+
+                  {/* Pagination Controls */}
+                  {filteredStudents.length > itemsPerPage && (
+                    <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t pt-4">
+                      <button
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        disabled={currentPage === 1}
+                        className="w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      >
+                        ← Sebelumnya
+                      </button>
+                      <p className="text-sm text-gray-600">
+                        Halaman {currentPage} dari {totalPages} | Menampilkan{" "}
+                        {paginatedStudents.length} dari {filteredStudents.length}{" "}
+                        siswa
+                      </p>
+                      <button
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages),
+                          )
+                        }
+                        disabled={currentPage === totalPages}
+                        className="w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      >
+                        Berikutnya →
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
