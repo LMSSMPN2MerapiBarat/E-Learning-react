@@ -19,14 +19,43 @@ import { toast } from "sonner";
 
 export default function Quizzes() {
   const { props } = usePage<SiswaPageProps>();
-  const { student, hasClass, quizzes = [] } = props;
+  const { student, hasClass, quizzes = [], auth } = props;
   const [quizList, setQuizList] = useState<QuizItem[]>(quizzes);
+  const [resumeable, setResumeable] = useState<Record<number, boolean>>({});
   const [pendingQuiz, setPendingQuiz] = useState<QuizItem | null>(null);
   const [pendingTargetUrl, setPendingTargetUrl] = useState<string | null>(null);
+  const currentUserId = auth?.user?.id ?? 0;
 
   useEffect(() => {
     setQuizList(quizzes);
   }, [quizzes]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const updated: Record<number, boolean> = {};
+    quizzes.forEach((quiz) => {
+      const storageKey = `quiz-progress-${quiz.id}-${currentUserId}`;
+      try {
+        const raw = window.localStorage.getItem(storageKey);
+        if (!raw) return;
+        const saved = JSON.parse(raw) as { startTime?: number };
+        if (!saved?.startTime) {
+          window.localStorage.removeItem(storageKey);
+          return;
+        }
+        const elapsedSeconds = Math.floor((Date.now() - saved.startTime) / 1000);
+        const remaining = quiz.duration * 60 - elapsedSeconds;
+        if (remaining > 0) {
+          updated[quiz.id] = true;
+        } else {
+          window.localStorage.removeItem(storageKey);
+        }
+      } catch (error) {
+        console.warn("Gagal membaca progres kuis untuk daftar kuis siswa.", error);
+      }
+    });
+    setResumeable(updated);
+  }, [quizzes, currentUserId]);
 
   const startQuiz = (quiz: QuizItem) => {
     if (quiz.questions.length === 0) {
@@ -60,6 +89,11 @@ export default function Quizzes() {
       }
     } catch (error) {
       console.warn("Ziggy route siswa.quizzes.show tidak ditemukan, fallback ke URL manual.", error);
+    }
+
+    if (resumeable[quiz.id]) {
+      router.visit(targetUrl);
+      return;
     }
 
     setPendingQuiz(quiz);
@@ -107,7 +141,11 @@ export default function Quizzes() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <StudentQuizList quizzes={quizList} onStartQuiz={startQuiz} />
+          <StudentQuizList
+            quizzes={quizList}
+            onStartQuiz={startQuiz}
+            resumeable={resumeable}
+          />
         </motion.div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Head, router } from "@inertiajs/react";
+import { Head, router, usePage } from "@inertiajs/react";
 import axios from "axios";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/Components/ui/button";
@@ -36,14 +36,33 @@ import type {
   QuizQuestion,
   QuizQuestionOption,
 } from "./types";
-import type { PageProps as InertiaPageProps } from "@inertiajs/core";
+import type { PageProps } from "@/types";
 
-interface QuizExamPageProps extends InertiaPageProps {
+type QuizExamPageProps = PageProps<{
   quiz: QuizItem;
   backUrl: string;
-}
+}>;
 
 type AnswerMap = Record<number, number>;
+
+const createSeededRandom = (seed: number) => {
+  let value = seed % 2147483647;
+  if (value <= 0) value += 2147483646;
+  return () => {
+    value = (value * 16807) % 2147483647;
+    return (value - 1) / 2147483646;
+  };
+};
+
+const shuffleArray = <T,>(items: T[], seed: number) => {
+  const random = createSeededRandom(seed);
+  const array = [...items];
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
 
 const formatTime = (seconds: number) => {
   const mins = Math.floor(seconds / 60);
@@ -71,19 +90,55 @@ const slideVariants = {
 };
 
 export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
+  const { props } = usePage<QuizExamPageProps>();
+  const currentUserId = props?.auth?.user?.id ?? 0;
+  const durationSeconds = useMemo(
+    () => Math.max(quiz.duration, 1) * 60,
+    [quiz.duration],
+  );
+
+  // Seeded shuffle so tiap siswa mendapat urutan soal & opsi yang berbeda.
+  const shuffleSeed = useMemo(() => {
+    const baseSeed = quiz.id * 1009 + currentUserId * 101;
+    return baseSeed === 0 ? 1 : baseSeed;
+  }, [quiz.id, currentUserId]);
+
+  const questions = useMemo(
+    () =>
+      shuffleArray(quiz.questions, shuffleSeed).map((question, index) => ({
+        ...question,
+        options: shuffleArray(question.options, shuffleSeed + index + 1),
+      })),
+    [quiz.questions, shuffleSeed],
+  );
+
+  const totalQuestions = questions.length;
+  const storageKey = useMemo(
+    () => `quiz-progress-${quiz.id}-${currentUserId}`,
+    [quiz.id, currentUserId],
+  );
   const [hasStarted, setHasStarted] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [showResults, setShowResults] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(Math.max(quiz.duration, 1) * 60);
+  const [timeLeft, setTimeLeft] = useState(durationSeconds);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [result, setResult] = useState<QuizAttemptLite | null>(null);
   const [shouldAutoSubmit, setShouldAutoSubmit] = useState(false);
+
+  const clearSavedProgress = useCallback(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.removeItem(storageKey);
+    } catch (error) {
+      console.warn("Gagal menghapus progres kuis dari penyimpanan lokal.", error);
+    }
+  }, [storageKey]);
 
   useEffect(() => {
     setHasStarted(false);
@@ -93,13 +148,91 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
     setShowExitConfirm(false);
     setShowSubmitConfirm(false);
     setIsTimerActive(false);
-    setTimeLeft(Math.max(quiz.duration, 1) * 60);
+    setTimeLeft(durationSeconds);
     setDirection(1);
     setIsSubmitting(false);
     setSubmitError(null);
     setResult(null);
     setShouldAutoSubmit(false);
-  }, [quiz.id, quiz.duration]);
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      const savedRaw = window.localStorage.getItem(storageKey);
+      if (!savedRaw) return;
+      const saved = JSON.parse(savedRaw) as {
+        startTime?: number;
+        answers?: AnswerMap;
+        currentQuestionIndex?: number;
+      };
+      if (!saved?.startTime) return;
+
+      const elapsedSeconds = Math.floor(
+        (Date.now() - saved.startTime) / 1000,
+      );
+      const remaining = durationSeconds - elapsedSeconds;
+      const safeRemaining = Math.max(remaining, 0);
+      const restoredAnswers = saved.answers ?? {};
+      const restoredIndex = Math.min(
+        Math.max(saved.currentQuestionIndex ?? 0, 0),
+        Math.max(totalQuestions - 1, 0),
+      );
+
+      setAnswers(restoredAnswers);
+      setCurrentQuestionIndex(restoredIndex);
+      setHasStarted(true);
+      setTimeLeft(safeRemaining);
+      if (safeRemaining > 0) {
+        setIsTimerActive(true);
+      } else {
+        setShouldAutoSubmit(true);
+      }
+    } catch (error) {
+      console.warn("Gagal memulihkan progres kuis dari penyimpanan lokal.", error);
+    }
+  }, [durationSeconds, storageKey, totalQuestions]);
+
+  useEffect(() => {
+    if (!hasStarted || typeof window === "undefined") return;
+    try {
+      const existingRaw = window.localStorage.getItem(storageKey);
+      const existing = existingRaw ? JSON.parse(existingRaw) : {};
+      const startTime =
+        existing?.startTime && Number.isFinite(existing.startTime)
+          ? existing.startTime
+          : Date.now();
+      const payload = {
+        startTime,
+        answers,
+        currentQuestionIndex,
+      };
+      window.localStorage.setItem(storageKey, JSON.stringify(payload));
+    } catch (error) {
+      console.warn("Gagal menyimpan progres kuis ke penyimpanan lokal.", error);
+    }
+  }, [hasStarted, answers, currentQuestionIndex, storageKey]);
+
+  const ensureStartTime = () => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      const parsed = raw ? JSON.parse(raw) : {};
+      if (!parsed?.startTime) {
+        window.localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            startTime: Date.now(),
+            answers: {},
+            currentQuestionIndex: 0,
+          }),
+        );
+      }
+    } catch (error) {
+      console.warn("Gagal menyiapkan progres kuis di penyimpanan lokal.", error);
+    }
+  };
 
   useEffect(() => {
     if (!isTimerActive || showResults || !hasStarted) {
@@ -122,6 +255,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
   }, [isTimerActive, showResults, hasStarted]);
 
   const startQuiz = () => {
+    ensureStartTime();
     setHasStarted(true);
     setIsTimerActive(true);
   };
@@ -138,7 +272,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
 
       try {
         const payload = {
-          answers: quiz.questions.map((question) => {
+          answers: questions.map((question) => {
             const selectedOrder = answers[question.id];
             return {
               question_id: question.id,
@@ -147,7 +281,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
             };
           }),
           duration_seconds:
-            Math.max(quiz.duration, 1) * 60 - Math.max(timeLeft, 0),
+            durationSeconds - Math.max(timeLeft, 0),
         };
 
         const response = await axios.post(
@@ -167,7 +301,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
               totalQuestions:
                 backendAttempt.total_questions ??
                 backendAttempt.totalQuestions ??
-                quiz.questions.length,
+                totalQuestions,
               submittedAt:
                 backendAttempt.submitted_at ??
                 backendAttempt.submittedAt ??
@@ -179,6 +313,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
         setShowResults(true);
         setIsTimerActive(false);
         setShowSubmitConfirm(false);
+        clearSavedProgress();
         if (!autoSubmit) {
           setShowExitConfirm(false);
         }
@@ -195,7 +330,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
         setIsSubmitting(false);
       }
     },
-    [answers, quiz.id, quiz.duration, quiz.questions, timeLeft, isSubmitting, showResults],
+    [answers, quiz.id, durationSeconds, questions, timeLeft, isSubmitting, showResults, clearSavedProgress],
   );
 
   useEffect(() => {
@@ -218,7 +353,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
   };
 
   const nextQuestion = () => {
-    if (currentQuestionIndex < quiz.questions.length - 1) {
+    if (currentQuestionIndex < totalQuestions - 1) {
       setDirection(1);
       setCurrentQuestionIndex((prev) => prev + 1);
     }
@@ -237,18 +372,18 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
   };
 
   const calculateScore = useCallback(() => {
-    if (!quiz.questions.length) {
+    if (!totalQuestions) {
       return 0;
     }
 
-    const correct = quiz.questions.reduce((count, question) => {
+    const correct = questions.reduce((count, question) => {
       return answers[question.id] === question.correctAnswer
         ? count + 1
         : count;
     }, 0);
 
-    return Math.round((correct / quiz.questions.length) * 100);
-  }, [answers, quiz.questions]);
+    return Math.round((correct / totalQuestions) * 100);
+  }, [answers, questions, totalQuestions]);
 
   const getTimeColor = () => {
     if (timeLeft <= 60) {
@@ -264,15 +399,16 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
     answers[questionId] !== undefined ? "answered" : "unanswered";
 
   const finishQuiz = () => {
+    clearSavedProgress();
     router.visit(backUrl);
   };
 
-  const activeQuestion = quiz.questions[currentQuestionIndex];
+  const activeQuestion = questions[currentQuestionIndex];
 
   const effectiveScore = result?.score ?? calculateScore();
   const correctTotal =
     result?.correctAnswers ??
-    quiz.questions.reduce(
+    questions.reduce(
       (count, question) =>
         answers[question.id] === question.correctAnswer ? count + 1 : count,
       0,
@@ -309,7 +445,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-gray-500">Jumlah Soal</p>
-                  <p className="font-medium">{quiz.questions.length} Soal</p>
+                  <p className="font-medium">{totalQuestions} Soal</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm text-gray-500">Batas Percobaan</p>
@@ -372,7 +508,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                     {effectiveScore}
                   </p>
                   <p className="mb-2 text-gray-600">
-                    {correctTotal} dari {quiz.questions.length} jawaban benar
+                    {correctTotal} dari {totalQuestions} jawaban benar
                   </p>
                   <Badge
                     className={`px-4 py-2 text-lg ${
@@ -395,7 +531,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                   <h3 className="text-lg font-semibold">
                     Review Jawaban Detail
                   </h3>
-                  {quiz.questions.map((question, index) => {
+                  {questions.map((question, index) => {
                     const selectedOrder = answers[question.id];
                     const isCorrect =
                       selectedOrder !== undefined &&
@@ -571,7 +707,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                 <Alert className="border-red-500 bg-red-50">
                   <AlertCircle className="h-4 w-4 text-red-600" />
                   <AlertDescription className="text-red-600">
-                    ⚠️ Waktu tersisa kurang dari 1 menit!
+                    Waktu tersisa kurang dari 1 menit!
                   </AlertDescription>
                 </Alert>
               </motion.div>
@@ -584,15 +720,15 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                     <div className="mb-2 flex items-center justify-between text-sm text-gray-600">
                       <span>
                         Soal {currentQuestionIndex + 1} dari{" "}
-                        {quiz.questions.length}
+                        {totalQuestions}
                       </span>
                       <span>{answeredCount} terjawab</span>
                     </div>
                     <Progress
                       value={
-                        quiz.questions.length > 0
+                        totalQuestions > 0
                           ? ((currentQuestionIndex + 1) /
-                              quiz.questions.length) *
+                              totalQuestions) *
                             100
                           : 0
                       }
@@ -700,7 +836,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                       Sebelumnya
                     </Button>
 
-                    {currentQuestionIndex < quiz.questions.length - 1 ? (
+                    {currentQuestionIndex < totalQuestions - 1 ? (
                       <Button onClick={nextQuestion} size="lg">
                         Selanjutnya
                         <ChevronRight className="ml-2 h-4 w-4" />
@@ -732,19 +868,19 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                       <div className="mb-1 flex justify-between">
                         <span className="text-gray-600">Terjawab:</span>
                         <span className="font-medium">
-                          {answeredCount}/{quiz.questions.length}
+                          {answeredCount}/{totalQuestions}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Belum dijawab:</span>
                         <span className="font-medium">
-                          {quiz.questions.length - answeredCount}
+                          {totalQuestions - answeredCount}
                         </span>
                       </div>
                     </div>
 
                     <div className="mb-6 grid grid-cols-5 gap-2">
-                      {quiz.questions.map((question: QuizQuestion, index) => {
+                      {questions.map((question: QuizQuestion, index) => {
                         const status = getQuestionStatus(question.id);
                         const isActive = index === currentQuestionIndex;
 
@@ -831,11 +967,11 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                 <div className="rounded-lg bg-blue-50 p-3 text-sm">
                   <p>
                     <span className="font-medium">Terjawab:</span>{" "}
-                    {answeredCount} dari {quiz.questions.length} soal
+                    {answeredCount} dari {totalQuestions} soal
                   </p>
                   <p>
                     <span className="font-medium">Belum dijawab:</span>{" "}
-                    {quiz.questions.length - answeredCount} soal
+                    {totalQuestions - answeredCount} soal
                   </p>
                 </div>
                 <p className="text-red-600">

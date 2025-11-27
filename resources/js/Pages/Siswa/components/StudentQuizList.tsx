@@ -7,11 +7,13 @@ import type { QuizAttemptLite, QuizItem } from "../types";
 interface StudentQuizListProps {
   quizzes: QuizItem[];
   onStartQuiz: (quiz: QuizItem) => void;
+  resumeable?: Record<number, boolean>;
 }
 
 export default function StudentQuizList({
   quizzes,
   onStartQuiz,
+  resumeable = {},
 }: StudentQuizListProps) {
   const formatSchedule = (quiz: QuizItem) => {
     if (!quiz.availableFrom && !quiz.availableUntil) {
@@ -71,6 +73,7 @@ export default function StudentQuizList({
               quiz.remainingAttempts ?? (attemptsLimited ? 0 : null);
             const limitReached =
               attemptsLimited && (remainingAttempts ?? 0) <= 0;
+            const canResume = resumeable[quiz.id] === true;
 
             return (
               <Card
@@ -141,6 +144,8 @@ export default function StudentQuizList({
                     ? "Sudah berakhir"
                     : quiz.isAvailable === false
                     ? "Belum tersedia"
+                    : canResume
+                    ? "Lanjutkan"
                     : quiz.latestAttempt
                     ? "Kerjakan Lagi"
                     : "Mulai Kuis"}
