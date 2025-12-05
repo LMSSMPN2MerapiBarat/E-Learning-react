@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -115,6 +116,109 @@ class QuizAttemptController extends Controller
         return Inertia::render('Siswa/QuizExam', [
             'quiz' => $quizPayload,
             'backUrl' => route('siswa.quizzes'),
+        ]);
+    }
+
+    public function detail(Request $request, Quiz $quiz, QuizAttempt $attempt)
+    {
+        $user = $request->user();
+        $siswa = $user->siswa;
+
+        if (!$siswa) {
+            abort(403, 'Profil siswa tidak ditemukan.');
+        }
+
+        if ((int) $attempt->siswa_id !== (int) $siswa->id || (int) $attempt->quiz_id !== (int) $quiz->id) {
+            abort(403, 'Anda tidak memiliki akses ke hasil kuis ini.');
+        }
+
+        $quiz->load([
+            'kelas',
+            'mataPelajaran',
+            'guru.user',
+            'questions.options' => fn($query) => $query->orderBy('urutan'),
+        ]);
+
+        $attempt->load([
+            'answers.question.options' => fn($query) => $query->orderBy('urutan'),
+        ]);
+
+        $formatKelasLabel = static function ($kelasModel) {
+            if (!$kelasModel) {
+                return null;
+            }
+
+            $parts = array_filter([
+                $kelasModel->tingkat,
+                $kelasModel->kelas,
+            ]);
+
+            $label = trim(implode(' ', $parts));
+
+            return $label !== '' ? $label : null;
+        };
+
+        $quizPayload = [
+            'id' => $quiz->id,
+            'title' => $quiz->judul,
+            'description' => $quiz->deskripsi,
+            'duration' => $quiz->durasi,
+            'status' => $quiz->status,
+            'subject' => $quiz->mataPelajaran?->nama_mapel,
+            'subjectId' => $quiz->mata_pelajaran_id,
+            'teacher' => $quiz->guru?->user?->name,
+            'classNames' => $quiz->kelas
+                ->map(fn($kelasItem) => $formatKelasLabel($kelasItem))
+                ->filter()
+                ->values()
+                ->all(),
+            'questions' => $quiz->questions
+                ->map(function ($question) {
+                    $sortedOptions = $question->options
+                        ->sortBy('urutan')
+                        ->values();
+
+                    return [
+                        'id' => $question->id,
+                        'prompt' => $question->pertanyaan,
+                        'options' => $sortedOptions
+                            ->map(fn($option) => [
+                                'id' => $option->id,
+                                'text' => $option->teks,
+                                'order' => $option->urutan,
+                            ])
+                            ->all(),
+                        'correctAnswer' => optional(
+                            $question->options->firstWhere('is_benar', true)
+                        )->urutan ?? 0,
+                    ];
+                })
+                ->values()
+                ->all(),
+            'totalQuestions' => $quiz->questions->count(),
+        ];
+
+        $attemptPayload = [
+            'id' => $attempt->id,
+            'score' => $attempt->score,
+            'correctAnswers' => $attempt->correct_answers,
+            'totalQuestions' => $attempt->total_questions,
+            'durationSeconds' => $attempt->duration_seconds,
+            'submittedAt' => optional($attempt->submitted_at ?? $attempt->created_at)->toIso8601String(),
+            'answers' => $attempt->answers
+                ->map(fn($answer) => [
+                    'questionId' => $answer->quiz_question_id,
+                    'selectedOption' => $answer->selected_option,
+                    'isCorrect' => $answer->is_correct,
+                ])
+                ->values(),
+        ];
+
+        return Inertia::render('Siswa/QuizDetail', [
+            'quiz' => $quizPayload,
+            'attempt' => $attemptPayload,
+            'backUrl' => route('siswa.quizzes'),
+            'reviewUrl' => null,
         ]);
     }
 

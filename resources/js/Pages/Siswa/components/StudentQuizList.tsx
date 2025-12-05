@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Com
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { CalendarClock, CheckCircle, Clock, ClipboardList, User, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarClock, CheckCircle, Clock, ClipboardList, User, Search, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import type { QuizAttemptLite, QuizItem } from "../types";
 
 const ITEMS_PER_PAGE = 5;
@@ -12,12 +12,14 @@ interface StudentQuizListProps {
   quizzes: QuizItem[];
   onStartQuiz: (quiz: QuizItem) => void;
   resumeable?: Record<number, boolean>;
+  onViewDetail?: (quiz: QuizItem, attemptId: number) => void;
 }
 
 export default function StudentQuizList({
   quizzes,
   onStartQuiz,
   resumeable = {},
+  onViewDetail,
 }: StudentQuizListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -135,6 +137,8 @@ export default function StudentQuizList({
               const limitReached =
                 attemptsLimited && (remainingAttempts ?? 0) <= 0;
               const canResume = resumeable[quiz.id] === true;
+              const latestAttempt = quiz.latestAttempt;
+              const canViewDetail = !!(latestAttempt && onViewDetail);
 
               return (
                 <Card
@@ -213,6 +217,17 @@ export default function StudentQuizList({
                                   ? "Kerjakan Lagi"
                                   : "Mulai Kuis"}
                     </Button>
+                    {canViewDetail && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => onViewDetail(quiz, latestAttempt.id)}
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Lihat Detail
+                      </Button>
+                    )}
                     {attemptsLimited && (
                       <div
                         className={`rounded-md border p-2 text-[10px] ${limitReached
@@ -285,4 +300,3 @@ function LatestAttemptBadge({ attempt }: { attempt: QuizAttemptLite }) {
     </div>
   );
 }
-

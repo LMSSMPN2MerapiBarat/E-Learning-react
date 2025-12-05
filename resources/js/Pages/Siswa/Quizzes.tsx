@@ -105,6 +105,25 @@ export default function Quizzes() {
     setPendingTargetUrl(null);
   };
 
+  const viewQuizDetail = (quiz: QuizItem) => {
+    const attemptId = quiz.latestAttempt?.id;
+    if (!attemptId) return;
+
+    let targetUrl = `/siswa/quizzes/${quiz.id}/attempts/${attemptId}`;
+    try {
+      if (typeof route === "function") {
+        targetUrl = route("siswa.quizzes.attempts.show", {
+          quiz: quiz.id,
+          attempt: attemptId,
+        });
+      }
+    } catch (error) {
+      console.warn("Ziggy route siswa.quizzes.attempts.show tidak ditemukan, fallback ke URL manual.", error);
+    }
+
+    router.visit(targetUrl);
+  };
+
   const confirmStartQuiz = () => {
     if (!pendingTargetUrl) {
       closeConfirmation();
@@ -148,6 +167,7 @@ export default function Quizzes() {
           <StudentQuizList
             quizzes={quizList}
             onStartQuiz={startQuiz}
+            onViewDetail={viewQuizDetail}
             resumeable={resumeable}
           />
         </motion.div>

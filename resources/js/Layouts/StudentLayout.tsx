@@ -152,6 +152,7 @@ export default function StudentLayout({
     if (component.includes("siswa/grades")) return "grades";
     if (component.includes("siswa/subjects")) return "subjects";
     if (component.includes("siswa/schedule")) return "schedule";
+    if (component.includes("siswa/quizdetail")) return "quizzes";
     if (component.includes("siswa/quizzes")) return "quizzes";
     if (component.includes("siswa/materials")) return "materials";
     if (component.includes("siswa/tugas")) return "assignments";
