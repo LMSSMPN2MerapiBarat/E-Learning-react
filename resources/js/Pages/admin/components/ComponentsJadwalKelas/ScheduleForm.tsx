@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/Components/ui/button";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
@@ -10,6 +10,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/Components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/Components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/Components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/Components/ui/utils";
 import type { ScheduleFormValues, ScheduleReference } from "@/Pages/Admin/JadwalKelas/types";
 
 interface ScheduleFormProps {
@@ -31,6 +46,8 @@ export default function ScheduleForm({
   processing,
   submitLabel,
 }: ScheduleFormProps) {
+  const [teacherOpen, setTeacherOpen] = useState(false);
+  
   const teacherValue = values.guru_id?.toString() ?? "";
 
   const selectedTeacher = useMemo(
@@ -78,21 +95,57 @@ export default function ScheduleForm({
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Guru Pengampu" error={errors.guru_id}>
-              <Select
-                value={values.guru_id?.toString() ?? ""}
-                onValueChange={(value) => onChange("guru_id", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih guru" />
-                </SelectTrigger>
-                <SelectContent>
-                  {reference.teachers.map((teacher) => (
-                    <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                      {teacher.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={teacherOpen} onOpenChange={setTeacherOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={teacherOpen}
+                    className={cn(
+                      "w-full justify-between font-normal h-10 px-3 border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                      !selectedTeacher && "text-muted-foreground"
+                    )}
+                  >
+                    {selectedTeacher ? selectedTeacher.name : "Pilih guru..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent 
+                  className="w-[--radix-popover-trigger-width] p-0" 
+                  align="start"
+                  sideOffset={4}
+                >
+                  <Command className="border rounded-md">
+                    <CommandInput placeholder="Cari nama guru..." className="h-9" />
+                    <CommandList className="max-h-[200px]">
+                      <CommandEmpty>Guru tidak ditemukan.</CommandEmpty>
+                      <CommandGroup>
+                        {reference.teachers.map((teacher) => (
+                          <CommandItem
+                            key={teacher.id}
+                            value={teacher.name}
+                            onSelect={() => {
+                              onChange("guru_id", teacher.id.toString());
+                              setTeacherOpen(false);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                teacherValue === teacher.id.toString()
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {teacher.name}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </Field>
             <Field label="Mata Pelajaran" error={errors.mata_pelajaran_id}>
               <Select
@@ -102,7 +155,7 @@ export default function ScheduleForm({
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih mata pelajaran" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
                   {subjectOptions.map((subject) => (
                     <SelectItem key={subject.id} value={subject.id.toString()}>
                       {subject.name}
@@ -122,7 +175,7 @@ export default function ScheduleForm({
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih kelas" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[200px] overflow-y-auto">
                   {classOptions.map((cls) => (
                     <SelectItem key={cls.id} value={cls.id.toString()}>
                       {cls.label}

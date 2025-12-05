@@ -107,13 +107,13 @@ export default function GuruPage() {
           setImportError(flashError);
           toast.error(flashError, { id: toastId });
         } else {
-          toast.success("�o. Data guru berhasil diimpor!", { id: toastId });
+          toast.success("Data guru berhasil diimpor!", { id: toastId });
           reloadGurus();
         }
       },
       onError: (errors) => {
         const message =
-          (errors && (errors.file || errors.role)) || "�?O Gagal mengimpor data guru.";
+          (errors && (errors.file || errors.role)) || "Gagal mengimpor data guru.";
         setImportError(message);
         toast.error(message, { id: toastId });
       },
