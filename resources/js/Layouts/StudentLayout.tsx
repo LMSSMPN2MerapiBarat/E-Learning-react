@@ -19,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
+import { Toaster } from "@/Components/ui/sonner";
 import StudentNotificationBell from "@/Pages/Siswa/components/StudentNotificationBell";
 import type { SiswaPageProps } from "@/Pages/Siswa/types";
 
@@ -42,51 +43,51 @@ const NAV_ITEMS: Array<{
   routeName: string;
   icon: typeof Home;
 }> = [
-  {
-    key: "dashboard",
-    label: "Dashboard",
-    routeName: "siswa.dashboard",
-    icon: Home,
-  },
-   {
-    key: "schedule",
-    label: "Jadwal",
-    routeName: "siswa.schedule",
-    icon: CalendarDays,
-  },
-  {
-    key: "assignments",
-    label: "Tugas",
-    routeName: "siswa.tugas.index",
-    icon: PenSquare,
-  },
-  {
-    key: "subjects",
-    label: "Mata Pelajaran",
-    routeName: "siswa.subjects",
-    icon: Layers,
-  },
-  {
-    key: "materials",
-    label: "Materi",
-    routeName: "siswa.materials",
-    icon: BookOpen,
-  },
- 
-  
-  {
-    key: "quizzes",
-    label: "Kuis",
-    routeName: "siswa.quizzes",
-    icon: ClipboardList,
-  },
-  {
-    key: "grades",
-    label: "Nilai Saya",
-    routeName: "siswa.grades",
-    icon: Trophy,
-  },
-];
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      routeName: "siswa.dashboard",
+      icon: Home,
+    },
+    {
+      key: "schedule",
+      label: "Jadwal",
+      routeName: "siswa.schedule",
+      icon: CalendarDays,
+    },
+    {
+      key: "assignments",
+      label: "Tugas",
+      routeName: "siswa.tugas.index",
+      icon: PenSquare,
+    },
+    {
+      key: "subjects",
+      label: "Mata Pelajaran",
+      routeName: "siswa.subjects",
+      icon: Layers,
+    },
+    {
+      key: "materials",
+      label: "Materi",
+      routeName: "siswa.materials",
+      icon: BookOpen,
+    },
+
+
+    {
+      key: "quizzes",
+      label: "Kuis",
+      routeName: "siswa.quizzes",
+      icon: ClipboardList,
+    },
+    {
+      key: "grades",
+      label: "Nilai Saya",
+      routeName: "siswa.grades",
+      icon: Trophy,
+    },
+  ];
 
 const getInitials = (name?: string | null, fallback = "S") => {
   if (!name) return fallback;
@@ -113,11 +114,11 @@ export default function StudentLayout({
   const routeHelper =
     typeof window !== "undefined" && typeof (window as any).route === "function"
       ? ((window as any).route as (
-          name: string,
-          params?: Record<string, unknown>,
-          absolute?: boolean,
-          config?: unknown,
-        ) => string)
+        name: string,
+        params?: Record<string, unknown>,
+        absolute?: boolean,
+        config?: unknown,
+      ) => string)
       : undefined;
 
   const ziggyHasRoute =
@@ -250,11 +251,10 @@ export default function StudentLayout({
                   className="relative inline-flex shrink-0"
                 >
                   <motion.span
-                    className={`relative flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 font-medium transition ${
-                      isActive
+                    className={`relative flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 font-medium transition ${isActive
                         ? "text-white"
                         : "text-gray-600 hover:text-gray-900"
-                    }`}
+                      }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -266,9 +266,8 @@ export default function StudentLayout({
                     )}
                     <span className="relative z-10 flex items-center gap-2">
                       <Icon
-                        className={`h-5 w-5 ${
-                          isActive ? "text-white" : "text-gray-500"
-                        }`}
+                        className={`h-5 w-5 ${isActive ? "text-white" : "text-gray-500"
+                          }`}
                       />
                       <span>{label}</span>
                     </span>
@@ -281,6 +280,7 @@ export default function StudentLayout({
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+      <Toaster position="top-right" richColors closeButton />
     </div>
   );
 }

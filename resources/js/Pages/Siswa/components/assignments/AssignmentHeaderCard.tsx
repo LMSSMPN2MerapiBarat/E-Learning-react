@@ -26,7 +26,7 @@ export default function AssignmentHeaderCard({
           <Badge variant="outline">{assignment.subject ?? "Umum"}</Badge>
           <Badge variant="secondary">{statusLabel}</Badge>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-900">
           {assignment.teacher} • {assignment.classes.filter(Boolean).join(", ")}
         </p>
         <Alert>
@@ -40,7 +40,7 @@ export default function AssignmentHeaderCard({
           </AlertDescription>
         </Alert>
         {assignment.description && (
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+          <p className="text-sm text-gray-900 whitespace-pre-wrap">
             {assignment.description}
           </p>
         )}

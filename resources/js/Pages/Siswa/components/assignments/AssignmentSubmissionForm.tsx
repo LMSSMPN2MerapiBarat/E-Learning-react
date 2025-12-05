@@ -44,7 +44,34 @@ export default function AssignmentSubmissionForm({
   const addFiles = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
     if (files.length === 0) return;
-    form.setData("files", [...form.data.files, ...files]);
+
+    // Validasi tipe file
+    const allowedExtensions = assignment.allowedFileTypes.map(ext =>
+      ext.toLowerCase().replace(/^\./, '')
+    );
+
+    const invalidFiles: string[] = [];
+    const validFiles: File[] = [];
+
+    for (const file of files) {
+      const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+      if (allowedExtensions.includes(ext)) {
+        validFiles.push(file);
+      } else {
+        invalidFiles.push(file.name);
+      }
+    }
+
+    if (invalidFiles.length > 0) {
+      toast.error(`Tipe file tidak diizinkan: ${invalidFiles.join(', ')}`, {
+        description: `Tipe yang diizinkan: ${assignment.allowedFileTypes.join(', ')}`,
+      });
+    }
+
+    if (validFiles.length > 0) {
+      form.setData("files", [...form.data.files, ...validFiles]);
+    }
+
     event.target.value = "";
   };
 
