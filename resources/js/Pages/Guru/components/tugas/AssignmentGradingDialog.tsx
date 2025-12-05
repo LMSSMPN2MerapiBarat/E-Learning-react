@@ -107,11 +107,18 @@ export default function AssignmentGradingDialog({
                           <span>{file.name}</span>
                         </div>
                         {file.url && (
-                          <Button asChild size="sm" variant="ghost">
-                            <a href={file.url} target="_blank" rel="noreferrer">
-                              Unduh
-                            </a>
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            <Button asChild size="sm" variant="ghost">
+                              <a href={file.url} target="_blank" rel="noreferrer">
+                                Lihat
+                              </a>
+                            </Button>
+                            <Button asChild size="sm" variant="outline">
+                              <a href={file.url} download={file.name}>
+                                Unduh
+                              </a>
+                            </Button>
+                          </div>
                         )}
                       </div>
                     ))}
