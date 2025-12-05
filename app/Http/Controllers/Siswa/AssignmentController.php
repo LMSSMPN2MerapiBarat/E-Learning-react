@@ -388,6 +388,6 @@ class AssignmentController extends Controller
 
     protected function defaultAllowedFileTypes(): array
     {
-        return ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.jpg', '.png'];
+        return ['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png'];
     }
 }
