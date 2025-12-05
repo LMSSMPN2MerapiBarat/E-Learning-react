@@ -55,14 +55,7 @@ export default function AssignmentTable({
           {assignments.map((assignment) => (
             <TableRow key={assignment.id}>
               <TableCell>
-                <div>
-                  <p className="font-medium">{assignment.title}</p>
-                  {assignment.description && (
-                    <p className="line-clamp-1 text-sm text-muted-foreground">
-                      {assignment.description}
-                    </p>
-                  )}
-                </div>
+                <p className="font-medium">{assignment.title}</p>
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
@@ -76,16 +69,16 @@ export default function AssignmentTable({
               <TableCell className="text-sm text-muted-foreground">
                 {assignment.openDate
                   ? new Date(assignment.openDate).toLocaleDateString("id-ID", {
-                      day: "2-digit",
-                      month: "short",
-                    })
+                    day: "2-digit",
+                    month: "short",
+                  })
                   : "-"}{" "}
                 &ndash;{" "}
                 {assignment.closeDate
                   ? new Date(assignment.closeDate).toLocaleDateString("id-ID", {
-                      day: "2-digit",
-                      month: "short",
-                    })
+                    day: "2-digit",
+                    month: "short",
+                  })
                   : "-"}
               </TableCell>
               <TableCell>
