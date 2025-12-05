@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import {
   BookOpen,
   CalendarDays,
+  ChevronDown,
   ClipboardList,
   Home,
   Layers,
@@ -12,6 +13,12 @@ import {
   Trophy,
 } from "lucide-react";
 import { Button } from "@/Components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/Components/ui/dropdown-menu";
 import StudentNotificationBell from "@/Pages/Siswa/components/StudentNotificationBell";
 import type { SiswaPageProps } from "@/Pages/Siswa/types";
 
@@ -101,6 +108,7 @@ export default function StudentLayout({
   const { auth, notifications } = page.props;
   const displayName = auth?.user?.name?.trim() || "Siswa";
   const initials = getInitials(auth?.user?.name, "S");
+  const kelasName = (auth?.user as any)?.kelas?.nama || null;
 
   const routeHelper =
     typeof window !== "undefined" && typeof (window as any).route === "function"
@@ -193,25 +201,41 @@ export default function StudentLayout({
           </div>
           <div className="flex items-center gap-3">
             <StudentNotificationBell notifications={notifications} />
-            <div className="hidden text-right sm:block">
-              <p className="text-xs text-gray-500">Halo</p>
-              <p className="text-sm font-semibold text-gray-900">
-                {displayName}
-              </p>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
-              {initials}
-            </div>
-            <Button asChild variant="outline" className="hidden sm:inline-flex">
-              <Link
-                href={routeHelper ? routeHelper("logout") : "/logout"}
-                method="post"
-                as="button"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </Link>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-gray-100">
+                  <div className="hidden text-right sm:block">
+                    <p className="text-xs text-gray-500">Halo</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {displayName}
+                    </p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                    {initials}
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-3 py-2 border-b">
+                  <p className="font-medium text-gray-900">{displayName}</p>
+                  {kelasName && (
+                    <p className="text-xs text-gray-500">Kelas {kelasName}</p>
+                  )}
+                </div>
+                <DropdownMenuItem asChild className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
+                  <Link
+                    href={routeHelper ? routeHelper("logout") : "/logout"}
+                    method="post"
+                    as="button"
+                    className="w-full flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <div className="border-t">

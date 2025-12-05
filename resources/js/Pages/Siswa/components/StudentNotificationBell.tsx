@@ -99,14 +99,14 @@ const NotificationList = ({
 }) => {
   if (items.length === 0) {
     return (
-      <div className="px-4 py-6 text-center text-sm text-gray-500">
+      <div className="px-3 py-4 text-center text-xs text-gray-500">
         Belum ada notifikasi baru.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-1 py-1">
+    <div className="flex flex-col py-1">
       {items.map((item) => {
         const Icon = ICON_MAP[item.type] ?? BookOpen;
 
@@ -114,27 +114,27 @@ const NotificationList = ({
           <DropdownMenuItem
             key={item.id}
             asChild
-            className="px-2 py-1"
+            className="px-1.5 py-0.5"
           >
             <Link
               href={item.url}
-              className="flex w-full items-start gap-3 rounded-md p-2 text-xs transition hover:bg-muted/60"
+              className="flex w-full items-start gap-2 rounded-md p-1.5 text-xs transition hover:bg-muted/60"
             >
-              <div className="mt-0.5 rounded-md bg-blue-100 p-1.5 text-blue-600">
-                <Icon className="h-3.5 w-3.5" />
+              <div className="mt-0.5 rounded-md bg-blue-100 p-1 text-blue-600">
+                <Icon className="h-3 w-3" />
               </div>
-              <div className="flex-1 space-y-1">
-                <p className="text-sm font-medium text-gray-900">
+              <div className="flex-1 space-y-0.5">
+                <p className="text-xs font-medium text-gray-900 line-clamp-1">
                   {item.title}
                 </p>
                 <Badge
                   variant="secondary"
-                  className="px-2 py-0 text-[9px] uppercase tracking-wide"
+                  className="px-1.5 py-0 text-[8px] uppercase tracking-wide"
                 >
                   {TYPE_LABEL[item.type] ?? item.type}
                 </Badge>
                 {renderNotificationMeta(item.meta)}
-                <p className="text-[11px] text-gray-400">
+                <p className="text-[10px] text-gray-400">
                   {formatRelativeTime(item.createdAt)}
                 </p>
               </div>
@@ -165,9 +165,9 @@ export default function StudentNotificationBell({
   const currentPage = Math.min(page, totalPages - 1);
   const paginatedItems = totalItems
     ? visibleItems.slice(
-        currentPage * PAGE_SIZE,
-        currentPage * PAGE_SIZE + PAGE_SIZE,
-      )
+      currentPage * PAGE_SIZE,
+      currentPage * PAGE_SIZE + PAGE_SIZE,
+    )
     : [];
 
   const latestCreatedAt = useMemo(() => {
