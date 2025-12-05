@@ -12,7 +12,7 @@ import type {
   AssignmentSubmission,
 } from "@/Pages/Guru/components/tugas/types";
 import type { PageProps } from "@/types";
-import { CalendarDays, Download, FileText, Users, ArrowLeft, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays, Download, FileText, Users, ArrowLeft, Search, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 
 const statusLabel: Record<string, string> = {
   draft: "Draft",
@@ -174,11 +174,20 @@ export default function AssignmentDetailPage() {
                           <span>{file.name}</span>
                         </div>
                         {file.url && (
-                          <Button asChild size="sm" variant="ghost">
-                            <a href={file.url} target="_blank" rel="noreferrer">
-                              Unduh
-                            </a>
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button asChild size="sm" variant="ghost">
+                              <a href={file.url} target="_blank" rel="noreferrer">
+                                <Eye className="mr-1 h-4 w-4" />
+                                Lihat
+                              </a>
+                            </Button>
+                            <Button asChild size="sm" variant="ghost">
+                              <a href={file.url} download rel="noreferrer">
+                                <Download className="mr-1 h-4 w-4" />
+                                Unduh
+                              </a>
+                            </Button>
+                          </div>
                         )}
                       </div>
                     ))}
