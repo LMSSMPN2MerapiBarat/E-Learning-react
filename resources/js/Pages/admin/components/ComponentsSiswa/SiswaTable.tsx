@@ -45,10 +45,10 @@ export default function SiswaTable({
   return (
     <>
       <div className="hidden overflow-x-auto rounded-lg border bg-white md:block">
-        <Table className="min-w-[880px]">
+        <Table className="min-w-[800px] text-xs">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40px] text-center">
+              <TableHead className="w-[36px] text-center">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -56,13 +56,13 @@ export default function SiswaTable({
                   className="p-0"
                 >
                   {selectedIds.length === students.length ? (
-                    <CheckSquare className="w-4 h-4 text-blue-600" />
+                    <CheckSquare className="w-3.5 h-3.5 text-blue-600" />
                   ) : (
-                    <Square className="w-4 h-4 text-gray-500" />
+                    <Square className="w-3.5 h-3.5 text-gray-500" />
                   )}
                 </Button>
               </TableHead>
-              <TableHead className="w-[60px] text-center">No</TableHead>
+              <TableHead className="w-[50px] text-center">No</TableHead>
               <TableHead>NISN</TableHead>
               <TableHead>Nama</TableHead>
               <TableHead>Jenis Kelamin</TableHead>
@@ -80,6 +80,7 @@ export default function SiswaTable({
                   <TableCell className="text-center">
                     <input
                       type="checkbox"
+                      className="h-3.5 w-3.5"
                       checked={selectedIds.includes(student.id)}
                       onChange={() => toggleSelect(student.id)}
                     />
@@ -95,39 +96,40 @@ export default function SiswaTable({
                   <TableCell>{student.email}</TableCell>
                   <TableCell>{student.kelas || "-"}</TableCell>
                   <TableCell>{student.no_telp || "-"}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    {/* UPDATED: sama seperti style pertama (outline, sm) */}
+                  <TableCell className="text-right space-x-1.5">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => onViewDetail(student)}
-                      className="px-2"
+                      className="h-7 w-7 p-0"
                     >
-                      <Eye className="h-4 w-4 text-gray-600" />
+                      <Eye className="h-3 w-3 text-gray-600" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => {
                         setSelectedStudent(student);
                         setIsEditOpen(true);
                       }}
                     >
-                      <Pencil className="w-4 h-4 text-blue-600" />
+                      <Pencil className="w-3 h-3 text-blue-600" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => setDeleteConfirm(student.id)}
                     >
-                      <Trash2 className="w-4 h-4 text-red-600" />
+                      <Trash2 className="w-3 h-3 text-red-600" />
                     </Button>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-6 text-gray-500">
+                <TableCell colSpan={9} className="text-center py-4 text-gray-500 text-xs">
                   Tidak ada data siswa yang cocok.
                 </TableCell>
               </TableRow>
@@ -137,32 +139,32 @@ export default function SiswaTable({
       </div>
 
       {/* Mobile cards */}
-      <div className="space-y-3 md:hidden">
+      <div className="space-y-2 md:hidden">
         {students.length > 0 ? (
           students.map((student, index) => (
             <div
               key={student.id}
-              className="space-y-3 rounded-lg border bg-white p-4 shadow-sm"
+              className="space-y-2 rounded-lg border bg-white p-3 shadow-sm"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-semibold text-gray-500">
+                  <p className="text-xs font-semibold text-gray-500">
                     No. {startIndex + index + 1}
                   </p>
-                  <p className="text-base font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-gray-900">
                     {student.name}
                   </p>
-                  <p className="text-sm text-gray-500">{student.email}</p>
+                  <p className="text-xs text-gray-500">{student.email}</p>
                 </div>
                 <input
                   type="checkbox"
                   checked={selectedIds.includes(student.id)}
                   onChange={() => toggleSelect(student.id)}
-                  className="mt-1 h-4 w-4 accent-blue-600"
+                  className="mt-1 h-3.5 w-3.5 accent-blue-600"
                 />
               </div>
 
-              <div className="grid gap-1 text-sm">
+              <div className="grid gap-0.5 text-xs">
                 <p>
                   <span className="font-medium text-gray-600">NIS:</span>{" "}
                   {student.nis || "-"}
@@ -181,19 +183,19 @@ export default function SiswaTable({
                 </p>
               </div>
 
-              <div className="flex justify-end gap-2">
-                {/* UPDATED: outline + sm agar match style */}
+              <div className="flex justify-end gap-1.5">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => onViewDetail(student)}
-                  className="px-2"
+                  className="h-7 w-7 p-0"
                 >
-                  <Eye className="h-4 w-4 text-gray-600" />
+                  <Eye className="h-3 w-3 text-gray-600" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 text-xs"
                   onClick={() => onViewDetail(student)}
                 >
                   Detail
@@ -201,25 +203,27 @@ export default function SiswaTable({
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 w-7 p-0"
                   onClick={() => {
                     setSelectedStudent(student);
                     setIsEditOpen(true);
                   }}
                 >
-                  <Pencil className="h-4 w-4 text-blue-600" />
+                  <Pencil className="h-3 w-3 text-blue-600" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 w-7 p-0"
                   onClick={() => setDeleteConfirm(student.id)}
                 >
-                  <Trash2 className="h-4 w-4 text-red-600" />
+                  <Trash2 className="h-3 w-3 text-red-600" />
                 </Button>
               </div>
             </div>
           ))
         ) : (
-          <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+          <p className="rounded-lg border bg-white p-3 text-center text-xs text-gray-500 shadow-sm">
             Tidak ada data siswa yang cocok.
           </p>
         )}

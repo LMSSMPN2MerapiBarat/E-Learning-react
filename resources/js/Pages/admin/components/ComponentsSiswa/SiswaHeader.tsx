@@ -154,8 +154,8 @@ export default function SiswaHeader({
           className="relative overflow-hidden w-full sm:w-auto"
           asChild
         >
-          <label className="cursor-pointer flex items-center gap-2">
-            <Upload className="w-4 h-4" />
+          <label className="cursor-pointer flex items-center gap-1.5 text-sm">
+            <Upload className="w-3 h-3" />
             Import
             <input
               ref={fileInputRef}
@@ -171,7 +171,7 @@ export default function SiswaHeader({
           onClick={handleExport}
           className="flex items-center gap-2 w-full sm:w-auto"
         >
-          <Download className="w-4 h-4" /> Export
+          <Download className="w-3 h-3" /> Export
         </Button>
         {hasStudents && (
           <Button
@@ -180,7 +180,7 @@ export default function SiswaHeader({
             className="flex items-center gap-2 w-full sm:w-auto"
             disabled={isClearingAll}
           >
-            <Trash className="w-4 h-4" />
+            <Trash className="w-3 h-3" />
             Hapus Semua
           </Button>
         )}
@@ -190,12 +190,12 @@ export default function SiswaHeader({
             onClick={() => setIsDeleteDialogOpen(true)}
             className="flex items-center gap-2 w-full sm:w-auto"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3 h-3" />
             Hapus Terpilih ({selectedIds.length})
           </Button>
         )}
-        <Button onClick={() => setIsAddOpen(true)} className="w-full sm:w-auto">
-          <Plus className="w-4 h-4 mr-2" /> Tambah
+        <Button size="sm" onClick={() => setIsAddOpen(true)} className="w-full sm:w-auto">
+          <Plus className="w-3 h-3 mr-1.5" /> Tambah
         </Button>
       </div>
 

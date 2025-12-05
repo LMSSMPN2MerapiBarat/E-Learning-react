@@ -52,7 +52,7 @@ export default function CreateMapel({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div>
         <Label>Nama Mata Pelajaran</Label>
         <Input
@@ -67,7 +67,7 @@ export default function CreateMapel({ onSuccess }: { onSuccess: () => void }) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={processing}>
+        <Button type="submit" size="sm" disabled={processing}>
           {processing ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>

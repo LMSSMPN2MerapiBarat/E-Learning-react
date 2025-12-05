@@ -61,67 +61,72 @@ const KelasTable: React.FC<KelasTableProps> = ({
   return (
     <>
       <div className="hidden overflow-x-auto rounded-lg border bg-white md:block">
-        <table className="min-w-[780px] w-full text-sm">
+        <table className="min-w-[700px] w-full text-xs">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="w-10 p-2">
+              <th className="w-8 p-1.5">
                 <input
                   type="checkbox"
+                  className="h-3.5 w-3.5"
                   checked={pageAllSelected}
                   disabled={paginatedKelas.length === 0}
                   onChange={(e) => toggleSelectAll(e.target.checked)}
                 />
               </th>
-              <th className="p-2 text-center">No</th>
-              <th className="p-2 text-left">Tingkat</th>
-              <th className="p-2 text-left">Nama Kelas</th>
-              <th className="p-2 text-left">Tahun Ajaran</th>
-              <th className="p-2 text-left">Jumlah Siswa</th>
-              <th className="p-2 text-left">Jumlah Pengajar</th>
-              <th className="p-2 text-center">Aksi</th>
+              <th className="p-1.5 text-center">No</th>
+              <th className="p-1.5 text-left">Tingkat</th>
+              <th className="p-1.5 text-left">Nama Kelas</th>
+              <th className="p-1.5 text-left">Tahun Ajaran</th>
+              <th className="p-1.5 text-left">Jumlah Siswa</th>
+              <th className="p-1.5 text-left">Jumlah Pengajar</th>
+              <th className="p-1.5 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {paginatedKelas.length > 0 ? (
               paginatedKelas.map((kelas, index) => (
                 <tr key={kelas.id} className="border-t">
-                  <td className="p-2 text-center">
+                  <td className="p-1.5 text-center">
                     <input
                       type="checkbox"
+                      className="h-3.5 w-3.5"
                       checked={selectedIds.includes(kelas.id)}
                       onChange={(e) => toggleSelect(kelas.id, e.target.checked)}
                     />
                   </td>
-                  <td className="p-2 text-center">{offset + index + 1}</td>
-                  <td className="p-2">{kelas.tingkat}</td>
-                  <td className="p-2">{kelas.kelas}</td>
-                  <td className="p-2">{kelas.tahun_ajaran}</td>
-                  <td className="p-2 text-center">{kelas.siswa_count ?? 0}</td>
-                  <td className="p-2 text-center">{kelas.guru_count ?? 0}</td>
-                  <td className="flex justify-center gap-2 p-2">
+                  <td className="p-1.5 text-center">{offset + index + 1}</td>
+                  <td className="p-1.5">{kelas.tingkat}</td>
+                  <td className="p-1.5">{kelas.kelas}</td>
+                  <td className="p-1.5">{kelas.tahun_ajaran}</td>
+                  <td className="p-1.5 text-center">{kelas.siswa_count ?? 0}</td>
+                  <td className="p-1.5 text-center">{kelas.guru_count ?? 0}</td>
+                  <td className="flex justify-center gap-1.5 p-1.5">
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => onViewDetail(kelas.id)}
                     >
-                      <Eye className="h-4 w-4 text-gray-600" />
+                      <Eye className="h-3 w-3 text-gray-600" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => {
                         setSelectedKelas(kelas);
                         setIsEditOpen(true);
                       }}
                     >
-                      <Pencil className="h-4 w-4 text-blue-600" />
+                      <Pencil className="h-3 w-3 text-blue-600" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => setDeleteConfirm(kelas.id)}
                     >
-                      <Trash2 className="h-4 w-4 text-red-600" />
+                      <Trash2 className="h-3 w-3 text-red-600" />
                     </Button>
                   </td>
                 </tr>
@@ -130,7 +135,7 @@ const KelasTable: React.FC<KelasTableProps> = ({
               <tr>
                 <td
                   colSpan={8}
-                  className="py-6 text-center text-sm text-gray-500"
+                  className="py-4 text-center text-xs text-gray-500"
                 >
                   Tidak ada data kelas.
                 </td>
@@ -140,31 +145,31 @@ const KelasTable: React.FC<KelasTableProps> = ({
         </table>
       </div>
 
-      <div className="space-y-3 md:hidden">
+      <div className="space-y-2 md:hidden">
         {paginatedKelas.length > 0 ? (
           paginatedKelas.map((kelas, index) => (
             <div
               key={kelas.id}
-              className="space-y-3 rounded-lg border bg-white p-4 shadow-sm"
+              className="space-y-2 rounded-lg border bg-white p-3 shadow-sm"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-sm font-semibold text-gray-500">
+                  <p className="text-xs font-semibold text-gray-500">
                     No. {offset + index + 1}
                   </p>
-                  <p className="text-base font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-gray-900">
                     {kelas.kelas}
                   </p>
-                  <p className="text-sm text-gray-500">{kelas.tingkat}</p>
+                  <p className="text-xs text-gray-500">{kelas.tingkat}</p>
                 </div>
                 <input
                   type="checkbox"
                   checked={selectedIds.includes(kelas.id)}
                   onChange={(e) => toggleSelect(kelas.id, e.target.checked)}
-                  className="mt-1 h-4 w-4 accent-blue-600"
+                  className="mt-1 h-3.5 w-3.5 accent-blue-600"
                 />
               </div>
-              <div className="grid gap-1 text-sm">
+              <div className="grid gap-0.5 text-xs">
                 <p>
                   <span className="font-medium text-gray-600">
                     Tahun Ajaran:
@@ -184,36 +189,39 @@ const KelasTable: React.FC<KelasTableProps> = ({
                   {kelas.guru_count ?? 0}
                 </p>
               </div>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-end gap-1.5">
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 w-7 p-0"
                   onClick={() => onViewDetail(kelas.id)}
                 >
-                  <Eye className="h-4 w-4 text-gray-600" />
+                  <Eye className="h-3 w-3 text-gray-600" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 w-7 p-0"
                   onClick={() => {
                     setSelectedKelas(kelas);
                     setIsEditOpen(true);
                   }}
                 >
-                  <Pencil className="h-4 w-4 text-blue-600" />
+                  <Pencil className="h-3 w-3 text-blue-600" />
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 w-7 p-0"
                   onClick={() => setDeleteConfirm(kelas.id)}
                 >
-                  <Trash2 className="h-4 w-4 text-red-600" />
+                  <Trash2 className="h-3 w-3 text-red-600" />
                 </Button>
               </div>
             </div>
           ))
         ) : kelasList.length === 0 ? (
-          <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+          <p className="rounded-lg border bg-white p-3 text-center text-xs text-gray-500 shadow-sm">
             Tidak ada data kelas.
           </p>
         ) : null}

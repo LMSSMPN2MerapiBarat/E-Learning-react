@@ -146,9 +146,9 @@ export default function GuruPage() {
 
       {(isBulkDeleting || isLoading) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center space-y-3 animate-fade-in">
-            <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-            <p className="text-gray-700 font-medium">
+          <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col items-center space-y-2 animate-fade-in">
+            <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            <p className="text-gray-700 font-medium text-sm">
               {isBulkDeleting ? "Menghapus data guru..." : "Sedang memproses data..."}
             </p>
           </div>
@@ -156,10 +156,10 @@ export default function GuruPage() {
       )}
 
       <Card>
-        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <CardTitle className="font-normal text-xl">Data Guru</CardTitle>
-            <CardDescription>Kelola data guru dan informasi pengajaran</CardDescription>
+            <CardTitle className="font-normal text-base">Data Guru</CardTitle>
+            <CardDescription className="text-xs">Kelola data guru dan informasi pengajaran</CardDescription>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto md:justify-end">
@@ -177,7 +177,7 @@ export default function GuruPage() {
               className="w-full sm:w-auto"
               onClick={() => importInputRef.current?.click()}
             >
-              <Upload className="w-4 h-4 mr-2" /> Import Excel
+              <Upload className="w-3 h-3 mr-1.5" /> Import Excel
             </Button>
 
             <Button
@@ -186,7 +186,7 @@ export default function GuruPage() {
               onClick={handleExport}
               className="w-full sm:w-auto"
             >
-              <Download className="w-4 h-4 mr-2" /> Export Excel
+              <Download className="w-3 h-3 mr-1.5" /> Export Excel
             </Button>
 
             {selectedIds.length > 0 && (
@@ -197,14 +197,14 @@ export default function GuruPage() {
                 disabled={isBulkDeleting}
                 className="w-full sm:w-auto"
               >
-                <Trash2 className="w-4 h-4 mr-2" /> Hapus Terpilih ({selectedIds.length})
+                <Trash2 className="w-3 h-3 mr-1.5" /> Hapus Terpilih ({selectedIds.length})
               </Button>
             )}
 
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto">
-                  <Plus className="w-4 h-4 mr-2" /> Tambah Guru
+                <Button size="sm" className="w-full sm:w-auto">
+                  <Plus className="w-3 h-3 mr-1.5" /> Tambah Guru
                 </Button>
               </DialogTrigger>
               <DialogContent
@@ -241,11 +241,11 @@ export default function GuruPage() {
         deleteConfirm={deleteConfirm}
         setDeleteConfirm={setDeleteConfirm}
         bulkDeleteConfirm={bulkDeleteConfirm}
-      setBulkDeleteConfirm={setBulkDeleteConfirm}
-      selectedIds={selectedIds}
-      reloadGurus={reloadGurus}
-      setIsBulkDeleting={setIsBulkDeleting}
-    />
+        setBulkDeleteConfirm={setBulkDeleteConfirm}
+        selectedIds={selectedIds}
+        reloadGurus={reloadGurus}
+        setIsBulkDeleting={setIsBulkDeleting}
+      />
 
       <AlertDialog
         open={isConfirmImportOpen}

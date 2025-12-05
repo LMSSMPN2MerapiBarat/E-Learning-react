@@ -160,9 +160,9 @@ export default function KelasPage() {
 
       {isBulkDeleting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-3 rounded-xl bg-white px-8 py-6 shadow-xl">
-            <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
-            <p className="font-semibold text-gray-700">
+          <div className="flex flex-col items-center gap-2 rounded-xl bg-white px-6 py-4 shadow-xl">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            <p className="font-semibold text-gray-700 text-sm">
               Menghapus {selectedIds.length} data kelas...
             </p>
           </div>

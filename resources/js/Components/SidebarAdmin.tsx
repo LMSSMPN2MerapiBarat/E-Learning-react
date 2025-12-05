@@ -44,25 +44,25 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 z-40 w-64 border-r bg-white shadow-md transition-transform duration-300 ease-in-out ${translateClass}`}
+      className={`fixed inset-y-0 left-0 z-40 w-48 border-r bg-white shadow-md transition-transform duration-300 ease-in-out ${translateClass}`}
     >
       {/* Header Sidebar */}
-      <div className="px-4 py-4 border-b">
+      <div className="px-3 py-3 border-b">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {/* Ikon biru */}
-            <div className="bg-blue-500 p-3 rounded-lg">
+            <div className="bg-blue-500 p-2 rounded-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="lucide lucide-users w-6 h-6 text-white"
+                className="lucide lucide-users w-4 h-4 text-white"
               >
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                 <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
@@ -73,10 +73,10 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
 
             {/* Judul dan subjudul */}
             <div className="flex flex-col">
-              <h2 className="text-lg text-gray-800 font-normal leading-tight">
+              <h2 className="text-sm text-gray-800 font-normal leading-tight">
                 Admin Panel
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-gray-500">
                 SMPN 2 Merapi Barat
               </p>
             </div>
@@ -88,13 +88,13 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
             className="text-gray-600 hover:text-gray-900 lg:hidden"
             aria-label="Tutup menu"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Menu Navigasi */}
-      <nav className="mt-4 space-y-1">
+      <nav className="mt-3 space-y-0.5">
         {menus.map((menu) => {
           const Icon = menu.icon;
           const active = url.startsWith(menu.href);
@@ -102,14 +102,13 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
             <Link
               key={menu.name}
               href={menu.href}
-              className={`flex items-center px-4 py-2 text-sm font-normal transition rounded-md ${
-                active
+              className={`flex items-center px-3 py-1.5 text-xs font-normal transition rounded-md ${active
                   ? "bg-blue-100 text-blue-700"
                   : "text-gray-600 hover:bg-gray-100"
-              }`}
+                }`}
               onClick={handleNavClick}
             >
-              <Icon className="w-5 h-5 mr-3" />
+              <Icon className="w-4 h-4 mr-2" />
               {menu.name}
             </Link>
           );
@@ -117,13 +116,13 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
       </nav>
 
       {/* Tombol Logout */}
-      <div className="absolute bottom-4 w-full px-4">
+      <div className="absolute bottom-3 w-full px-3">
         <button
           type="button"
           onClick={handleLogout}
-          className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
+          className="flex items-center w-full px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-md"
         >
-          <LogOut className="w-5 h-5 mr-3" /> Logout
+          <LogOut className="w-4 h-4 mr-2" /> Logout
         </button>
       </div>
     </div>

@@ -27,12 +27,12 @@ export default function ScheduleFilters({
 }: ScheduleFiltersProps) {
   return (
     <Card>
-      <CardContent className="p-4">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Filter Kelas</Label>
+      <CardContent className="p-3">
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="space-y-1">
+            <Label className="text-xs">Filter Kelas</Label>
             <Select value={selectedClass} onValueChange={onClassChange}>
-              <SelectTrigger>
+              <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="Semua Kelas" />
               </SelectTrigger>
               <SelectContent>
@@ -45,10 +45,10 @@ export default function ScheduleFilters({
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label>Filter Hari</Label>
+          <div className="space-y-1">
+            <Label className="text-xs">Filter Hari</Label>
             <Select value={selectedDay} onValueChange={onDayChange}>
-              <SelectTrigger>
+              <SelectTrigger className="h-8 text-xs">
                 <SelectValue placeholder="Semua Hari" />
               </SelectTrigger>
               <SelectContent>

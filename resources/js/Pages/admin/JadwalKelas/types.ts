@@ -47,5 +47,4 @@ export interface ScheduleFormValues {
   day: string;
   start_time: string;
   end_time: string;
-  room: string;
 }

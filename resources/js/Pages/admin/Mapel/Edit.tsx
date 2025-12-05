@@ -62,7 +62,7 @@ export default function EditMapel({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div>
         <Label>Nama Mata Pelajaran</Label>
         <Input
@@ -73,11 +73,11 @@ export default function EditMapel({
         />
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" onClick={onCancel} type="button">
+      <div className="flex justify-end gap-1.5">
+        <Button variant="outline" size="sm" onClick={onCancel} type="button">
           Batal
         </Button>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" size="sm" disabled={loading}>
           {loading ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>

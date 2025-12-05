@@ -89,13 +89,13 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
       <div className="flex justify-center mt-8">
         <Card className="w-full max-w-lg shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl font-semibold">
+            <CardTitle className="text-base font-semibold">
               Tambah Data Kelas
             </CardTitle>
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
               <div>
                 <Label htmlFor="tingkat">Tingkat</Label>
                 <select
@@ -161,10 +161,10 @@ export default function CreateKelas({ onSuccess }: { onSuccess: () => void }) {
               </div>
 
               <div className="flex justify-end">
-                <Button type="submit" disabled={processing}>
+                <Button type="submit" size="sm" disabled={processing}>
                   {processing ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Menyimpan...
+                      <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> Menyimpan...
                     </>
                   ) : (
                     "Simpan"

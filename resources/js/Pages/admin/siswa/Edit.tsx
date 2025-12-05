@@ -173,10 +173,10 @@ export default function EditSiswa({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 p-4 bg-white rounded-lg shadow-sm"
+      className="space-y-4 p-3 bg-white rounded-lg shadow-sm"
     >
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="space-y-1">
           <Label>Nama Lengkap</Label>
           <Input
             value={form.name}
@@ -188,7 +188,7 @@ export default function EditSiswa({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Tempat Lahir</Label>
           <Input
             value={form.tempat_lahir}
@@ -202,7 +202,7 @@ export default function EditSiswa({
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Tanggal Lahir</Label>
           <Input
             type="date"
@@ -212,7 +212,7 @@ export default function EditSiswa({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Jenis Kelamin</Label>
           <Select value={form.jenis_kelamin} onValueChange={handleGenderChange}>
             <SelectTrigger>
@@ -225,7 +225,7 @@ export default function EditSiswa({
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Email</Label>
           <Input
             type="email"
@@ -236,7 +236,7 @@ export default function EditSiswa({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Kelas</Label>
           <Select
             value={form.kelas_id}
@@ -247,7 +247,7 @@ export default function EditSiswa({
                 placeholder={
                   form.kelas_id
                     ? kelasList.find((k) => String(k.id) === form.kelas_id)
-                        ?.kelas
+                      ?.kelas
                     : "Pilih kelas"
                 }
               />
@@ -262,7 +262,7 @@ export default function EditSiswa({
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>NISN</Label>
           <Input
             value={form.nis}
@@ -278,7 +278,7 @@ export default function EditSiswa({
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>No. Telepon</Label>
           <Input
             value={form.no_telp}
@@ -292,7 +292,7 @@ export default function EditSiswa({
           />
         </div>
 
-        <div className="space-y-2 md:col-span-2">
+        <div className="space-y-1 md:col-span-2">
           <Label>Password (opsional)</Label>
           <Input
             type="password"
@@ -304,11 +304,11 @@ export default function EditSiswa({
         </div>
       </div>
 
-      <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
+      <div className="flex justify-end gap-1.5 pt-1">
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
           Batal
         </Button>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" size="sm" disabled={loading}>
           {loading ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>

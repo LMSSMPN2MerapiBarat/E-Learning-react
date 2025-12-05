@@ -47,7 +47,7 @@ export default function ScheduleForm({
   submitLabel,
 }: ScheduleFormProps) {
   const [teacherOpen, setTeacherOpen] = useState(false);
-  
+
   const teacherValue = values.guru_id?.toString() ?? "";
 
   const selectedTeacher = useMemo(
@@ -91,9 +91,9 @@ export default function ScheduleForm({
 
   return (
     <Card>
-      <CardContent className="space-y-6 pt-6">
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+      <CardContent className="space-y-4 pt-4">
+        <form onSubmit={onSubmit} className="space-y-3">
+          <div className="grid gap-3 md:grid-cols-2">
             <Field label="Guru Pengampu" error={errors.guru_id}>
               <Popover open={teacherOpen} onOpenChange={setTeacherOpen}>
                 <PopoverTrigger asChild>
@@ -110,14 +110,14 @@ export default function ScheduleForm({
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent 
-                  className="w-[--radix-popover-trigger-width] p-0" 
+                <PopoverContent
+                  className="w-[--radix-popover-trigger-width] p-0"
                   align="start"
                   sideOffset={4}
                 >
                   <Command className="border rounded-md">
                     <CommandInput placeholder="Cari nama guru..." className="h-9" />
-                    <CommandList className="max-h-[200px]">
+                    <CommandList className="max-h-[200px] overflow-y-auto">
                       <CommandEmpty>Guru tidak ditemukan.</CommandEmpty>
                       <CommandGroup>
                         {reference.teachers.map((teacher) => (
@@ -151,6 +151,7 @@ export default function ScheduleForm({
                 type="text"
                 value={values.guru_id || ""}
                 required
+                readOnly
                 className="sr-only"
                 tabIndex={-1}
                 onFocus={() => setTeacherOpen(true)}
@@ -177,13 +178,14 @@ export default function ScheduleForm({
                 type="text"
                 value={values.mata_pelajaran_id || ""}
                 required
+                readOnly
                 className="sr-only"
                 tabIndex={-1}
               />
             </Field>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <Field label="Kelas" error={errors.kelas_id}>
               <Select
                 value={values.kelas_id?.toString() ?? ""}
@@ -205,6 +207,7 @@ export default function ScheduleForm({
                 type="text"
                 value={values.kelas_id || ""}
                 required
+                readOnly
                 className="sr-only"
                 tabIndex={-1}
               />
@@ -226,13 +229,14 @@ export default function ScheduleForm({
                 type="text"
                 value={values.day || ""}
                 required
+                readOnly
                 className="sr-only"
                 tabIndex={-1}
               />
             </Field>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             <Field label="Jam Mulai" error={errors.start_time}>
               <Input
                 type="time"
@@ -251,15 +255,7 @@ export default function ScheduleForm({
             </Field>
           </div>
 
-          <Field label="Ruangan" error={errors.room}>
-            <Input
-              placeholder="Contoh: Lab Komputer 1"
-              value={values.room}
-              onChange={(event) => onChange("room", event.target.value)}
-            />
-          </Field>
-
-          <Button type="submit" className="w-full" disabled={processing}>
+          <Button type="submit" size="sm" className="w-full" disabled={processing}>
             {submitLabel}
           </Button>
         </form>
@@ -270,10 +266,10 @@ export default function ScheduleForm({
 
 function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
   return (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium text-gray-700">{label}</Label>
+    <div className="space-y-1">
+      <Label className="text-xs font-medium text-gray-700">{label}</Label>
       {children}
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 }

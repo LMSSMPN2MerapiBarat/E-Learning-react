@@ -105,9 +105,9 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="space-y-1">
           <Label>Nama Lengkap</Label>
           <Input
             value={data.name}
@@ -122,7 +122,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Jenis Kelamin</Label>
           <Select
             value={data.jenis_kelamin}
@@ -141,7 +141,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Tempat Lahir</Label>
           <Input
             value={data.tempat_lahir}
@@ -155,7 +155,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Tanggal Lahir</Label>
           <Input
             type="date"
@@ -168,7 +168,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Email</Label>
           <Input
             type="email"
@@ -182,7 +182,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Password</Label>
           <Input
             type="password"
@@ -198,7 +198,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>NISN</Label>
           <Input
             inputMode="numeric"
@@ -214,7 +214,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label>Kelas</Label>
           <Select
             value={data.kelas_id}
@@ -236,7 +236,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
           )}
         </div>
 
-        <div className="space-y-2 md:col-span-2">
+        <div className="space-y-1 md:col-span-2">
           <Label>No. Telepon</Label>
           <Input
             value={data.no_telp}
@@ -255,7 +255,7 @@ export default function CreateSiswa({ onSuccess }: CreateSiswaProps) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={processing} className="w-full md:w-auto">
+        <Button type="submit" size="sm" disabled={processing} className="w-full md:w-auto">
           Simpan
         </Button>
       </div>

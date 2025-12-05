@@ -35,10 +35,10 @@ const KelasHeader: React.FC<KelasHeaderProps> = ({
   onAddSuccess,
 }) => {
   return (
-    <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <div>
-        <CardTitle className="text-xl font-normal">Data Kelas</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-base font-normal">Data Kelas</CardTitle>
+        <CardDescription className="text-xs">
           Kelola data kelas, tingkat, dan tahun ajaran
         </CardDescription>
       </div>
@@ -51,7 +51,7 @@ const KelasHeader: React.FC<KelasHeaderProps> = ({
             disabled={isBulkDeleting}
             className="w-full sm:w-auto"
           >
-            <Trash2 className="mr-2 h-4 w-4" />
+            <Trash2 className="mr-1.5 h-3 w-3" />
             Hapus Terpilih
           </Button>
         )}
@@ -62,14 +62,14 @@ const KelasHeader: React.FC<KelasHeaderProps> = ({
           onClick={onExport}
           className="w-full sm:w-auto"
         >
-          <Download className="mr-2 h-4 w-4" />
+          <Download className="mr-1.5 h-3 w-3" />
           Export Excel
         </Button>
 
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto">
-              <Plus className="mr-2 h-4 w-4" />
+            <Button size="sm" className="w-full sm:w-auto">
+              <Plus className="mr-1.5 h-3 w-3" />
               Tambah Kelas
             </Button>
           </DialogTrigger>

@@ -90,8 +90,8 @@ const formatClassLabel = (
   const items = Array.isArray(value)
     ? value
     : String(value)
-        .split(",")
-        .map((item) => item.trim());
+      .split(",")
+      .map((item) => item.trim());
 
   const formatted = items
     .map((item) =>
@@ -134,40 +134,40 @@ export default function DashboardOverview() {
   const studentQuery = searchStudents.trim().toLowerCase();
   const filteredStudents = studentQuery
     ? students.filter(
-        (s) =>
-          normalize(s.name).includes(studentQuery) ||
-          normalize(s.nis).includes(studentQuery) ||
-          normalize(s.kelas).includes(studentQuery)
-      )
+      (s) =>
+        normalize(s.name).includes(studentQuery) ||
+        normalize(s.nis).includes(studentQuery) ||
+        normalize(s.kelas).includes(studentQuery)
+    )
     : students;
 
   const guruQuery = searchGuru.trim().toLowerCase();
   const filteredGuru = guruQuery
     ? gurus.filter(
-        (g) =>
-          normalize(g.name).includes(guruQuery) ||
-          normalize(g.mapel).includes(guruQuery) ||
-          normalize(g.email).includes(guruQuery) ||
-          normalize(g.kelas).includes(guruQuery)
-      )
+      (g) =>
+        normalize(g.name).includes(guruQuery) ||
+        normalize(g.mapel).includes(guruQuery) ||
+        normalize(g.email).includes(guruQuery) ||
+        normalize(g.kelas).includes(guruQuery)
+    )
     : gurus;
 
   const kelasQuery = searchKelas.trim().toLowerCase();
   const filteredKelas = kelasQuery
     ? kelas.filter(
-        (k) =>
-          normalize(k.nama).includes(kelasQuery) ||
-          normalize(k.wali).includes(kelasQuery)
-      )
+      (k) =>
+        normalize(k.nama).includes(kelasQuery) ||
+        normalize(k.wali).includes(kelasQuery)
+    )
     : kelas;
 
   const mapelQuery = searchMapel.trim().toLowerCase();
   const filteredMapel = mapelQuery
     ? mapels.filter(
-        (m) =>
-          normalize(m.nama).includes(mapelQuery) ||
-          normalize(m.guru).includes(mapelQuery)
-      )
+      (m) =>
+        normalize(m.nama).includes(mapelQuery) ||
+        normalize(m.guru).includes(mapelQuery)
+    )
     : mapels;
 
   // === PAGINATION HANDLER ===
@@ -198,83 +198,83 @@ export default function DashboardOverview() {
   const mapelPagination = usePagination(filteredMapel);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* === Statistik === */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <Card>
-          <CardContent className="p-6 flex justify-between items-center">
+          <CardContent className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600">Total Siswa</p>
-              <p className="text-3xl mt-2">{totalSiswa}</p>
+              <p className="text-xs text-gray-600">Total Siswa</p>
+              <p className="text-2xl mt-1">{totalSiswa}</p>
             </div>
-            <div className="bg-blue-500 p-3 rounded-lg">
-              <Users className="w-6 h-6 text-white" />
+            <div className="bg-blue-500 p-2 rounded-lg">
+              <Users className="w-5 h-5 text-white" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6 flex justify-between items-center">
+          <CardContent className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600">Total Guru</p>
-              <p className="text-3xl mt-2">{totalGuru}</p>
+              <p className="text-xs text-gray-600">Total Guru</p>
+              <p className="text-2xl mt-1">{totalGuru}</p>
             </div>
-            <div className="bg-green-500 p-3 rounded-lg">
-              <GraduationCap className="w-6 h-6 text-white" />
+            <div className="bg-green-500 p-2 rounded-lg">
+              <GraduationCap className="w-5 h-5 text-white" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6 flex justify-between items-center">
+          <CardContent className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600">Total Kelas</p>
-              <p className="text-3xl mt-2">{totalMateri}</p>
+              <p className="text-xs text-gray-600">Total Kelas</p>
+              <p className="text-2xl mt-1">{totalMateri}</p>
             </div>
-            <div className="bg-purple-500 p-3 rounded-lg">
-              <BookOpen className="w-6 h-6 text-white" />
+            <div className="bg-purple-500 p-2 rounded-lg">
+              <BookOpen className="w-5 h-5 text-white" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6 flex justify-between items-center">
+          <CardContent className="p-4 flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600">Total Mata Pelajaran</p>
-              <p className="text-3xl mt-2">{totalKuis}</p>
+              <p className="text-xs text-gray-600">Total Mata Pelajaran</p>
+              <p className="text-2xl mt-1">{totalKuis}</p>
             </div>
-            <div className="bg-orange-500 p-3 rounded-lg">
-              <School className="w-6 h-6 text-white" />
+            <div className="bg-orange-500 p-2 rounded-lg">
+              <School className="w-5 h-5 text-white" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* === Statistik Jenis Kelamin === */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
         {/* Statistik Siswa berdasarkan Gender */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Jenis Kelamin Siswa</CardTitle>
-            <CardDescription>Distribusi siswa berdasarkan jenis kelamin</CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Jenis Kelamin Siswa</CardTitle>
+            <CardDescription className="text-xs">Distribusi siswa berdasarkan jenis kelamin</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+          <CardContent className="pt-0">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600">Laki-laki</p>
-                  <p className="text-2xl font-bold text-blue-600">{siswaLakiLaki}</p>
+                  <p className="text-xs text-gray-600">Laki-laki</p>
+                  <p className="text-xl font-bold text-blue-600">{siswaLakiLaki}</p>
                 </div>
-                <div className="text-right text-sm text-gray-500">
+                <div className="text-right text-xs text-gray-500">
                   {totalSiswa > 0 ? ((siswaLakiLaki / totalSiswa) * 100).toFixed(1) : 0}%
                 </div>
               </div>
-              <div className="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+              <div className="flex justify-between items-center p-2 bg-pink-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600">Perempuan</p>
-                  <p className="text-2xl font-bold text-pink-600">{siswaPerempuan}</p>
+                  <p className="text-xs text-gray-600">Perempuan</p>
+                  <p className="text-xl font-bold text-pink-600">{siswaPerempuan}</p>
                 </div>
-                <div className="text-right text-sm text-gray-500">
+                <div className="text-right text-xs text-gray-500">
                   {totalSiswa > 0 ? ((siswaPerempuan / totalSiswa) * 100).toFixed(1) : 0}%
                 </div>
               </div>
@@ -284,27 +284,27 @@ export default function DashboardOverview() {
 
         {/* Statistik Guru berdasarkan Gender */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Jenis Kelamin Guru</CardTitle>
-            <CardDescription>Distribusi guru berdasarkan jenis kelamin</CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Jenis Kelamin Guru</CardTitle>
+            <CardDescription className="text-xs">Distribusi guru berdasarkan jenis kelamin</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+          <CardContent className="pt-0">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center p-2 bg-green-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600">Laki-laki</p>
-                  <p className="text-2xl font-bold text-green-600">{guruLakiLaki}</p>
+                  <p className="text-xs text-gray-600">Laki-laki</p>
+                  <p className="text-xl font-bold text-green-600">{guruLakiLaki}</p>
                 </div>
-                <div className="text-right text-sm text-gray-500">
+                <div className="text-right text-xs text-gray-500">
                   {totalGuru > 0 ? ((guruLakiLaki / totalGuru) * 100).toFixed(1) : 0}%
                 </div>
               </div>
-              <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+              <div className="flex justify-between items-center p-2 bg-purple-50 rounded-lg">
                 <div>
-                  <p className="text-sm text-gray-600">Perempuan</p>
-                  <p className="text-2xl font-bold text-purple-600">{guruPerempuan}</p>
+                  <p className="text-xs text-gray-600">Perempuan</p>
+                  <p className="text-xl font-bold text-purple-600">{guruPerempuan}</p>
                 </div>
-                <div className="text-right text-sm text-gray-500">
+                <div className="text-right text-xs text-gray-500">
                   {totalGuru > 0 ? ((guruPerempuan / totalGuru) * 100).toFixed(1) : 0}%
                 </div>
               </div>
@@ -556,81 +556,81 @@ export default function DashboardOverview() {
             </TabsContent>
 
             {/* === MAPEL === */}
-<TabsContent value="mapel" className="space-y-4 relative z-0">
-  <div className="relative mt-4">
-    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-    <Input
-      placeholder="Cari mata pelajaran..."
-      value={searchMapel}
-      onChange={(e) => setSearchMapel(e.target.value)}
-      className="pl-10 py-2"
-    />
-  </div>
+            <TabsContent value="mapel" className="space-y-4 relative z-0">
+              <div className="relative mt-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Cari mata pelajaran..."
+                  value={searchMapel}
+                  onChange={(e) => setSearchMapel(e.target.value)}
+                  className="pl-10 py-2"
+                />
+              </div>
 
-  <div className="rounded-lg border bg-white mt-2">
-    <div className="hidden overflow-x-auto md:block">
-      <Table className="min-w-[520px]">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nama Mata Pelajaran</TableHead>
-            <TableHead>Guru Pengampu</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {mapelPagination.data.map((m) => (
-            <TableRow key={m.id}>
-              <TableCell>{m.nama ?? "-"}</TableCell>
-              <TableCell>{m.guru ?? "-"}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+              <div className="rounded-lg border bg-white mt-2">
+                <div className="hidden overflow-x-auto md:block">
+                  <Table className="min-w-[520px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nama Mata Pelajaran</TableHead>
+                        <TableHead>Guru Pengampu</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {mapelPagination.data.map((m) => (
+                        <TableRow key={m.id}>
+                          <TableCell>{m.nama ?? "-"}</TableCell>
+                          <TableCell>{m.guru ?? "-"}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
 
-    {/* Mobile Cards */}
-    <div className="space-y-3 p-4 md:hidden">
-      {mapelPagination.data.length > 0 ? (
-        mapelPagination.data.map((m) => (
-          <div key={m.id} className="space-y-1 rounded-lg border bg-white p-4 shadow-sm">
-            <p className="text-base font-semibold">{m.nama ?? "-"}</p>
-            <p className="text-sm text-gray-600">
-              Guru Pengampu: {m.guru ?? "-"}
-            </p>
-          </div>
-        ))
-      ) : (
-        <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
-          Tidak ada data mata pelajaran.
-        </p>
-      )}
-    </div>
+                {/* Mobile Cards */}
+                <div className="space-y-3 p-4 md:hidden">
+                  {mapelPagination.data.length > 0 ? (
+                    mapelPagination.data.map((m) => (
+                      <div key={m.id} className="space-y-1 rounded-lg border bg-white p-4 shadow-sm">
+                        <p className="text-base font-semibold">{m.nama ?? "-"}</p>
+                        <p className="text-sm text-gray-600">
+                          Guru Pengampu: {m.guru ?? "-"}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="rounded-lg border bg-white p-4 text-center text-sm text-gray-500 shadow-sm">
+                      Tidak ada data mata pelajaran.
+                    </p>
+                  )}
+                </div>
 
-    {/* Pagination */}
-    <div className="flex flex-col sm:flex-row items-center justify-between border-t px-3 py-3 gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={mapelPagination.prev}
-        disabled={mapelPagination.page === 1}
-        className="w-full sm:w-auto"
-      >
-        ← Sebelumnya
-      </Button>
-      <p className="text-sm text-gray-500 text-center">
-        Halaman {mapelPagination.page} dari {mapelPagination.totalPages}
-      </p>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={mapelPagination.next}
-        disabled={mapelPagination.page === mapelPagination.totalPages}
-        className="w-full sm:w-auto"
-      >
-        Berikutnya →
-      </Button>
-    </div>
-  </div>
-</TabsContent>
+                {/* Pagination */}
+                <div className="flex flex-col sm:flex-row items-center justify-between border-t px-3 py-3 gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={mapelPagination.prev}
+                    disabled={mapelPagination.page === 1}
+                    className="w-full sm:w-auto"
+                  >
+                    ← Sebelumnya
+                  </Button>
+                  <p className="text-sm text-gray-500 text-center">
+                    Halaman {mapelPagination.page} dari {mapelPagination.totalPages}
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={mapelPagination.next}
+                    disabled={mapelPagination.page === mapelPagination.totalPages}
+                    className="w-full sm:w-auto"
+                  >
+                    Berikutnya →
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
 
           </Tabs>
         </CardContent>

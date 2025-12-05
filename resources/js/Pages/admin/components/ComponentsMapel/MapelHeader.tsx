@@ -33,10 +33,10 @@ const MapelHeader: React.FC<MapelHeaderProps> = ({
   onAddSuccess,
 }) => {
   return (
-    <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <div>
-        <CardTitle className="text-xl font-normal">Data Mata Pelajaran</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-base font-normal">Data Mata Pelajaran</CardTitle>
+        <CardDescription className="text-xs">
           Kelola daftar mata pelajaran dan guru pengajar
         </CardDescription>
       </div>
@@ -50,15 +50,15 @@ const MapelHeader: React.FC<MapelHeaderProps> = ({
             disabled={isBulkDeleting}
             className="w-full sm:w-auto"
           >
-            <Trash2 className="mr-2 h-4 w-4" />
+            <Trash2 className="mr-1.5 h-3 w-3" />
             Hapus Terpilih ({selectedIds.length})
           </Button>
         )}
 
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto">
-              <Plus className="mr-2 h-4 w-4" /> Tambah Mapel
+            <Button size="sm" className="w-full sm:w-auto">
+              <Plus className="mr-1.5 h-3 w-3" /> Tambah Mapel
             </Button>
           </DialogTrigger>
           <DialogContent

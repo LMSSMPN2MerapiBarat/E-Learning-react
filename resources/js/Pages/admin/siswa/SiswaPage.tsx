@@ -100,10 +100,10 @@ export default function SiswaPage() {
       {isLoading && <LoadingOverlay text="Sedang memproses data siswa..." />}
 
       <Card className="shadow-sm bg-white">
-        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <CardTitle className="font-normal text-xl">Data Siswa</CardTitle>
-            <CardDescription>
+            <CardTitle className="font-normal text-base">Data Siswa</CardTitle>
+            <CardDescription className="text-xs">
               Kelola data siswa dan informasi pribadi
             </CardDescription>
           </div>

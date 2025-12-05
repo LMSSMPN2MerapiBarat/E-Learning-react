@@ -102,7 +102,7 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4 mt-2">
+    <form onSubmit={submit} className="space-y-3 mt-1">
       <div>
         <Label>Nama</Label>
         <Input
@@ -199,8 +199,8 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
       </div>
 
       <div>
-        <Label>Mata Pelajaran (bisa lebih dari satu)</Label>
-        <div className="flex flex-wrap gap-2 rounded-md border p-2">
+        <Label className="text-xs">Mata Pelajaran (bisa lebih dari satu)</Label>
+        <div className="flex flex-wrap gap-1.5 rounded-md border p-1.5">
           {mapels.length === 0 && (
             <p className="text-sm text-gray-500">
               Tidak ada data mata pelajaran.
@@ -222,11 +222,10 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
                       : [...data.mapel_ids, mapelId]
                   )
                 }
-                className={`rounded-md border px-3 py-1 text-sm transition ${
-                  isSelected
+                className={`rounded-md border px-2 py-0.5 text-xs transition ${isSelected
                     ? "border-blue-700 bg-blue-600 text-white"
                     : "bg-gray-100 hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 {m.nama_mapel}
               </button>
@@ -234,15 +233,15 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           })}
         </div>
         {data.mapel_ids.length > 0 && (
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-0.5 text-xs text-gray-600">
             Dipilih: {data.mapel_ids.length} mapel
           </p>
         )}
       </div>
 
       <div>
-        <Label>Kelas yang Diajar</Label>
-        <div className="flex flex-wrap gap-2 border rounded-md p-2">
+        <Label className="text-xs">Kelas yang Diajar</Label>
+        <div className="flex flex-wrap gap-1.5 border rounded-md p-1.5">
           {kelasList.length === 0 && (
             <p className="text-sm text-gray-500">Tidak ada data kelas.</p>
           )}
@@ -263,11 +262,10 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
                       : [...data.kelas_ids, kelasId]
                   )
                 }
-                className={`px-3 py-1 rounded-md border text-sm transition ${
-                  isSelected
+                className={`px-2 py-0.5 rounded-md border text-xs transition ${isSelected
                     ? "bg-blue-600 text-white border-blue-700"
                     : "bg-gray-100 hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 {namaKelas || "Tanpa Nama"}
               </button>
@@ -275,14 +273,14 @@ export default function CreateGuru({ onSuccess }: { onSuccess: () => void }) {
           })}
         </div>
         {data.kelas_ids.length > 0 && (
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-xs text-gray-600 mt-0.5">
             Dipilih: {data.kelas_ids.length} kelas
           </p>
         )}
       </div>
 
-      <div className="flex justify-end gap-2 pt-2">
-        <Button type="submit" disabled={processing}>
+      <div className="flex justify-end gap-1.5 pt-1">
+        <Button type="submit" size="sm" disabled={processing}>
           {processing ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>

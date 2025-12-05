@@ -60,12 +60,13 @@ const MapelTable: React.FC<MapelTableProps> = ({
   return (
     <>
       <div className="overflow-x-auto rounded-lg border bg-white">
-        <table className="min-w-full text-sm">
+        <table className="min-w-full text-xs">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="p-2 text-center">
+              <th className="p-1.5 text-center">
                 <input
                   type="checkbox"
+                  className="h-3.5 w-3.5"
                   checked={
                     paginatedMapel.length > 0 &&
                     paginatedMapel.every((mapel) =>
@@ -76,57 +77,61 @@ const MapelTable: React.FC<MapelTableProps> = ({
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th className="p-2 text-center">No</th>
-              <th className="p-2 text-left">Nama Mata Pelajaran</th>
-              <th className="p-2 text-left">Jumlah Guru</th>
-              <th className="p-2 text-center">Aksi</th>
+              <th className="p-1.5 text-center">No</th>
+              <th className="p-1.5 text-left">Nama Mata Pelajaran</th>
+              <th className="p-1.5 text-left">Jumlah Guru</th>
+              <th className="p-1.5 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {paginatedMapel.length > 0 ? (
               paginatedMapel.map((mapel, index) => (
                 <tr key={mapel.id} className="border-t">
-                  <td className="p-2 text-center">
+                  <td className="p-1.5 text-center">
                     <input
                       type="checkbox"
+                      className="h-3.5 w-3.5"
                       checked={selectedIds.includes(mapel.id)}
                       onChange={() => toggleSelect(mapel.id)}
                     />
                   </td>
-                  <td className="p-2 text-center">{offset + index + 1}</td>
-                  <td className="p-2">{mapel.nama_mapel}</td>
-                  <td className="p-2">{mapel.gurus_count ?? 0}</td>
-                  <td className="flex justify-center gap-2 p-2">
+                  <td className="p-1.5 text-center">{offset + index + 1}</td>
+                  <td className="p-1.5">{mapel.nama_mapel}</td>
+                  <td className="p-1.5">{mapel.gurus_count ?? 0}</td>
+                  <td className="flex justify-center gap-1.5 p-1.5">
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => onViewDetail(mapel.id)}
                     >
-                      <Eye className="h-4 w-4 text-gray-600" />
+                      <Eye className="h-3 w-3 text-gray-600" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => {
                         setSelectedMapel(mapel);
                         setIsEditOpen(true);
                       }}
                     >
-                      <Pencil className="h-4 w-4 text-blue-600" />
+                      <Pencil className="h-3 w-3 text-blue-600" />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-7 w-7 p-0"
                       onClick={() => setDeleteConfirm(mapel.id)}
                     >
-                      <Trash2 className="h-4 w-4 text-red-600" />
+                      <Trash2 className="h-3 w-3 text-red-600" />
                     </Button>
                   </td>
                 </tr>
               ))
             ) : mapelList.length === 0 ? (
               <tr>
-              <td colSpan={5} className="py-6 text-center text-gray-500">
+                <td colSpan={5} className="py-4 text-center text-gray-500 text-xs">
                   Tidak ada data mata pelajaran.
                 </td>
               </tr>

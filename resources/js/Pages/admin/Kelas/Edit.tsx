@@ -78,7 +78,7 @@ export default function EditKelas({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div>
         <Label>Tingkat</Label>
         <Select
@@ -112,14 +112,14 @@ export default function EditKelas({
         />
       </div>
 
-      <div className="flex justify-end space-x-2 pt-2">
-        <Button variant="outline" onClick={onCancel} type="button">
+      <div className="flex justify-end space-x-1.5 pt-1">
+        <Button variant="outline" size="sm" onClick={onCancel} type="button">
           Batal
         </Button>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" size="sm" disabled={loading}>
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
               Menyimpan...
             </>
           ) : (
