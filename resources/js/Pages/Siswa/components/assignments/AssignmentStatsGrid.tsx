@@ -1,10 +1,11 @@
 import { Card, CardContent } from "@/Components/ui/card";
-import { BadgeCheck, ClipboardList, Hourglass } from "lucide-react";
+import { BadgeCheck, ClipboardList, Hourglass, Clock } from "lucide-react";
 
 interface AssignmentStatsGridProps {
   total: number;
   pending: number;
   submitted: number;
+  waitingGrade: number;
   averageScore: number | null;
 }
 
@@ -36,10 +37,11 @@ export default function AssignmentStatsGrid({
   total,
   pending,
   submitted,
+  waitingGrade,
   averageScore,
 }: AssignmentStatsGridProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
       <StatCard
         title="Total Tugas"
         value={total}
@@ -57,6 +59,12 @@ export default function AssignmentStatsGrid({
         value={submitted}
         icon={ClipboardList}
         accent="bg-sky-500"
+      />
+      <StatCard
+        title="Menunggu Dinilai"
+        value={waitingGrade}
+        icon={Clock}
+        accent="bg-purple-500"
       />
       <StatCard
         title="Rata-Rata Nilai"

@@ -43,11 +43,11 @@ export default function TugasPage() {
 
   const averageScore = graded.length
     ? Math.round(
-        graded.reduce(
-          (total, item) => total + (item.score ?? 0),
-          0,
-        ) / graded.length,
-      )
+      graded.reduce(
+        (total, item) => total + (item.score ?? 0),
+        0,
+      ) / graded.length,
+    )
     : null;
 
   return (
@@ -57,7 +57,8 @@ export default function TugasPage() {
         <AssignmentStatsGrid
           total={assignments.length}
           pending={pending.length}
-          submitted={submitted.length}
+          submitted={submitted.length + graded.length}
+          waitingGrade={submitted.length}
           averageScore={averageScore}
         />
 
