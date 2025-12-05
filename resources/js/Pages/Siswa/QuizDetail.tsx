@@ -138,11 +138,23 @@ export default function QuizDetail() {
   };
 
   const handleViewReview = () => {
-    if (reviewUrl) {
-      router.visit(reviewUrl);
-      return;
+    let targetUrl = reviewUrl || "";
+    if (!targetUrl) {
+      try {
+        if (typeof route === "function") {
+          targetUrl = route("siswa.quizzes.review", {
+            quiz: quiz.id,
+            attempt: attempt.id,
+          });
+        }
+      } catch {
+        // ignore
+      }
+      if (!targetUrl) {
+        targetUrl = `/siswa/quizzes/${quiz.id}/attempts/${attempt.id}/review`;
+      }
     }
-    router.visit(resolveBackRoute(backUrl));
+    router.visit(targetUrl);
   };
 
   return (
