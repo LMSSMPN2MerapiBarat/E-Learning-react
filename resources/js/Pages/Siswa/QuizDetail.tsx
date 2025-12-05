@@ -6,7 +6,7 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  FileQuestion,
+  ClipboardList,
   Calendar,
   Trophy,
   ArrowLeft,
@@ -173,7 +173,7 @@ export default function QuizDetail() {
         </div>
         <div className="flex items-center gap-3">
           <div className="bg-gradient-to-br from-green-600 to-green-700 p-3 rounded-lg">
-            <FileQuestion className="w-6 h-6 text-white" />
+            <ClipboardList className="w-6 h-6 text-white" />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Detail Hasil Kuis</h2>
@@ -227,7 +227,7 @@ export default function QuizDetail() {
                     <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border">
                       <div className="flex items-center gap-3">
                         <div className="bg-gray-100 p-2 rounded-lg">
-                          <FileQuestion className="w-5 h-5 text-gray-600" />
+                          <ClipboardList className="w-5 h-5 text-gray-600" />
                         </div>
                         <span className="text-gray-700 text-sm">Tidak Dijawab</span>
                       </div>
@@ -336,7 +336,7 @@ export default function QuizDetail() {
             </Card>
           </motion.div>
         </div>
-        </div>
+      </div>
     </StudentLayout>
   );
 }

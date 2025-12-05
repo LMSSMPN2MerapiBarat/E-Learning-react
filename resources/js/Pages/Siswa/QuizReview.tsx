@@ -8,7 +8,7 @@ import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  FileQuestion,
+  ClipboardList,
   Target,
   Trophy,
   XCircle,
@@ -171,7 +171,7 @@ export default function QuizReview() {
           </div>
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-purple-600 to-purple-700 p-2 rounded-lg">
-              <FileQuestion className="w-6 h-6 text-white" />
+              <ClipboardList className="w-6 h-6 text-white" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Pembahasan Soal</h2>
@@ -418,7 +418,7 @@ export default function QuizReview() {
             <Card className="sticky top-24 shadow-lg">
               <CardContent className="p-6">
                 <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-800">
-                  <FileQuestion className="w-5 h-5" />
+                  <ClipboardList className="w-5 h-5" />
                   Navigasi Soal
                 </h3>
 
