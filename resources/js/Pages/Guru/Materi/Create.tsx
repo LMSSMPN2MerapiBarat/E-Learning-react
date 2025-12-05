@@ -78,12 +78,13 @@ export default function CreateMateri({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="judul">Judul Materi</Label>
+        <Label htmlFor="judul">Judul Materi <span className="text-red-500">*</span></Label>
         <Input
           id="judul"
           value={data.judul}
           onChange={(e) => setData("judul", e.target.value)}
           placeholder="Masukkan judul materi"
+          required
         />
         {errors.judul && (
           <p className="text-xs text-red-500">{errors.judul}</p>
@@ -91,13 +92,14 @@ export default function CreateMateri({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="deskripsi">Deskripsi</Label>
+        <Label htmlFor="deskripsi">Deskripsi <span className="text-red-500">*</span></Label>
         <Textarea
           id="deskripsi"
           rows={4}
           value={data.deskripsi}
           onChange={(e) => setData("deskripsi", e.target.value)}
           placeholder="Tambahkan deskripsi singkat mengenai materi"
+          required
         />
         {errors.deskripsi && (
           <p className="text-xs text-red-500">{errors.deskripsi}</p>
@@ -106,12 +108,13 @@ export default function CreateMateri({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="kelas">Kelas</Label>
+          <Label htmlFor="kelas">Kelas <span className="text-red-500">*</span></Label>
           <Select
             value={data.kelas_id !== null ? String(data.kelas_id) : ""}
             onValueChange={(value: string) =>
               setData("kelas_id", value ? Number(value) : null)
             }
+            required
           >
             <SelectTrigger id="kelas">
               <SelectValue placeholder="Pilih kelas" />
@@ -124,13 +127,20 @@ export default function CreateMateri({
               ))}
             </SelectContent>
           </Select>
+          <input
+            type="text"
+            value={data.kelas_id ?? ""}
+            required
+            className="sr-only"
+            tabIndex={-1}
+          />
           {errors.kelas_id && (
             <p className="text-xs text-red-500">{errors.kelas_id}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="mata_pelajaran_id">Mata Pelajaran</Label>
+          <Label htmlFor="mata_pelajaran_id">Mata Pelajaran <span className="text-red-500">*</span></Label>
           <Select
             value={
               data.mata_pelajaran_id !== null ? String(data.mata_pelajaran_id) : ""
@@ -138,6 +148,7 @@ export default function CreateMateri({
             onValueChange={(value: string) =>
               setData("mata_pelajaran_id", value ? Number(value) : null)
             }
+            required
           >
             <SelectTrigger id="mata_pelajaran_id">
               <SelectValue placeholder="Pilih mata pelajaran" />
@@ -150,6 +161,13 @@ export default function CreateMateri({
               ))}
             </SelectContent>
           </Select>
+          <input
+            type="text"
+            value={data.mata_pelajaran_id ?? ""}
+            required
+            className="sr-only"
+            tabIndex={-1}
+          />
           {errors.mata_pelajaran_id && (
             <p className="text-xs text-red-500">
               {errors.mata_pelajaran_id}
@@ -159,12 +177,13 @@ export default function CreateMateri({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="file">File Materi</Label>
+        <Label htmlFor="file">File Materi <span className="text-red-500">*</span></Label>
         <Input
           id="file"
           type="file"
           accept=".pdf,.doc,.docx,.ppt,.pptx,.pps,.ppsx,.txt,.zip,.rar,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
           onChange={handleFileChange}
+          required
         />
         {errors.file && (
           <p className="text-xs text-red-500">{errors.file}</p>

@@ -111,12 +111,13 @@ export default function EditMateri({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="judul_edit">Judul Materi</Label>
+        <Label htmlFor="judul_edit">Judul Materi <span className="text-red-500">*</span></Label>
         <Input
           id="judul_edit"
           value={data.judul}
           onChange={(e) => setData("judul", e.target.value)}
           placeholder="Masukkan judul materi"
+          required
         />
         {errors.judul && (
           <p className="text-xs text-red-500">{errors.judul}</p>
@@ -124,13 +125,14 @@ export default function EditMateri({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="deskripsi_edit">Deskripsi</Label>
+        <Label htmlFor="deskripsi_edit">Deskripsi <span className="text-red-500">*</span></Label>
         <Textarea
           id="deskripsi_edit"
           rows={4}
           value={data.deskripsi}
           onChange={(e) => setData("deskripsi", e.target.value)}
           placeholder="Tambahkan deskripsi singkat mengenai materi"
+          required
         />
         {errors.deskripsi && (
           <p className="text-xs text-red-500">{errors.deskripsi}</p>
@@ -139,12 +141,13 @@ export default function EditMateri({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="kelas_edit">Kelas</Label>
+          <Label htmlFor="kelas_edit">Kelas <span className="text-red-500">*</span></Label>
           <Select
             value={data.kelas_id !== null ? String(data.kelas_id) : ""}
             onValueChange={(value: string) =>
               setData("kelas_id", value ? Number(value) : null)
             }
+            required
           >
             <SelectTrigger id="kelas_edit">
               <SelectValue placeholder="Pilih kelas" />
@@ -157,13 +160,20 @@ export default function EditMateri({
               ))}
             </SelectContent>
           </Select>
+          <input
+            type="text"
+            value={data.kelas_id ?? ""}
+            required
+            className="sr-only"
+            tabIndex={-1}
+          />
           {errors.kelas_id && (
             <p className="text-xs text-red-500">{errors.kelas_id}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="mapel_edit">Mata Pelajaran</Label>
+          <Label htmlFor="mapel_edit">Mata Pelajaran <span className="text-red-500">*</span></Label>
           <Select
             value={
               data.mata_pelajaran_id !== null ? String(data.mata_pelajaran_id) : ""
@@ -171,6 +181,7 @@ export default function EditMateri({
             onValueChange={(value: string) =>
               setData("mata_pelajaran_id", value ? Number(value) : null)
             }
+            required
           >
             <SelectTrigger id="mapel_edit">
               <SelectValue placeholder="Pilih mata pelajaran" />
@@ -183,6 +194,13 @@ export default function EditMateri({
               ))}
             </SelectContent>
           </Select>
+          <input
+            type="text"
+            value={data.mata_pelajaran_id ?? ""}
+            required
+            className="sr-only"
+            tabIndex={-1}
+          />
           {errors.mata_pelajaran_id && (
             <p className="text-xs text-red-500">
               {errors.mata_pelajaran_id}
