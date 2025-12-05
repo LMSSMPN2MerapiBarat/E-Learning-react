@@ -10,6 +10,7 @@ import {
   X,
   CalendarClock,
 } from "lucide-react";
+import { Button } from "@/Components/ui/button";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -103,8 +104,8 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
               key={menu.name}
               href={menu.href}
               className={`flex items-center px-3 py-1.5 text-xs font-normal transition rounded-md ${active
-                  ? "bg-blue-100 text-blue-700"
-                  : "text-gray-600 hover:bg-gray-100"
+                ? "bg-blue-100 text-blue-700"
+                : "text-gray-600 hover:bg-gray-100"
                 }`}
               onClick={handleNavClick}
             >
@@ -117,13 +118,15 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
 
       {/* Tombol Logout */}
       <div className="absolute bottom-3 w-full px-3">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex w-full items-center justify-start gap-1.5 text-xs"
           onClick={handleLogout}
-          className="flex items-center w-full px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-md"
         >
-          <LogOut className="w-4 h-4 mr-2" /> Logout
-        </button>
+          <LogOut className="w-3.5 h-3.5" />
+          Logout
+        </Button>
       </div>
     </div>
   );
