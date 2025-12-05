@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
-import { ClipboardList, Pencil, Trash2 } from "lucide-react";
+import { ClipboardList, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { QuizItem } from "@/Pages/Guru/components/kuis/formTypes";
+
+const ITEMS_PER_PAGE = 5;
 
 interface QuizListProps {
   quizzes: QuizItem[];
@@ -35,103 +37,153 @@ const formatSchedule = (from?: string | null, until?: string | null) => {
   return null;
 };
 
-const QuizList: React.FC<QuizListProps> = ({ quizzes, onView, onEdit, onDelete }) => (
-  <div className="space-y-4">
-    {quizzes.length === 0 ? (
-      <Card>
-        <CardContent className="py-12 text-center text-sm text-gray-500">
-          Belum ada kuis yang dibuat.
-        </CardContent>
-      </Card>
-    ) : (
-      quizzes.map((quiz) => {
-        const scheduleLabel = formatSchedule(
-          quiz.available_from,
-          quiz.available_until,
-        );
+const QuizList: React.FC<QuizListProps> = ({ quizzes, onView, onEdit, onDelete }) => {
+  const [currentPage, setCurrentPage] = useState(1);
 
-        return (
-          <Card key={quiz.id}>
-            <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-start md:justify-between">
-              <div className="flex flex-1 gap-4">
-                <div className="rounded-lg bg-green-100 p-2">
-                  <ClipboardList className="h-5 w-5 text-green-600" />
-                </div>
-                <div className="flex-1 space-y-2">
-                  <h3 className="text-base font-semibold text-gray-800">
-                    {quiz.judul}
-                  </h3>
-                  {quiz.deskripsi && (
-                    <p className="text-sm text-gray-600">{quiz.deskripsi}</p>
-                  )}
-                  <div className="flex flex-wrap gap-2 text-xs text-gray-500">
-                    {quiz.mapel?.nama && (
-                      <Badge variant="outline">{quiz.mapel.nama}</Badge>
-                    )}
-                    <Badge variant="outline">{quiz.durasi} Menit</Badge>
-                    <Badge
-                      className={
-                        quiz.status === "published"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }
-                    >
-                      {quiz.status === "published" ? "Aktif" : "Draft"}
-                    </Badge>
-                    <Badge variant="outline">
-                      {quiz.questions.length} Soal
-                    </Badge>
-                    <Badge variant="outline">
-                      {quiz.max_attempts === null
-                        ? "Percobaan: Tak terbatas"
-                        : `Percobaan: ${quiz.max_attempts}x`}
-                    </Badge>
-                    {quiz.created_at && (
-                      <span>
-                        Dibuat:{" "}
-                        {new Date(quiz.created_at).toLocaleDateString("id-ID")}
-                      </span>
-                    )}
-                  </div>
-                  {scheduleLabel && (
-                    <div className="rounded-md bg-gray-50 p-2 text-xs text-gray-600">
-                      Batas waktu: {scheduleLabel}
+  const totalPages = Math.ceil(quizzes.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedQuizzes = quizzes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Reset ke halaman 1 jika quizzes berubah dan currentPage melebihi totalPages
+  React.useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [quizzes.length, totalPages, currentPage]);
+
+  return (
+    <div className="space-y-4">
+      {quizzes.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center text-sm text-gray-500">
+            Belum ada kuis yang dibuat.
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {paginatedQuizzes.map((quiz) => {
+            const scheduleLabel = formatSchedule(
+              quiz.available_from,
+              quiz.available_until,
+            );
+
+            return (
+              <Card key={quiz.id}>
+                <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-start md:justify-between">
+                  <div className="flex flex-1 gap-4">
+                    <div className="rounded-lg bg-green-100 p-2">
+                      <ClipboardList className="h-5 w-5 text-green-600" />
                     </div>
-                  )}
-                  {quiz.kelas.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {quiz.kelas.map((kelas) => (
-                        <Badge key={kelas.id} variant="secondary">
-                          {kelas.nama}
+                    <div className="flex-1 space-y-2">
+                      <h3 className="text-base font-semibold text-gray-800">
+                        {quiz.judul}
+                      </h3>
+                      {quiz.deskripsi && (
+                        <p className="text-sm text-gray-600 line-clamp-2">{quiz.deskripsi}</p>
+                      )}
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+                        {quiz.mapel?.nama && (
+                          <Badge variant="outline">{quiz.mapel.nama}</Badge>
+                        )}
+                        <Badge variant="outline">{quiz.durasi} Menit</Badge>
+                        <Badge
+                          className={
+                            quiz.status === "published"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                          }
+                        >
+                          {quiz.status === "published" ? "Aktif" : "Draft"}
                         </Badge>
-                      ))}
+                        <Badge variant="outline">
+                          {quiz.questions.length} Soal
+                        </Badge>
+                        <Badge variant="outline">
+                          {quiz.max_attempts === null
+                            ? "Percobaan: Tak terbatas"
+                            : `Percobaan: ${quiz.max_attempts}x`}
+                        </Badge>
+                        {quiz.created_at && (
+                          <span>
+                            Dibuat:{" "}
+                            {new Date(quiz.created_at).toLocaleDateString("id-ID")}
+                          </span>
+                        )}
+                      </div>
+                      {scheduleLabel && (
+                        <div className="rounded-md bg-gray-50 p-2 text-xs text-gray-600">
+                          Batas waktu: {scheduleLabel}
+                        </div>
+                      )}
+                      {quiz.kelas.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {quiz.kelas.map((kelas) => (
+                            <Badge key={kelas.id} variant="secondary">
+                              {kelas.nama}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" onClick={() => onView(quiz)}>
-                  Detail
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => onEdit(quiz)}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Edit
-                </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" onClick={() => onView(quiz)}>
+                      Detail
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => onEdit(quiz)}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onDelete(quiz.id)}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                      Hapus
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t pt-4">
+              <p className="text-sm text-gray-500">
+                Menampilkan {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, quizzes.length)} dari {quizzes.length} kuis
+              </p>
+              <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => onDelete(quiz.id)}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  disabled={currentPage === 1}
                 >
-                  <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                  Hapus
+                  <ChevronLeft className="h-4 w-4" />
+                  Prev
+                </Button>
+                <span className="text-sm font-medium px-2">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        );
-      })
-    )}
-  </div>
-);
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
 
 export default QuizList;
+
