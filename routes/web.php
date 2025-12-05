@@ -237,6 +237,10 @@ Route::middleware(['auth', 'role:siswa'])
             ->whereNumber('quiz')
             ->whereNumber('attempt')
             ->name('quizzes.attempts.show');
+        Route::get('/quizzes/{quiz}/attempts/{attempt}/review', [SiswaQuizAttemptController::class, 'review'])
+            ->whereNumber('quiz')
+            ->whereNumber('attempt')
+            ->name('quizzes.review');
         Route::get('/nilai', [SiswaDashboardController::class, 'grades'])->name('grades');
         Route::get('/materi/{materi}/preview', [SiswaMateriController::class, 'preview'])->name('materials.preview');
         Route::get('/materi/{materi}/download', [SiswaMateriController::class, 'download'])->name('materials.download');
