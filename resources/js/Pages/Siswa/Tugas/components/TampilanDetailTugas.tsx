@@ -17,8 +17,8 @@ import {
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
 import type { StudentAssignmentItem } from "@/Pages/Siswa/types";
-import AssignmentHeaderCard from "./AssignmentHeaderCard";
-import AssignmentSubmissionForm from "./AssignmentSubmissionForm";
+import AssignmentHeaderCard from "./KartuHeaderTugas";
+import AssignmentSubmissionForm from "./FormPengumpulanTugas";
 
 interface AssignmentDetailViewProps {
   assignment: StudentAssignmentItem;

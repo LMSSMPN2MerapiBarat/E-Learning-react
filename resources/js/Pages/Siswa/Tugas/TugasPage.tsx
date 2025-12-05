@@ -1,9 +1,9 @@
 import { useMemo, useState, useEffect } from "react";
 import { Head, usePage } from "@inertiajs/react";
 import StudentLayout from "@/Layouts/StudentLayout";
-import AssignmentStatsGrid from "@/Pages/Siswa/components/assignments/AssignmentStatsGrid";
-import AssignmentTabs from "@/Pages/Siswa/components/assignments/AssignmentTabs";
-import AssignmentDetailView from "@/Pages/Siswa/components/assignments/AssignmentDetailView";
+import AssignmentStatsGrid from "@/Pages/Siswa/Tugas/components/GridStatistikTugas";
+import AssignmentTabs from "@/Pages/Siswa/Tugas/components/TabTugas";
+import AssignmentDetailView from "@/Pages/Siswa/Tugas/components/TampilanDetailTugas";
 import type {
   StudentAssignmentItem,
   SiswaPageProps,

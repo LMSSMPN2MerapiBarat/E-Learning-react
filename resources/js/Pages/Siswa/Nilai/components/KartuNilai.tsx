@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Calendar, ClipboardList, FileText } from "lucide-react";
 import type { GradeItem } from "@/Pages/Siswa/types";
-import { getScoreBgColor, getScoreColor, getGradeLabel } from "./gradeHelpers";
+import { getScoreBgColor, getScoreColor, getGradeLabel } from "./helperNilai";
 
 interface GradeCardProps {
   grade: GradeItem;

@@ -17,7 +17,7 @@ import { Badge } from "@/Components/ui/badge";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import type { SiswaPageProps, StudentSubject } from "@/Pages/Siswa/types";
-import SubjectDetail from "@/Pages/Siswa/components/SubjectDetail";
+import DetailMapel from "./components/DetailMapel";
 
 interface SubjectsPageProps extends SiswaPageProps {
   classSubjects?: StudentSubject[];
@@ -108,7 +108,7 @@ export default function Subjects({
         subtitle={`Pelajari materi dan kuis untuk ${selectedSubject.data.name}.`}
         {...rest}
       >
-        <SubjectDetail
+        <DetailMapel
           subject={selectedSubject.data}
           onBack={() => setSelectedKey(null)}
         />

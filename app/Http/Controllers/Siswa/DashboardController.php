@@ -33,7 +33,7 @@ class DashboardController extends Controller
     {
         $data = $this->composeStudentData();
 
-        return Inertia::render('Siswa/Materials', Arr::only($data, [
+        return Inertia::render('Siswa/Materi/MateriPage', Arr::only($data, [
             'student',
             'hasClass',
             'materials',
@@ -46,7 +46,7 @@ class DashboardController extends Controller
     {
         $data = $this->composeStudentData();
 
-        return Inertia::render('Siswa/Quizzes', Arr::only($data, [
+        return Inertia::render('Siswa/Kuis/KuisPage', Arr::only($data, [
             'student',
             'hasClass',
             'quizzes',
@@ -59,7 +59,7 @@ class DashboardController extends Controller
     {
         $data = $this->composeStudentData();
 
-        return Inertia::render('Siswa/Subjects', Arr::only($data, [
+        return Inertia::render('Siswa/MataPelajaran/MataPelajaranPage', Arr::only($data, [
             'student',
             'hasClass',
             'classSubjects',
@@ -79,7 +79,7 @@ class DashboardController extends Controller
     {
         $data = $this->composeStudentData();
 
-        return Inertia::render('Siswa/Grades', Arr::only($data, [
+        return Inertia::render('Siswa/Nilai/NilaiPage', Arr::only($data, [
             'student',
             'hasClass',
             'grades',
@@ -93,7 +93,7 @@ class DashboardController extends Controller
     {
         $data = $this->composeStudentData();
 
-        return Inertia::render('Siswa/Schedule', Arr::only($data, [
+        return Inertia::render('Siswa/Jadwal/JadwalPage', Arr::only($data, [
             'student',
             'hasClass',
             'schedule',

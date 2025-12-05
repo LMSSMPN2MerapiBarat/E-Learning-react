@@ -11,7 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import type { GradeSummary } from "@/Pages/Siswa/types";
-import { getGradeLabel } from "./gradeHelpers";
+import { getGradeLabel } from "./helperNilai";
 
 interface GradeSummaryGridProps {
   summary: GradeSummary;

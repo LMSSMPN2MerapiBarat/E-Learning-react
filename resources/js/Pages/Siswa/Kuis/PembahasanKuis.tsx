@@ -19,7 +19,7 @@ import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Progress } from "@/Components/ui/progress";
 import type { PageProps } from "@/types";
-import type { QuizAttemptDetail, QuizItem } from "./types";
+import type { QuizAttemptDetail, QuizItem } from "../types";
 
 type QuizReviewPageProps = PageProps<{
   quiz: QuizItem;

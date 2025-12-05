@@ -30,7 +30,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import type { MaterialItem } from "../types";
+import type { MaterialItem } from "../../types";
 
 const getFileExtension = (
   fileName?: string | null,

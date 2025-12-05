@@ -2,8 +2,8 @@ import { Head, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
-import StudentMaterialBrowser from "./components/StudentMaterialBrowser";
-import type { SiswaPageProps } from "./types";
+import PenjelajahMateri from "./components/Materi";
+import type { SiswaPageProps } from "../types";
 
 export default function Materials() {
   const { props } = usePage<SiswaPageProps>();
@@ -35,7 +35,7 @@ export default function Materials() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <StudentMaterialBrowser
+          <PenjelajahMateri
             materials={materials}
             subjects={materialSubjects}
           />

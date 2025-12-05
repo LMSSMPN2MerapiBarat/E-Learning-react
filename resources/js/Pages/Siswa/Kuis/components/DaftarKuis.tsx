@@ -4,7 +4,7 @@ import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { CalendarClock, CheckCircle, Clock, ClipboardList, User, Search, ChevronLeft, ChevronRight, Eye } from "lucide-react";
-import type { QuizAttemptLite, QuizItem } from "../types";
+import type { QuizAttemptLite, QuizItem } from "../../types";
 
 const ITEMS_PER_PAGE = 6;
 

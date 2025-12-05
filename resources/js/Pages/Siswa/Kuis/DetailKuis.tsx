@@ -22,7 +22,7 @@ import type {
   QuizAttemptDetail,
   QuizItem,
   SiswaPageProps,
-} from "./types";
+} from "../types";
 
 type QuizDetailPageProps = SiswaPageProps & {
   quiz: QuizItem;

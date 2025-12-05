@@ -13,8 +13,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
-import StudentQuizList from "./components/StudentQuizList";
-import type { QuizItem, SiswaPageProps } from "./types";
+import DaftarKuis from "./components/DaftarKuis";
+import type { QuizItem, SiswaPageProps } from "../types";
 import { toast } from "sonner";
 
 export default function Quizzes() {
@@ -164,7 +164,7 @@ export default function Quizzes() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <StudentQuizList
+          <DaftarKuis
             quizzes={quizList}
             onStartQuiz={startQuiz}
             onViewDetail={viewQuizDetail}

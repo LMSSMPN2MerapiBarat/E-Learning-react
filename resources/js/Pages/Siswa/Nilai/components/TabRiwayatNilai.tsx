@@ -4,7 +4,7 @@ import { Award, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/Components/ui/button";
 import type { GradeItem } from "@/Pages/Siswa/types";
-import GradeCard from "./GradeCard";
+import GradeCard from "./KartuNilai";
 
 interface GradeHistoryTabsProps {
   allGrades: GradeItem[];

@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 import { Toaster } from "@/Components/ui/sonner";
-import StudentNotificationBell from "@/Pages/Siswa/components/StudentNotificationBell";
+import StudentNotificationBell from "@/Pages/Siswa/components/LoncengNotifikasiSiswa";
 import type { SiswaPageProps } from "@/Pages/Siswa/types";
 
 interface StudentLayoutProps {
@@ -149,12 +149,11 @@ export default function StudentLayout({
     }
 
     const component = page.component.toLowerCase();
-    if (component.includes("siswa/grades")) return "grades";
-    if (component.includes("siswa/subjects")) return "subjects";
-    if (component.includes("siswa/schedule")) return "schedule";
-    if (component.includes("siswa/quizdetail")) return "quizzes";
-    if (component.includes("siswa/quizzes")) return "quizzes";
-    if (component.includes("siswa/materials")) return "materials";
+    if (component.includes("siswa/nilai")) return "grades";
+    if (component.includes("siswa/matapelajaran")) return "subjects";
+    if (component.includes("siswa/jadwal")) return "schedule";
+    if (component.includes("siswa/kuis")) return "quizzes";
+    if (component.includes("siswa/materi")) return "materials";
     if (component.includes("siswa/tugas")) return "assignments";
 
     return "dashboard";

@@ -5,10 +5,10 @@ import StudentLayout from "@/Layouts/StudentLayout";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select";
 import type { GradeItem, GradeSummary, SiswaPageProps } from "@/Pages/Siswa/types";
-import GradeSummaryGrid from "@/Pages/Siswa/components/GradeSummaryGrid";
-import SubjectPerformanceList from "@/Pages/Siswa/components/SubjectPerformanceList";
-import GradeHistoryTabs from "@/Pages/Siswa/components/GradeHistoryTabs";
-import { calculateAverage } from "@/Pages/Siswa/components/gradeHelpers";
+import GridRingkasanNilai from "./components/GridRingkasanNilai";
+import DaftarPerformaMapel from "./components/DaftarPerformaMapel";
+import TabRiwayatNilai from "./components/TabRiwayatNilai";
+import { calculateAverage } from "./components/helperNilai";
 
 export default function Grades() {
   const { props } = usePage<SiswaPageProps>();
@@ -114,13 +114,13 @@ export default function Grades() {
           </div>
         </motion.div>
 
-        <GradeSummaryGrid
+        <GridRingkasanNilai
           summary={displaySummary}
           quizCount={quizGrades.length}
           assignmentCount={assignmentGrades.length}
         />
 
-        <SubjectPerformanceList
+        <DaftarPerformaMapel
           subjects={subjects}
           getStats={getSubjectStats}
         />
@@ -153,7 +153,7 @@ export default function Grades() {
           </div>
         </motion.div>
 
-        <GradeHistoryTabs
+        <TabRiwayatNilai
           allGrades={filteredGrades}
           quizGrades={quizGrades}
           assignmentGrades={assignmentGrades}

@@ -114,7 +114,7 @@ class QuizAttemptController extends Controller
             'availableUntil' => $quiz->available_until?->toIso8601String(),
         ];
 
-        return Inertia::render('Siswa/QuizExam', [
+        return Inertia::render('Siswa/Kuis/UjianKuis', [
             'quiz' => $quizPayload,
             'backUrl' => route('siswa.quizzes'),
         ]);
@@ -215,7 +215,7 @@ class QuizAttemptController extends Controller
                 ->values(),
         ];
 
-        return Inertia::render('Siswa/QuizDetail', [
+        return Inertia::render('Siswa/Kuis/DetailKuis', [
             'quiz' => $quizPayload,
             'attempt' => $attemptPayload,
             'backUrl' => route('siswa.quizzes'),
@@ -431,7 +431,7 @@ class QuizAttemptController extends Controller
                 ->values(),
         ];
 
-        return Inertia::render('Siswa/QuizReview', [
+        return Inertia::render('Siswa/Kuis/PembahasanKuis', [
             'quiz' => $quizPayload,
             'attempt' => $attemptPayload,
             'backUrl' => route('siswa.quizzes'),

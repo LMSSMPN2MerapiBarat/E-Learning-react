@@ -4,9 +4,9 @@ import { motion } from "motion/react";
 import { Calendar } from "lucide-react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
-import StudentScheduleNavigator from "./components/StudentScheduleNavigator";
-import StudentScheduleList from "./components/StudentScheduleList";
-import type { SiswaPageProps } from "./types";
+import NavigasiJadwal from "./components/NavigasiJadwal";
+import DaftarJadwal from "./components/DaftarJadwal";
+import type { SiswaPageProps } from "../types";
 
 const DEFAULT_DAYS = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const PREFERRED_DAY = "Senin";
@@ -118,7 +118,7 @@ export default function Schedule() {
           </div>
         </motion.div>
 
-        <StudentScheduleNavigator
+        <NavigasiJadwal
           currentDay={currentDay}
           days={dayOptions}
           onSelectDay={setCurrentDay}
@@ -126,7 +126,7 @@ export default function Schedule() {
           totalClasses={totalClassesToday}
         />
 
-        <StudentScheduleList
+        <DaftarJadwal
           day={currentDay}
           schedules={todaysSchedules}
           todayName={todayName}

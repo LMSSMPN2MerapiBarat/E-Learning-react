@@ -1,10 +1,10 @@
 import { Head, usePage } from "@inertiajs/react";
 import StudentLayout from "@/Layouts/StudentLayout";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
-import StudentStatsGrid from "./components/StudentStatsGrid";
-import QuickActionsCard from "./components/QuickActionsCard";
-import RecentMaterialsCard from "./components/RecentMaterialsCard";
-import UpcomingQuizzesCard from "./components/UpcomingQuizzesCard";
+import GridStatistikSiswa from "./components/GridStatistikSiswa";
+import KartuAksiCepat from "./components/KartuAksiCepat";
+import KartuMateriTerbaru from "./Materi/components/MateriTerbaru";
+import KartuKuisMendatang from "./Kuis/components/KartuKuisMendatang";
 import type { SiswaPageProps } from "./types";
 
 export default function Dashboard() {
@@ -49,16 +49,16 @@ export default function Dashboard() {
           </Alert>
         )}
 
-        <StudentStatsGrid stats={stats} />
+        <GridStatistikSiswa stats={stats} />
 
-        <QuickActionsCard routeHelper={routeHelper} />
+        <KartuAksiCepat routeHelper={routeHelper} />
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <RecentMaterialsCard
+          <KartuMateriTerbaru
             items={recentMaterials}
             routeHelper={routeHelper}
           />
-          <UpcomingQuizzesCard
+          <KartuKuisMendatang
             items={upcomingQuizzes}
             routeHelper={routeHelper}
           />

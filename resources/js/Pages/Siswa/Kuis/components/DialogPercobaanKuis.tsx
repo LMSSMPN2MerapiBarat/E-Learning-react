@@ -12,7 +12,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 import axios from "axios";
-import type { QuizAttemptLite, QuizItem } from "../types";
+import type { QuizAttemptLite, QuizItem } from "../../types";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
 
 interface QuizAttemptDialogProps {
