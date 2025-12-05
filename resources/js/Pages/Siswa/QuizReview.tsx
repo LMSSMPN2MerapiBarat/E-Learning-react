@@ -30,7 +30,7 @@ type QuizReviewPageProps = PageProps<{
 
 const slideVariants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 1000 : -1000,
+    x: direction > 0 ? 50 : -50,
     opacity: 0,
   }),
   center: {
@@ -40,7 +40,7 @@ const slideVariants = {
   },
   exit: (direction: number) => ({
     zIndex: 0,
-    x: direction < 0 ? 1000 : -1000,
+    x: direction < 0 ? 50 : -50,
     opacity: 0,
   }),
 };
@@ -137,46 +137,54 @@ export default function QuizReview() {
     >
       <Head title={`Pembahasan - ${quiz.title}`} />
 
-      <div className="space-y-4 md:space-y-6">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+      <div
+        className="space-y-4 md:space-y-6"
+        style={{
+          transform: 'scale(0.8)',
+          transformOrigin: 'top left',
+          width: '125%',
+          marginBottom: '-15%'
+        }}
+      >
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
             <Button variant="outline" size="sm" onClick={goBack}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Kembali
             </Button>
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-purple-600 to-purple-700 p-2 rounded-lg">
-                <FileQuestion className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">Pembahasan Soal</h2>
-                <p className="text-sm text-gray-600">
-                  {quiz.title}
-                  {quiz.subject ? ` • ${quiz.subject}` : ""}
-                </p>
-              </div>
+            <div className="hidden md:flex items-center gap-4 text-sm">
+              {/* <span className="flex items-center gap-2 text-gray-600">
+                <div className="w-3 h-3 rounded-full bg-green-500" />
+                {correctCount} Benar
+              </span>
+              <span className="flex items-center gap-2 text-gray-600">
+                <div className="w-3 h-3 rounded-full bg-red-500" />
+                {wrongCount} Salah
+              </span> */}
+              {unansweredCount > 0 && (
+                <span className="flex items-center gap-2 text-gray-600">
+                  <div className="w-3 h-3 rounded-full bg-gray-400" />
+                  {unansweredCount} Kosong
+                </span>
+              )}
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-4 text-sm">
-            <span className="flex items-center gap-2 text-gray-600">
-              <div className="w-3 h-3 rounded-full bg-green-500" />
-              {correctCount} Benar
-            </span>
-            <span className="flex items-center gap-2 text-gray-600">
-              <div className="w-3 h-3 rounded-full bg-red-500" />
-              {wrongCount} Salah
-            </span>
-            {unansweredCount > 0 && (
-              <span className="flex items-center gap-2 text-gray-600">
-                <div className="w-3 h-3 rounded-full bg-gray-400" />
-                {unansweredCount} Kosong
-              </span>
-            )}
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-purple-600 to-purple-700 p-2 rounded-lg">
+              <FileQuestion className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Pembahasan Soal</h2>
+              <p className="text-sm text-gray-600">
+                {quiz.title}
+                {quiz.subject ? ` • ${quiz.subject}` : ""}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-3 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+          <div className="lg:col-span-3 flex flex-col gap-6">
             <Card className="shadow-sm">
               <CardContent className="p-4">
                 <div className="flex justify-between items-center mb-2">
@@ -199,187 +207,186 @@ export default function QuizReview() {
               </CardContent>
             </Card>
 
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
-                }}
-              >
-                <Card
-                  className={`border-2 shadow-xl ${
-                    !isAnswered
+            <div className="overflow-hidden">
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={currentIndex}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    x: { type: "spring", stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.2 },
+                  }}
+                >
+                  <Card
+                    className={`border-2 shadow-xl ${!isAnswered
                       ? "border-gray-300"
                       : isCorrect
                         ? "border-green-500"
                         : "border-red-500"
-                  }`}
-                >
-                  <CardContent className="p-8">
-                    <div className="flex items-start gap-4 mb-6">
-                      <div
-                        className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${
-                          !isAnswered
+                      }`}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm ${!isAnswered
                             ? "bg-gray-500"
                             : isCorrect
                               ? "bg-gradient-to-br from-green-600 to-green-700"
                               : "bg-gradient-to-br from-red-600 to-red-700"
-                        }`}
-                      >
-                        <span className="text-white text-xl">{currentIndex + 1}</span>
+                            }`}
+                        >
+                          <span className="text-white text-base font-medium">{currentIndex + 1}</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-base">{currentQuestion?.prompt}</p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-xl mb-3">{currentQuestion?.prompt ?? currentQuestion?.question}</p>
+
+                      <div className="space-y-2 mb-3">
+                        {currentQuestion?.options.map((option, index) => {
+                          const letter = String.fromCharCode(65 + index);
+                          const isUserAnswer =
+                            isAnswered && userAnswer !== null ? userAnswer === option.order : false;
+                          const isCorrectAnswer = currentQuestion.correctAnswer === option.order;
+
+                          let borderColor = "border-gray-200";
+                          let bgColor = "bg-white";
+                          let textColor = "text-gray-700";
+                          let labelBg = "bg-gray-200";
+                          let labelText = "text-gray-700";
+
+                          if (isCorrectAnswer) {
+                            borderColor = "border-green-500";
+                            bgColor = "bg-green-50";
+                            textColor = "text-green-900";
+                            labelBg = "bg-green-600";
+                            labelText = "text-white";
+                          } else if (isUserAnswer && !isCorrectAnswer) {
+                            borderColor = "border-red-500";
+                            bgColor = "bg-red-50";
+                            textColor = "text-red-900";
+                            labelBg = "bg-red-600";
+                            labelText = "text-white";
+                          }
+
+                          return (
+                            <motion.div
+                              key={option.id ?? option.order ?? index}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                              className={`p-2.5 rounded-lg border ${borderColor} ${bgColor} transition-all`}
+                            >
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm ${labelBg} ${labelText}`}
+                                >
+                                  {letter}
+                                </span>
+                                <span className={`flex-1 text-sm ${textColor}`}>{option.text ?? option}</span>
+                                {isCorrectAnswer && (
+                                  <div className="flex items-center gap-2">
+                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <Badge className="bg-green-600">Jawaban Benar</Badge>
+                                  </div>
+                                )}
+                                {isUserAnswer && !isCorrectAnswer && (
+                                  <div className="flex items-center gap-2">
+                                    <XCircle className="w-4 h-4 text-red-600" />
+                                    <Badge className="bg-red-600">Jawaban Anda</Badge>
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          );
+                        })}
                       </div>
-                    </div>
 
-                    <div className="space-y-3 mb-6">
-                      {currentQuestion?.options.map((option, index) => {
-                        const letter = String.fromCharCode(65 + index);
-                        const isUserAnswer =
-                          isAnswered && userAnswer !== null ? userAnswer === option.order : false;
-                        const isCorrectAnswer = currentQuestion.correctAnswer === option.order;
-
-                        let borderColor = "border-gray-200";
-                        let bgColor = "bg-white";
-                        let textColor = "text-gray-700";
-                        let labelBg = "bg-gray-200";
-                        let labelText = "text-gray-700";
-
-                        if (isCorrectAnswer) {
-                          borderColor = "border-green-500";
-                          bgColor = "bg-green-50";
-                          textColor = "text-green-900";
-                          labelBg = "bg-green-600";
-                          labelText = "text-white";
-                        } else if (isUserAnswer && !isCorrectAnswer) {
-                          borderColor = "border-red-500";
-                          bgColor = "bg-red-50";
-                          textColor = "text-red-900";
-                          labelBg = "bg-red-600";
-                          labelText = "text-white";
-                        }
-
-                        return (
-                          <motion.div
-                            key={option.id ?? option.order ?? index}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className={`p-4 rounded-xl border-2 ${borderColor} ${bgColor} transition-all`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <span
-                                className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${labelBg} ${labelText}`}
-                              >
-                                {letter}
-                              </span>
-                              <span className={`flex-1 ${textColor}`}>{option.text ?? option}</span>
-                              {isCorrectAnswer && (
-                                <div className="flex items-center gap-2">
-                                  <CheckCircle className="w-6 h-6 text-green-600" />
-                                  <Badge className="bg-green-600">Jawaban Benar</Badge>
-                                </div>
-                              )}
-                              {isUserAnswer && !isCorrectAnswer && (
-                                <div className="flex items-center gap-2">
-                                  <XCircle className="w-6 h-6 text-red-600" />
-                                  <Badge className="bg-red-600">Jawaban Anda</Badge>
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-
-                    <div
-                      className={`p-4 rounded-xl border-2 ${
-                        !isAnswered
+                      <div
+                        className={`p-3 rounded-lg border ${!isAnswered
                           ? "border-gray-300 bg-gray-50"
                           : isCorrect
                             ? "border-green-200 bg-green-50"
                             : "border-red-200 bg-red-50"
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        {!isAnswered ? (
-                          <>
-                            <AlertCircle className="w-5 h-5 text-gray-600 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="font-medium text-gray-800 mb-1">Tidak Dijawab</p>
-                              <p className="text-sm text-gray-600">
-                                Anda tidak menjawab soal ini. Jawaban yang benar adalah{" "}
-                                <span className="font-medium text-green-700">
-                                  {String.fromCharCode(
-                                    65 +
+                          }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          {!isAnswered ? (
+                            <>
+                              <AlertCircle className="w-4 h-4 text-gray-600 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="font-medium text-gray-800 mb-1">Tidak Dijawab</p>
+                                <p className="text-sm text-gray-600">
+                                  Anda tidak menjawab soal ini. Jawaban yang benar adalah{" "}
+                                  <span className="font-medium text-green-700">
+                                    {String.fromCharCode(
+                                      65 +
                                       Math.max(
                                         currentQuestion?.options.findIndex(
                                           (opt) => opt.order === currentQuestion.correctAnswer,
                                         ),
                                         0,
                                       ),
-                                  )}
-                                </span>
-                                .
-                              </p>
-                            </div>
-                          </>
-                        ) : isCorrect ? (
-                          <>
-                            <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="font-medium text-green-800 mb-1">Jawaban Benar! 🎉</p>
-                              <p className="text-sm text-green-700">
-                                Selamat! Anda memilih jawaban yang tepat. Pertahankan performa Anda.
-                              </p>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <p className="font-medium text-red-800 mb-1">Jawaban Kurang Tepat</p>
-                              <p className="text-sm text-red-700">
-                                Anda memilih{" "}
-                                <span className="font-medium">
-                                  {String.fromCharCode(
-                                    65 +
+                                    )}
+                                  </span>
+                                  .
+                                </p>
+                              </div>
+                            </>
+                          ) : isCorrect ? (
+                            <>
+                              <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="font-medium text-green-800 mb-1">Jawaban Benar! 🎉</p>
+                                <p className="text-sm text-green-700">
+                                  Selamat! Anda memilih jawaban yang tepat. Pertahankan performa Anda.
+                                </p>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <p className="font-medium text-red-800 mb-1">Jawaban Kurang Tepat</p>
+                                <p className="text-sm text-red-700">
+                                  Anda memilih{" "}
+                                  <span className="font-medium">
+                                    {String.fromCharCode(
+                                      65 +
                                       Math.max(
                                         currentQuestion?.options.findIndex((opt) => opt.order === userAnswer),
                                         0,
                                       ),
-                                  )}
-                                </span>
-                                , jawaban benar adalah{" "}
-                                <span className="font-medium text-green-700">
-                                  {String.fromCharCode(
-                                    65 +
+                                    )}
+                                  </span>
+                                  , jawaban benar adalah{" "}
+                                  <span className="font-medium text-green-700">
+                                    {String.fromCharCode(
+                                      65 +
                                       Math.max(
                                         currentQuestion?.options.findIndex(
                                           (opt) => opt.order === currentQuestion.correctAnswer,
                                         ),
                                         0,
                                       ),
-                                  )}
-                                </span>
-                                .
-                              </p>
-                            </div>
-                          </>
-                        )}
+                                    )}
+                                  </span>
+                                  .
+                                </p>
+                              </div>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </AnimatePresence>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             <Card className="shadow-sm">
               <CardContent className="p-4">
@@ -452,15 +459,14 @@ export default function QuizReview() {
                         onClick={() => jumpToQuestion(index)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`aspect-square rounded-lg border-2 transition-all flex items-center justify-center text-sm ${
-                          isActive
-                            ? "border-purple-600 bg-purple-600 text-white shadow-lg scale-110"
-                            : status === "correct"
-                              ? "border-green-500 bg-green-50 text-green-700 hover:bg-green-100"
-                              : status === "wrong"
-                                ? "border-red-500 bg-red-50 text-red-700 hover:bg-red-100"
-                                : "border-gray-300 bg-gray-50 text-gray-600 hover:bg-gray-100"
-                        }`}
+                        className={`aspect-square rounded-lg border-2 transition-all flex items-center justify-center text-sm ${isActive
+                          ? "border-purple-600 bg-purple-600 text-white shadow-lg scale-110"
+                          : status === "correct"
+                            ? "border-green-500 bg-green-50 text-green-700 hover:bg-green-100"
+                            : status === "wrong"
+                              ? "border-red-500 bg-red-50 text-red-700 hover:bg-red-100"
+                              : "border-gray-300 bg-gray-50 text-gray-600 hover:bg-gray-100"
+                          }`}
                       >
                         {index + 1}
                       </motion.button>
