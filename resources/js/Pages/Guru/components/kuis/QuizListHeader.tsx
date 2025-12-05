@@ -18,7 +18,7 @@ const QuizListHeader: React.FC<QuizListHeaderProps> = ({
     <div>
       <h2 className="text-xl font-semibold text-gray-900">Daftar Kuis</h2>
       <p className="text-sm text-gray-600">
-        Buat kuis interaktif dan bagikan hanya kepada kelas yang Anda ampu.
+        Buat kuis dan bagikan hanya kepada kelas yang Anda ampu.
       </p>
     </div>
     <div className="flex w-full items-center gap-2 md:w-auto">

@@ -88,7 +88,7 @@ export default function Schedule() {
     >
       <Head title="Jadwal Pelajaran" />
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {!hasClass && (
           <Alert className="border-l-4 border-l-amber-500">
             <AlertDescription>
@@ -103,13 +103,13 @@ export default function Schedule() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <div className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
-            <div className="rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 p-3 text-white">
-              <Calendar className="h-6 w-6" />
+          <div className="flex items-center gap-2 rounded-xl bg-white p-3 shadow-sm">
+            <div className="rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-700 p-2 text-white">
+              <Calendar className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">Jadwal Pelajaran</h2>
-              <p className="text-sm text-gray-600">
+              <h2 className="text-base font-semibold text-gray-900">Jadwal Pelajaran</h2>
+              <p className="text-xs text-gray-600">
                 {student.className
                   ? `Kelas ${student.className}`
                   : "Belum ada kelas terdaftar"}

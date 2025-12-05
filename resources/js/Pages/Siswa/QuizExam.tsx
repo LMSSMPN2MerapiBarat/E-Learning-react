@@ -159,15 +159,35 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
       return;
     }
 
+    // Cek apakah ada parameter autostart di URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldAutoStart = urlParams.get("autostart") === "1";
+
     try {
       const savedRaw = window.localStorage.getItem(storageKey);
-      if (!savedRaw) return;
+      if (!savedRaw) {
+        // Tidak ada saved progress, cek apakah harus autostart
+        if (shouldAutoStart) {
+          ensureStartTime();
+          setHasStarted(true);
+          setIsTimerActive(true);
+        }
+        return;
+      }
       const saved = JSON.parse(savedRaw) as {
         startTime?: number;
         answers?: AnswerMap;
         currentQuestionIndex?: number;
       };
-      if (!saved?.startTime) return;
+      if (!saved?.startTime) {
+        // Tidak ada startTime, cek apakah harus autostart
+        if (shouldAutoStart) {
+          ensureStartTime();
+          setHasStarted(true);
+          setIsTimerActive(true);
+        }
+        return;
+      }
 
       const elapsedSeconds = Math.floor(
         (Date.now() - saved.startTime) / 1000,
@@ -191,6 +211,12 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
       }
     } catch (error) {
       console.warn("Gagal memulihkan progres kuis dari penyimpanan lokal.", error);
+      // Jika error tapi harus autostart, tetap mulai
+      if (shouldAutoStart) {
+        ensureStartTime();
+        setHasStarted(true);
+        setIsTimerActive(true);
+      }
     }
   }, [durationSeconds, storageKey, totalQuestions]);
 
@@ -292,21 +318,21 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
         const backendAttempt = response.data?.attempt ?? null;
         const normalizedAttempt: QuizAttemptLite | null = backendAttempt
           ? {
-              id: backendAttempt.id,
-              score: backendAttempt.score,
-              correctAnswers:
-                backendAttempt.correct_answers ??
-                backendAttempt.correctAnswers ??
-                0,
-              totalQuestions:
-                backendAttempt.total_questions ??
-                backendAttempt.totalQuestions ??
-                totalQuestions,
-              submittedAt:
-                backendAttempt.submitted_at ??
-                backendAttempt.submittedAt ??
-                null,
-            }
+            id: backendAttempt.id,
+            score: backendAttempt.score,
+            correctAnswers:
+              backendAttempt.correct_answers ??
+              backendAttempt.correctAnswers ??
+              0,
+            totalQuestions:
+              backendAttempt.total_questions ??
+              backendAttempt.totalQuestions ??
+              totalQuestions,
+            submittedAt:
+              backendAttempt.submitted_at ??
+              backendAttempt.submittedAt ??
+              null,
+          }
           : null;
 
         setResult(normalizedAttempt);
@@ -463,14 +489,14 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
               )}
 
               <div className="space-y-3">
-                <Button 
-                  className="w-full text-lg h-12" 
+                <Button
+                  className="w-full text-lg h-12"
                   onClick={startQuiz}
                 >
                   Mulai Kerjakan Sekarang
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full"
                   onClick={() => router.visit(backUrl)}
                 >
@@ -511,19 +537,18 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                     {correctTotal} dari {totalQuestions} jawaban benar
                   </p>
                   <Badge
-                    className={`px-4 py-2 text-lg ${
-                      effectiveScore >= 80
-                        ? "bg-green-500"
-                        : effectiveScore >= 60
+                    className={`px-4 py-2 text-lg ${effectiveScore >= 80
+                      ? "bg-green-500"
+                      : effectiveScore >= 60
                         ? "bg-blue-500"
                         : "bg-orange-500"
-                    }`}
+                      }`}
                   >
                     {effectiveScore >= 80
                       ? "Luar biasa!"
                       : effectiveScore >= 60
-                      ? "Bagus!"
-                      : "Tetap semangat!"}
+                        ? "Bagus!"
+                        : "Tetap semangat!"}
                   </Badge>
                 </motion.div>
 
@@ -540,8 +565,8 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
 
                     const selectedOption = isAnswered
                       ? question.options.find(
-                          (option) => option.order === selectedOrder,
-                        )
+                        (option) => option.order === selectedOrder,
+                      )
                       : null;
                     const correctOption = question.options.find(
                       (option) => option.order === question.correctAnswer,
@@ -555,13 +580,12 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                         transition={{ delay: index * 0.05 }}
                       >
                         <Card
-                          className={`border-l-4 ${
-                            isAnswered
-                              ? isCorrect
-                                ? "border-l-green-500 bg-green-50/30"
-                                : "border-l-red-500 bg-red-50/30"
-                              : "border-l-gray-300"
-                          }`}
+                          className={`border-l-4 ${isAnswered
+                            ? isCorrect
+                              ? "border-l-green-500 bg-green-50/30"
+                              : "border-l-red-500 bg-red-50/30"
+                            : "border-l-gray-300"
+                            }`}
                         >
                           <CardContent className="p-4">
                             <div className="flex items-start gap-3">
@@ -593,21 +617,20 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                                   <div className="space-y-2 text-sm">
                                     {selectedOption && (
                                       <div
-                                        className={`rounded-lg p-3 ${
-                                          isCorrect
-                                            ? "bg-green-100 text-green-800"
-                                            : "bg-red-100 text-red-800"
-                                        }`}
+                                        className={`rounded-lg p-3 ${isCorrect
+                                          ? "bg-green-100 text-green-800"
+                                          : "bg-red-100 text-red-800"
+                                          }`}
                                       >
                                         <span className="font-medium">
                                           Jawaban Anda:
                                         </span>{" "}
                                         {String.fromCharCode(
                                           65 +
-                                            question.options.findIndex(
-                                              (opt) =>
-                                                opt.order === selectedOrder,
-                                            ),
+                                          question.options.findIndex(
+                                            (opt) =>
+                                              opt.order === selectedOrder,
+                                          ),
                                         )}
                                         . {selectedOption.text}
                                       </div>
@@ -619,11 +642,11 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                                         </span>{" "}
                                         {String.fromCharCode(
                                           65 +
-                                            question.options.findIndex(
-                                              (opt) =>
-                                                opt.order ===
-                                                question.correctAnswer,
-                                            ),
+                                          question.options.findIndex(
+                                            (opt) =>
+                                              opt.order ===
+                                              question.correctAnswer,
+                                          ),
                                         )}
                                         . {correctOption.text}
                                       </div>
@@ -653,27 +676,27 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
       ) : (
         <div className="min-h-screen bg-gray-50">
           <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
-            <div className="container mx-auto px-4 py-4">
+            <div className="container mx-auto px-3 py-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 p-2">
-                    <ClipboardList className="h-6 w-6 text-white" />
+                <div className="flex items-center gap-3">
+                  <div className="rounded-md bg-gradient-to-br from-blue-600 to-blue-700 p-1.5">
+                    <ClipboardList className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">
+                    <h2 className="text-sm font-semibold text-gray-900">
                       {quiz.title}
                     </h2>
                     {quiz.subject && (
-                      <p className="text-sm text-gray-600">{quiz.subject}</p>
+                      <p className="text-xs text-gray-600">{quiz.subject}</p>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <div
-                    className={`flex items-center gap-2 rounded-lg border-2 px-4 py-2 ${getTimeColor()}`}
+                    className={`flex items-center gap-1.5 rounded-md border-2 px-3 py-1.5 ${getTimeColor()}`}
                   >
-                    <Clock className="h-5 w-5" />
-                    <span className="text-xl font-semibold">
+                    <Clock className="h-4 w-4" />
+                    <span className="text-base font-semibold">
                       {formatTime(timeLeft)}
                     </span>
                   </div>
@@ -682,18 +705,18 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                     size="sm"
                     onClick={() => setShowExitConfirm(true)}
                   >
-                    <X className="h-5 w-5" />
+                    <X className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
             </div>
           </header>
 
-          <div className="container mx-auto px-4 py-6">
+          <div className="container mx-auto px-3 py-4">
             {submitError && (
-              <Alert className="mb-4 border-red-500 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-600">
+              <Alert className="mb-3 border-red-500 bg-red-50">
+                <AlertCircle className="h-3.5 w-3.5 text-red-600" />
+                <AlertDescription className="text-xs text-red-600">
                   {submitError}
                 </AlertDescription>
               </Alert>
@@ -702,22 +725,22 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-6"
+                className="mb-4"
               >
                 <Alert className="border-red-500 bg-red-50">
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                  <AlertDescription className="text-red-600">
+                  <AlertCircle className="h-3.5 w-3.5 text-red-600" />
+                  <AlertDescription className="text-xs text-red-600">
                     Waktu tersisa kurang dari 1 menit!
                   </AlertDescription>
                 </Alert>
               </motion.div>
             )}
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              <div className="space-y-6 lg:col-span-2">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+              <div className="space-y-4 lg:col-span-2">
                 <Card>
-                  <CardContent className="p-4">
-                    <div className="mb-2 flex items-center justify-between text-sm text-gray-600">
+                  <CardContent className="p-3">
+                    <div className="mb-1.5 flex items-center justify-between text-xs text-gray-600">
                       <span>
                         Soal {currentQuestionIndex + 1} dari{" "}
                         {totalQuestions}
@@ -728,8 +751,8 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                       value={
                         totalQuestions > 0
                           ? ((currentQuestionIndex + 1) /
-                              totalQuestions) *
-                            100
+                            totalQuestions) *
+                          100
                           : 0
                       }
                     />
@@ -749,13 +772,13 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                       opacity: { duration: 0.2 },
                     }}
                   >
-                    <Card className="border-2 border-blue-100 shadow-lg">
-                      <CardContent className="p-8">
-                        <div className="mb-6 flex items-start gap-4">
-                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 text-xl font-semibold text-white shadow-md">
+                    <Card className="border-2 border-blue-100 shadow-md">
+                      <CardContent className="p-5">
+                        <div className="mb-4 flex items-start gap-3">
+                          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 text-base font-semibold text-white shadow-md">
                             {currentQuestionIndex + 1}
                           </div>
-                          <p className="flex-1 pt-2 text-lg text-gray-800">
+                          <p className="flex-1 pt-1 text-sm text-gray-800">
                             {activeQuestion.prompt}
                           </p>
                         </div>
@@ -772,7 +795,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                               Number.parseInt(value, 10),
                             )
                           }
-                          className="space-y-3"
+                          className="space-y-2"
                         >
                           {activeQuestion.options.map(
                             (option: QuizQuestionOption, index: number) => {
@@ -784,32 +807,33 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                                   key={optionId}
                                   whileHover={{ scale: 1.01 }}
                                   whileTap={{ scale: 0.99 }}
+                                  onClick={() => handleAnswer(activeQuestion.id, option.order)}
+                                  className="cursor-pointer"
                                 >
                                   <div
-                                    className={`flex items-center space-x-3 rounded-xl border-2 p-4 transition-all ${
-                                      isSelected
-                                        ? "border-blue-500 bg-blue-50 shadow-md"
-                                        : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
-                                    }`}
+                                    className={`flex items-center space-x-2.5 rounded-lg border-2 p-3 transition-all ${isSelected
+                                      ? "border-blue-500 bg-blue-50 shadow-md"
+                                      : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+                                      }`}
                                   >
                                     <RadioGroupItem
                                       value={String(option.order)}
                                       id={optionId}
+                                      className="pointer-events-none"
                                     />
                                     <Label
                                       htmlFor={optionId}
-                                      className="flex flex-1 cursor-pointer items-center gap-3"
+                                      className="flex flex-1 cursor-pointer items-center gap-2 pointer-events-none"
                                     >
                                       <span
-                                        className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                                          isSelected
-                                            ? "bg-blue-600 text-white"
-                                            : "bg-gray-200 text-gray-600"
-                                        }`}
+                                        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${isSelected
+                                          ? "bg-blue-600 text-white"
+                                          : "bg-gray-200 text-gray-600"
+                                          }`}
                                       >
                                         {String.fromCharCode(65 + index)}
                                       </span>
-                                      <span className="text-sm text-gray-800">
+                                      <span className="text-xs text-gray-800">
                                         {option.text}
                                       </span>
                                     </Label>
@@ -825,30 +849,31 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                 </AnimatePresence>
 
                 <Card>
-                  <CardContent className="flex items-center justify-between gap-4 p-4">
+                  <CardContent className="flex items-center justify-between gap-3 p-3">
                     <Button
                       variant="outline"
                       onClick={previousQuestion}
                       disabled={currentQuestionIndex === 0}
-                      size="lg"
+                      size="sm"
+                      className="text-xs"
                     >
-                      <ChevronLeft className="mr-2 h-4 w-4" />
+                      <ChevronLeft className="mr-1 h-3.5 w-3.5" />
                       Sebelumnya
                     </Button>
 
                     {currentQuestionIndex < totalQuestions - 1 ? (
-                      <Button onClick={nextQuestion} size="lg">
+                      <Button onClick={nextQuestion} size="sm" className="text-xs">
                         Selanjutnya
-                        <ChevronRight className="ml-2 h-4 w-4" />
+                        <ChevronRight className="ml-1 h-3.5 w-3.5" />
                       </Button>
                     ) : (
                       <Button
                         onClick={() => setShowSubmitConfirm(true)}
-                        size="lg"
-                        className="bg-green-600 hover:bg-green-700"
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700 text-xs"
                         disabled={isSubmitting}
                       >
-                        <CheckCircle className="mr-2 h-4 w-4" />
+                        <CheckCircle className="mr-1 h-3.5 w-3.5" />
                         {isSubmitting ? "Mengumpulkan..." : "Selesai & Kumpulkan"}
                       </Button>
                     )}
@@ -857,15 +882,15 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
               </div>
 
               <div className="lg:col-span-1">
-                <Card className="sticky top-24 shadow-lg">
-                  <CardContent className="p-6">
-                    <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800">
-                      <ClipboardList className="h-5 w-5" />
+                <Card className="sticky top-20 shadow-md">
+                  <CardContent className="p-4">
+                    <h3 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-gray-800">
+                      <ClipboardList className="h-4 w-4" />
                       Navigasi Soal
                     </h3>
 
-                    <div className="mb-4 rounded-lg bg-blue-50 p-3 text-sm">
-                      <div className="mb-1 flex justify-between">
+                    <div className="mb-3 rounded-md bg-blue-50 p-2 text-xs">
+                      <div className="mb-0.5 flex justify-between">
                         <span className="text-gray-600">Terjawab:</span>
                         <span className="font-medium">
                           {answeredCount}/{totalQuestions}
@@ -879,7 +904,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                       </div>
                     </div>
 
-                    <div className="mb-6 grid grid-cols-5 gap-2">
+                    <div className="mb-4 grid grid-cols-5 gap-1.5">
                       {questions.map((question: QuizQuestion, index) => {
                         const status = getQuestionStatus(question.id);
                         const isActive = index === currentQuestionIndex;
@@ -890,13 +915,12 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                             onClick={() => jumpToQuestion(index)}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className={`flex aspect-square items-center justify-center rounded-lg border-2 transition-all ${
-                              isActive
-                                ? "border-blue-600 bg-blue-600 text-white shadow-md"
-                                : status === "answered"
+                            className={`flex aspect-square items-center justify-center rounded-md border-2 text-xs transition-all ${isActive
+                              ? "border-blue-600 bg-blue-600 text-white shadow-md"
+                              : status === "answered"
                                 ? "border-green-500 bg-green-50 text-green-700 hover:bg-green-100"
                                 : "border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50"
-                            }`}
+                              }`}
                           >
                             {index + 1}
                           </motion.button>
@@ -904,28 +928,28 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                       })}
                     </div>
 
-                    <div className="mb-4 space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg border-2 border-blue-600 bg-blue-600" />
+                    <div className="mb-3 space-y-1.5 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-6 w-6 rounded-md border-2 border-blue-600 bg-blue-600" />
                         <span className="text-gray-600">Soal aktif</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg border-2 border-green-500 bg-green-50" />
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-6 w-6 rounded-md border-2 border-green-500 bg-green-50" />
                         <span className="text-gray-600">Sudah dijawab</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg border-2 border-gray-300 bg-white" />
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-6 w-6 rounded-md border-2 border-gray-300 bg-white" />
                         <span className="text-gray-600">Belum dijawab</span>
                       </div>
                     </div>
 
                     <Button
                       onClick={() => setShowSubmitConfirm(true)}
-                      className="w-full bg-green-600 hover:bg-green-700"
-                      size="lg"
+                      className="w-full bg-green-600 hover:bg-green-700 text-xs"
+                      size="sm"
                       disabled={isSubmitting}
                     >
-                      <CheckCircle className="mr-2 h-4 w-4" />
+                      <CheckCircle className="mr-1.5 h-3.5 w-3.5" />
                       {isSubmitting ? "Mengumpulkan..." : "Kumpulkan Kuis"}
                     </Button>
                   </CardContent>

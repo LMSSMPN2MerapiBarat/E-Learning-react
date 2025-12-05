@@ -21,13 +21,13 @@ const StatCard = ({
   accent: string;
 }) => (
   <Card>
-    <CardContent className="flex items-center justify-between p-5">
+    <CardContent className="flex items-center justify-between p-4">
       <div>
-        <p className="text-sm text-muted-foreground">{title}</p>
-        <p className="text-3xl font-semibold">{value}</p>
+        <p className="text-xs text-muted-foreground">{title}</p>
+        <p className="text-2xl font-semibold">{value}</p>
       </div>
-      <div className={`rounded-full p-3 ${accent}`}>
-        <Icon className="h-5 w-5 text-white" />
+      <div className={`rounded-full p-2 ${accent}`}>
+        <Icon className="h-4 w-4 text-white" />
       </div>
     </CardContent>
   </Card>
@@ -41,7 +41,7 @@ export default function AssignmentStatsGrid({
   averageScore,
 }: AssignmentStatsGridProps) {
   return (
-    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+    <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
       <StatCard
         title="Total Tugas"
         value={total}

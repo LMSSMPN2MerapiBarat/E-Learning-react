@@ -133,33 +133,33 @@ export default function StudentMaterialBrowser({
 
   return (
     <Card className="border shadow-sm">
-      <CardHeader>
-        <CardTitle>Materi Pembelajaran</CardTitle>
-        <CardDescription>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">Materi Pembelajaran</CardTitle>
+        <CardDescription className="text-xs">
           Cari dan akses materi yang dibagikan guru sesuai kelas Anda.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="relative w-full md:w-72">
+      <CardContent className="space-y-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="relative w-full md:w-64">
             <Input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Cari judul, deskripsi, atau nama guru..."
-              className="pl-9"
+              className="pl-8 text-xs h-8"
             />
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
           </div>
           <Select
             value={subjectFilter}
             onValueChange={(value) => setSubjectFilter(value)}
           >
-            <SelectTrigger className="w-full md:w-64">
+            <SelectTrigger className="w-full md:w-56 h-8 text-xs">
               <SelectValue placeholder="Semua mata pelajaran" />
             </SelectTrigger>
             <SelectContent>
               {subjectOptions.map((subject) => (
-                <SelectItem key={subject} value={subject}>
+                <SelectItem key={subject} value={subject} className="text-xs">
                   {subject === "all" ? "Semua Mata Pelajaran" : subject}
                 </SelectItem>
               ))}
@@ -169,13 +169,13 @@ export default function StudentMaterialBrowser({
 
         {filteredMaterials.length === 0 ? (
           <Card className="border-dashed">
-            <CardContent className="py-12 text-center text-sm text-gray-500">
-              <FileText className="mx-auto mb-3 h-10 w-10 text-gray-400" />
+            <CardContent className="py-10 text-center text-xs text-gray-500">
+              <FileText className="mx-auto mb-2 h-8 w-8 text-gray-400" />
               Tidak ada materi yang sesuai dengan pencarian.
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {filteredMaterials.map((material) => {
               const extension = getFileExtension(
                 material.fileName,
@@ -193,198 +193,117 @@ export default function StudentMaterialBrowser({
               const hasDocumentLinks = Boolean(previewHref || downloadHref);
               const hasVideoFile = Boolean(material.videoUrl);
               const hasYoutube = Boolean(material.youtubeEmbedUrl);
-              const scheduleSlots = material.scheduleSlots ?? [];
-              const hasScheduleSlots = scheduleSlots.length > 0;
 
               return (
                 <Card
                   key={material.id}
-                  className="border-l-4 border-l-blue-500 shadow-sm transition hover:border-l-blue-600 hover:shadow-md"
+                  className="overflow-hidden shadow-sm transition hover:shadow-md"
                 >
-                  <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-start md:justify-between">
-                    <div className="flex-1 space-y-4">
-                      <div>
-                        <h3 className="text-base font-semibold text-gray-900">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-2 border-b bg-gradient-to-r from-white to-gray-50 p-3">
+                    <div className="flex items-start gap-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-lg">
+                        📚
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">
                           {material.title}
                         </h3>
-                        {material.description && (
-                          <p className="mt-1 text-sm text-gray-600">
-                            {material.description}
-                          </p>
-                        )}
-                      </div>
-
-                      {material.youtubeEmbedUrl && (
-                        <div className="aspect-video w-full overflow-hidden rounded-lg bg-black">
-                          <iframe
-                            src={`${material.youtubeEmbedUrl}?rel=0`}
-                            title={`Video YouTube ${material.title}`}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowFullScreen
-                            className="h-full w-full"
-                          />
-                        </div>
-                      )}
-
-                      {material.videoUrl && (
-                        <video
-                          controls
-                          preload="metadata"
-                          className="w-full rounded-lg border border-gray-200"
-                        >
-                          <source src={material.videoUrl} />
-                          Browser Anda tidak mendukung pemutaran video.
-                        </video>
-                      )}
-
-                      {hasScheduleSlots && (
-                        <div className="rounded-lg border border-indigo-100 bg-indigo-50/70 p-3 text-indigo-900">
-                          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-600">
-                            <Calendar className="h-3 w-3" />
-                            Jadwal Mata Pelajaran
-                          </div>
-                          <div className="mt-2 space-y-1 text-xs">
-                            {scheduleSlots.map((slot) => (
-                              <div
-                                key={`${slot.id}-${slot.day}-${slot.startTime}`}
-                                className="flex flex-wrap items-center gap-3"
-                              >
-                                <span className="font-semibold">{slot.day}</span>
-                                <span className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
-                                  {slot.startTime} - {slot.endTime}
-                                </span>
-                                {slot.room && (
-                                  <span className="flex items-center gap-1">
-                                    <MapPin className="h-3 w-3" />
-                                    {slot.room}
-                                  </span>
-                                )}
-                                {slot.teacherName && (
-                                  <span className="flex items-center gap-1">
-                                    <User className="h-3 w-3" />
-                                    {slot.teacherName}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                        {material.subject && (
-                          <Badge variant="outline">{material.subject}</Badge>
-                        )}
-                        {material.className && (
-                          <Badge variant="outline">
-                            Kelas {material.className}
-                          </Badge>
-                        )}
-                        {hasDocumentLinks && (
-                          <Badge className={`${documentBadgeClass} border`}>
-                            {documentBadgeLabel}
-                          </Badge>
-                        )}
-                        {hasVideoFile && (
-                          <Badge className="border-purple-200 bg-purple-100 text-purple-600">
-                            Video
-                          </Badge>
-                        )}
-                        {hasYoutube && (
-                          <Badge className="border-red-200 bg-red-100 text-red-600">
-                            YouTube
-                          </Badge>
-                        )}
-                        {material.fileSize && (
-                          <Badge variant="outline">
-                            Dokumen {(material.fileSize / (1024 * 1024)).toFixed(2)} MB
-                          </Badge>
-                        )}
-                        {material.videoSize && (
-                          <Badge variant="outline">
-                            Video {(material.videoSize / (1024 * 1024)).toFixed(2)} MB
-                          </Badge>
-                        )}
-                        {material.teacher && (
-                          <span className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            {material.teacher}
-                          </span>
-                        )}
+                        <p className="text-[10px] text-gray-500 line-clamp-1">
+                          {material.subject ?? "Materi Umum"}
+                        </p>
                         {dateLabel && (
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {dateLabel}
-                          </span>
+                          <p className="text-[10px] text-gray-400">{dateLabel}</p>
                         )}
                       </div>
                     </div>
-                    <div className="flex w-full flex-col gap-2 md:w-52">
-                      {hasDocumentLinks && (
-                        <>
-                          <Button size="sm" asChild disabled={!previewHref}>
-                            <a
-                              href={previewHref}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              aria-disabled={!previewHref}
-                            >
-                              <Eye className="mr-2 h-4 w-4" />
-                              Buka Materi
+                    {(hasVideoFile || hasYoutube) && (
+                      <Badge className="shrink-0 border-pink-200 bg-pink-100 text-pink-600 text-[10px]">
+                        Video
+                      </Badge>
+                    )}
+                  </div>
+
+                  <CardContent className="space-y-2 p-3">
+                    {/* File info with buttons */}
+                    {hasDocumentLinks && material.fileName && (
+                      <div className="flex items-center justify-between rounded-md border bg-gray-50 p-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <FileText className="h-4 w-4 shrink-0 text-gray-400" />
+                          <div className="min-w-0 flex-1">
+                            <span className="block truncate text-[10px] text-gray-600">
+                              {material.fileName}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <Badge className={`${documentBadgeClass} border text-[9px] px-1.5`}>
+                                {documentBadgeLabel}
+                              </Badge>
+                              {material.fileSize && (
+                                <span className="text-[9px] text-gray-400">
+                                  {(material.fileSize / (1024 * 1024)).toFixed(1)} MB
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0 ml-2">
+                          <Button size="sm" variant="ghost" className="h-6 px-2 text-[10px]" asChild disabled={!previewHref}>
+                            <a href={previewHref} target="_blank" rel="noopener noreferrer">
+                              <Eye className="mr-1 h-3 w-3" />
+                              Lihat
                             </a>
                           </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            asChild
-                            disabled={!downloadHref}
-                          >
-                            <a
-                              href={downloadHref}
-                              download={
-                                downloadHref
-                                  ? material.fileName ?? undefined
-                                  : undefined
-                              }
-                              aria-disabled={!downloadHref}
-                            >
-                              <Download className="mr-2 h-4 w-4" />
-                              Unduh Dokumen
+                          <Button size="sm" variant="ghost" className="h-6 px-2 text-[10px]" asChild disabled={!downloadHref}>
+                            <a href={downloadHref} download={material.fileName ?? undefined}>
+                              <Download className="mr-1 h-3 w-3" />
+                              Unduh
                             </a>
                           </Button>
-                        </>
-                      )}
-                      {hasVideoFile && (
-                        <Button variant="outline" size="sm" asChild>
-                          <a
-                            href={material.videoUrl ?? undefined}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <PlayCircle className="mr-2 h-4 w-4" />
-                            Unduh Video
-                          </a>
-                        </Button>
-                      )}
-                      {material.youtubeUrl && (
-                        <Button variant="outline" size="sm" asChild>
-                          <a
-                            href={material.youtubeUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Youtube className="mr-2 h-4 w-4" />
-                            Buka di YouTube
-                          </a>
-                        </Button>
-                      )}
-                      {!hasDocumentLinks && !hasVideoFile && !material.youtubeUrl && (
-                        <Button size="sm" disabled>
-                          Materi tidak tersedia
-                        </Button>
-                      )}
-                    </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* YouTube embed - smaller */}
+                    {material.youtubeEmbedUrl && (
+                      <div className="aspect-video max-h-36 w-full overflow-hidden rounded-md bg-black">
+                        <iframe
+                          src={`${material.youtubeEmbedUrl}?rel=0`}
+                          title={`Video YouTube ${material.title}`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="h-full w-full"
+                        />
+                      </div>
+                    )}
+
+                    {/* Video file - smaller */}
+                    {material.videoUrl && (
+                      <video
+                        controls
+                        preload="metadata"
+                        className="max-h-36 w-full rounded-md border border-gray-200"
+                      >
+                        <source src={material.videoUrl} />
+                        Browser Anda tidak mendukung pemutaran video.
+                      </video>
+                    )}
+
+                    {/* YouTube button */}
+                    {material.youtubeUrl && (
+                      <Button variant="outline" size="sm" className="h-6 w-full text-[10px]" asChild>
+                        <a href={material.youtubeUrl} target="_blank" rel="noopener noreferrer">
+                          <Youtube className="mr-1 h-3 w-3" />
+                          Buka di YouTube
+                        </a>
+                      </Button>
+                    )}
+
+                    {/* No content fallback */}
+                    {!hasDocumentLinks && !hasVideoFile && !material.youtubeUrl && (
+                      <div className="flex items-center justify-center rounded-md border border-dashed py-4 text-[10px] text-gray-400">
+                        Materi tidak tersedia
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               );

@@ -53,7 +53,7 @@ export default function TugasPage() {
   return (
     <StudentLayout title="Tugas Saya">
       <Head title="Tugas Siswa" />
-      <div className="space-y-6">
+      <div className="space-y-4">
         <AssignmentStatsGrid
           total={assignments.length}
           pending={pending.length}

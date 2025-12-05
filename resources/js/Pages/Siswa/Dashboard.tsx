@@ -20,9 +20,9 @@ export default function Dashboard() {
   const routeHelper =
     typeof window !== "undefined" && typeof (window as any).route === "function"
       ? ((window as any).route as (
-          name: string,
-          params?: Record<string, unknown>
-        ) => string)
+        name: string,
+        params?: Record<string, unknown>
+      ) => string)
       : undefined;
 
   const recentMaterials = materials.slice(0, 3);
@@ -39,7 +39,7 @@ export default function Dashboard() {
     >
       <Head title="Dashboard Siswa" />
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {!hasClass && (
           <Alert className="border-l-4 border-l-amber-500">
             <AlertDescription>
@@ -53,7 +53,7 @@ export default function Dashboard() {
 
         <QuickActionsCard routeHelper={routeHelper} />
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           <RecentMaterialsCard
             items={recentMaterials}
             routeHelper={routeHelper}

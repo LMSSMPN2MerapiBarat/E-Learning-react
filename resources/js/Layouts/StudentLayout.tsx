@@ -185,53 +185,53 @@ export default function StudentLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-20 bg-white shadow-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 p-2 text-white shadow-md">
-              <BookOpen className="h-6 w-6" />
+        <div className="flex w-full items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 p-1.5 text-white shadow-md">
+              <BookOpen className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">
+              <h1 className="text-base font-semibold text-gray-900">
                 {title ?? "Dashboard Siswa"}
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs text-gray-600">
                 {subtitle ??
                   "Pantau materi, kerjakan kuis, dan ikuti progres belajar Anda."}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <StudentNotificationBell notifications={notifications} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-gray-100">
+                <Button variant="ghost" className="flex items-center gap-1.5 px-1.5 hover:bg-gray-100">
                   <div className="hidden text-right sm:block">
-                    <p className="text-xs text-gray-500">Halo</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-[10px] text-gray-500">Halo</p>
+                    <p className="text-xs font-semibold text-gray-900">
                       {displayName}
                     </p>
                   </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
                     {initials}
                   </div>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-3.5 w-3.5 text-gray-500" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-3 py-2 border-b">
-                  <p className="font-medium text-gray-900">{displayName}</p>
+              <DropdownMenuContent align="end" className="w-48">
+                <div className="px-2.5 py-1.5 border-b">
+                  <p className="font-medium text-gray-900 text-sm">{displayName}</p>
                   {kelasName && (
-                    <p className="text-xs text-gray-500">Kelas {kelasName}</p>
+                    <p className="text-[10px] text-gray-500">Kelas {kelasName}</p>
                   )}
                 </div>
-                <DropdownMenuItem asChild className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
+                <DropdownMenuItem asChild className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 text-xs">
                   <Link
                     href={routeHelper ? routeHelper("logout") : "/logout"}
                     method="post"
                     as="button"
-                    className="w-full flex items-center gap-2"
+                    className="w-full flex items-center gap-1.5"
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="h-3.5 w-3.5" />
                     Logout
                   </Link>
                 </DropdownMenuItem>
@@ -240,7 +240,7 @@ export default function StudentLayout({
           </div>
         </div>
         <div className="border-t">
-          <nav className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-3 sm:flex-wrap sm:justify-start sm:overflow-visible">
+          <nav className="mx-auto flex max-w-6xl gap-1.5 overflow-x-auto px-3 py-2 sm:flex-wrap sm:justify-start sm:overflow-visible">
             {NAV_ITEMS.map(({ key, label, routeName, icon: Icon }) => {
               const isActive = key === activeKey;
               const href = resolveHref(routeName, fallbackPaths[key]);
@@ -251,9 +251,9 @@ export default function StudentLayout({
                   className="relative inline-flex shrink-0"
                 >
                   <motion.span
-                    className={`relative flex items-center gap-2 overflow-hidden rounded-lg px-4 py-2 font-medium transition ${isActive
-                        ? "text-white"
-                        : "text-gray-600 hover:text-gray-900"
+                    className={`relative flex items-center gap-1.5 overflow-hidden rounded-md px-3 py-1.5 text-xs font-medium transition ${isActive
+                      ? "text-white"
+                      : "text-gray-600 hover:text-gray-900"
                       }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -261,12 +261,12 @@ export default function StudentLayout({
                     {isActive && (
                       <motion.span
                         layoutId="student-nav-active"
-                        className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 shadow-md"
+                        className="absolute inset-0 rounded-md bg-gradient-to-r from-blue-600 to-blue-700 shadow-md"
                       />
                     )}
-                    <span className="relative z-10 flex items-center gap-2">
+                    <span className="relative z-10 flex items-center gap-1.5">
                       <Icon
-                        className={`h-5 w-5 ${isActive ? "text-white" : "text-gray-500"
+                        className={`h-4 w-4 ${isActive ? "text-white" : "text-gray-500"
                           }`}
                       />
                       <span>{label}</span>
@@ -279,7 +279,7 @@ export default function StudentLayout({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-6xl px-3 py-6">{children}</main>
       <Toaster position="top-right" richColors closeButton />
     </div>
   );

@@ -41,7 +41,7 @@ interface StudentStatsGridProps {
 
 export default function StudentStatsGrid({ stats }: StudentStatsGridProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
       {STAT_CONFIG.map(({ key, label, icon: Icon, accent }, index) => (
         <motion.div
           key={key}
@@ -50,16 +50,16 @@ export default function StudentStatsGrid({ stats }: StudentStatsGridProps) {
           transition={{ delay: index * 0.05 }}
         >
           <Card className="relative overflow-hidden border shadow-sm">
-            <div className="absolute -right-8 -top-8 h-24 w-24 rounded-3xl bg-gradient-to-br from-blue-400/10 to-blue-600/10" />
-            <CardContent className="relative flex items-center justify-between p-6">
+            <div className="absolute -right-6 -top-6 h-20 w-20 rounded-2xl bg-gradient-to-br from-blue-400/10 to-blue-600/10" />
+            <CardContent className="relative flex items-center justify-between p-4">
               <div>
-                <p className="text-sm text-gray-600">{label}</p>
-                <p className="mt-2 text-3xl font-semibold text-gray-900">
+                <p className="text-xs text-gray-600">{label}</p>
+                <p className="mt-1.5 text-2xl font-semibold text-gray-900">
                   {stats[key]}
                 </p>
               </div>
-              <div className={`rounded-lg p-3 ${accent}`}>
-                <Icon className="h-6 w-6" />
+              <div className={`rounded-md p-2.5 ${accent}`}>
+                <Icon className="h-5 w-5" />
               </div>
             </CardContent>
           </Card>

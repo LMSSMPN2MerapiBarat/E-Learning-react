@@ -57,15 +57,15 @@ const GradeSummaryGrid: React.FC<GradeSummaryGridProps> = ({
   assignmentCount,
 }) => {
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
       {summaryConfig.map(({ key, title, description, icon: Icon, gradient }, index) => {
         const value = summary[key];
         const descriptionText =
           key === "quizAverage"
             ? description(value, quizCount)
             : key === "assignmentAverage"
-            ? description(value, assignmentCount)
-            : description(value, summary.totalAssessments);
+              ? description(value, assignmentCount)
+              : description(value, summary.totalAssessments);
 
         return (
           <motion.div
@@ -76,20 +76,20 @@ const GradeSummaryGrid: React.FC<GradeSummaryGridProps> = ({
           >
             <Card className="relative overflow-hidden border shadow-sm">
               <div
-                className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-3xl bg-gradient-to-br ${gradient} opacity-30`}
+                className={`pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-2xl bg-gradient-to-br ${gradient} opacity-30`}
               />
-              <CardContent className="relative flex items-center justify-between p-6">
+              <CardContent className="relative flex items-center justify-between p-4">
                 <div>
-                  <p className="text-sm text-gray-600">{title}</p>
-                  <p className="mt-2 text-3xl font-semibold text-gray-900">
+                  <p className="text-xs text-gray-600">{title}</p>
+                  <p className="mt-1.5 text-2xl font-semibold text-gray-900">
                     {value}
                   </p>
-                  <p className="mt-1 text-sm text-gray-500">{descriptionText}</p>
+                  <p className="mt-0.5 text-xs text-gray-500">{descriptionText}</p>
                 </div>
                 <div
-                  className={`rounded-lg bg-gradient-to-br ${gradient} p-3 text-white shadow`}
+                  className={`rounded-md bg-gradient-to-br ${gradient} p-2 text-white shadow`}
                 >
-                  <Icon className="h-6 w-6" />
+                  <Icon className="h-5 w-5" />
                 </div>
               </CardContent>
             </Card>

@@ -184,56 +184,57 @@ export default function AssignmentSubmissionForm({
   return (
     <>
       <Card>
-        <CardContent className="space-y-4 p-5">
+        <CardContent className="space-y-3 p-4">
           {assignment.allowTextAnswer ? (
-            <div className="space-y-2">
-              <Label>Jawaban teks</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Jawaban teks</Label>
               <Textarea
-                rows={6}
+                rows={5}
+                className="text-xs"
                 value={form.data.text_answer}
                 onChange={(event) => form.setData("text_answer", event.target.value)}
                 placeholder="Tulis jawaban Anda..."
               />
               {form.errors.text_answer && (
-                <p className="text-xs text-destructive">{form.errors.text_answer}</p>
+                <p className="text-[10px] text-destructive">{form.errors.text_answer}</p>
               )}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Jawaban teks tidak diizinkan untuk tugas ini.
             </p>
           )}
 
           {assignment.allowFileUpload && (
-            <div className="space-y-2">
-              <Label>Lampiran jawaban</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Lampiran jawaban</Label>
 
               {/* File yang sudah ada sebelumnya */}
               {assignment.files.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">File yang sudah dilampirkan:</p>
+                <div className="space-y-1.5">
+                  <p className="text-[10px] text-muted-foreground">File yang sudah dilampirkan:</p>
                   {assignment.files.map((file) => {
                     const isRemoved = removedFileIds.includes(file.id);
                     return (
                       <div
                         key={file.id}
-                        className={`flex items-center justify-between rounded-xl border p-3 text-sm ${isRemoved
-                            ? "border-red-200 bg-red-50 opacity-60"
-                            : "border-green-200 bg-green-50"
+                        className={`flex items-center justify-between rounded-lg border p-2 text-xs ${isRemoved
+                          ? "border-red-200 bg-red-50 opacity-60"
+                          : "border-green-200 bg-green-50"
                           }`}
                       >
-                        <div className="flex items-center gap-2">
-                          <FileText className={`h-4 w-4 ${isRemoved ? "text-red-600" : "text-green-600"}`} />
+                        <div className="flex items-center gap-1.5">
+                          <FileText className={`h-3.5 w-3.5 ${isRemoved ? "text-red-600" : "text-green-600"}`} />
                           <span className={isRemoved ? "text-red-800 line-through" : "text-green-800"}>
                             {file.name}
                           </span>
                           {isRemoved && (
-                            <span className="text-xs text-red-600">(akan dihapus)</span>
+                            <span className="text-[10px] text-red-600">(akan dihapus)</span>
                           )}
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-0.5">
                           {file.url && !isRemoved && (
-                            <Button asChild size="sm" variant="ghost">
+                            <Button asChild size="sm" variant="ghost" className="h-6 px-1.5 text-[10px]">
                               <a href={file.url} target="_blank" rel="noreferrer">
                                 Lihat
                               </a>
@@ -243,7 +244,7 @@ export default function AssignmentSubmissionForm({
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="text-green-600 hover:text-green-700"
+                              className="h-6 px-1.5 text-[10px] text-green-600 hover:text-green-700"
                               onClick={() => restoreExistingFile(file.id)}
                             >
                               Batalkan
@@ -252,10 +253,10 @@ export default function AssignmentSubmissionForm({
                             <Button
                               size="icon"
                               variant="ghost"
-                              className="text-red-500 hover:text-red-600"
+                              className="h-6 w-6 text-red-500 hover:text-red-600"
                               onClick={() => removeExistingFile(file.id)}
                             >
-                              <X className="h-4 w-4" />
+                              <X className="h-3.5 w-3.5" />
                             </Button>
                           )}
                         </div>
@@ -275,32 +276,34 @@ export default function AssignmentSubmissionForm({
               <Button
                 type="button"
                 variant="outline"
-                className="w-full"
+                size="sm"
+                className="w-full text-xs"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className="mr-1.5 h-3.5 w-3.5" />
                 {assignment.files.length > 0 ? "Tambah File Baru" : "Unggah File"}
               </Button>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[10px] text-muted-foreground">
                 Tipe diizinkan: {assignment.allowedFileTypes.join(", ")}
               </p>
 
               {/* File baru yang akan diupload */}
               {form.data.files.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">File baru yang akan diunggah:</p>
+                <div className="space-y-1.5">
+                  <p className="text-[10px] text-muted-foreground">File baru yang akan diunggah:</p>
                   {form.data.files.map((file, index) => (
                     <div
                       key={`${file.name}-${index}`}
-                      className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm"
+                      className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-2 text-xs"
                     >
                       <span className="text-blue-800">{file.name}</span>
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="h-6 w-6"
                         onClick={() => removeNewFile(index)}
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   ))}
@@ -309,25 +312,29 @@ export default function AssignmentSubmissionForm({
             </div>
           )}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-1.5">
             <Button
               variant="outline"
+              size="sm"
               type="button"
+              className="text-xs"
               disabled={form.processing}
               onClick={handleSaveDraft}
             >
               {form.processing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
               ) : null}
               Simpan Draft
             </Button>
             <Button
+              size="sm"
               type="button"
+              className="text-xs"
               disabled={form.processing}
               onClick={handleSubmitClick}
             >
               {form.processing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
               ) : null}
               Kumpulkan
             </Button>

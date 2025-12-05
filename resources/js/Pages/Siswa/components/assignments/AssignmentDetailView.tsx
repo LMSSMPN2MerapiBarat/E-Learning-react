@@ -78,9 +78,9 @@ export default function AssignmentDetailView({
 
   return (
     <>
-      <div className="space-y-5">
-        <Button variant="ghost" size="sm" onClick={onBack} className="flex gap-2">
-          <ArrowLeft className="h-4 w-4" />
+      <div className="space-y-4">
+        <Button variant="ghost" size="sm" onClick={onBack} className="flex gap-1.5 text-xs">
+          <ArrowLeft className="h-3.5 w-3.5" />
           Kembali ke daftar
         </Button>
 
@@ -93,8 +93,8 @@ export default function AssignmentDetailView({
 
         {showSubmissionPreview && (
           <Card>
-            <CardContent className="space-y-3 p-5">
-              <p className="text-sm text-muted-foreground">
+            <CardContent className="space-y-2 p-4">
+              <p className="text-xs text-muted-foreground">
                 Dikumpulkan pada {formatDate(assignment.submittedDate)}
               </p>
               {assignment.status === "submitted" &&
@@ -102,41 +102,43 @@ export default function AssignmentDetailView({
                 !assignment.isClosed && (
                   <Button
                     variant="secondary"
+                    size="sm"
+                    className="text-xs"
                     onClick={handleCancelClick}
                     disabled={isCanceling}
                   >
-                    {isCanceling && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isCanceling && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
                     Batalkan Submit
                   </Button>
                 )}
               {assignment.textAnswer && (
-                <div className="space-y-1">
-                  <Label>Jawaban Teks</Label>
-                  <p className="rounded-xl border bg-muted/50 p-3 text-sm whitespace-pre-wrap">
+                <div className="space-y-0.5">
+                  <Label className="text-xs">Jawaban Teks</Label>
+                  <p className="rounded-lg border bg-muted/50 p-2 text-xs whitespace-pre-wrap">
                     {assignment.textAnswer}
                   </p>
                 </div>
               )}
               {assignment.files.length > 0 && (
-                <div className="space-y-2">
-                  <Label>Lampiran Anda</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Lampiran Anda</Label>
                   {assignment.files.map((file) => (
                     <div
                       key={file.id}
-                      className="flex items-center justify-between rounded-xl border p-3 text-sm"
+                      className="flex items-center justify-between rounded-lg border p-2 text-xs"
                     >
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                      <div className="flex items-center gap-1.5">
+                        <FileText className="h-3.5 w-3.5 text-muted-foreground" />
                         <span>{file.name}</span>
                       </div>
                       {file.url && (
-                        <div className="flex items-center gap-1">
-                          <Button asChild size="sm" variant="ghost">
+                        <div className="flex items-center gap-0.5">
+                          <Button asChild size="sm" variant="ghost" className="h-6 px-2 text-[10px]">
                             <a href={file.url} target="_blank" rel="noreferrer">
                               Lihat
                             </a>
                           </Button>
-                          <Button asChild size="sm" variant="outline">
+                          <Button asChild size="sm" variant="outline" className="h-6 px-2 text-[10px]">
                             <a href={file.url} download={file.name}>
                               Unduh
                             </a>
@@ -153,15 +155,15 @@ export default function AssignmentDetailView({
 
         {assignment.status === "graded" && (
           <Card>
-            <CardContent className="space-y-3 p-5">
-              <div className="flex items-end gap-3">
-                <p className="text-4xl font-bold">{assignment.score}</p>
-                <Badge variant="outline">/ {assignment.maxScore}</Badge>
+            <CardContent className="space-y-2 p-4">
+              <div className="flex items-end gap-2">
+                <p className="text-3xl font-bold">{assignment.score}</p>
+                <Badge variant="outline" className="text-xs">/ {assignment.maxScore}</Badge>
               </div>
               {assignment.feedback && (
-                <div className="space-y-1">
-                  <Label>Catatan Guru</Label>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                <div className="space-y-0.5">
+                  <Label className="text-xs">Catatan Guru</Label>
+                  <p className="text-xs text-muted-foreground whitespace-pre-wrap">
                     {assignment.feedback}
                   </p>
                 </div>

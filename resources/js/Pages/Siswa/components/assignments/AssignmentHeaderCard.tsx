@@ -20,17 +20,17 @@ export default function AssignmentHeaderCard({
 }: AssignmentHeaderCardProps) {
   return (
     <Card>
-      <CardContent className="space-y-4 p-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 className="text-2xl font-semibold">{assignment.title}</h2>
-          <Badge variant="outline">{assignment.subject ?? "Umum"}</Badge>
-          <Badge variant="secondary">{statusLabel}</Badge>
+      <CardContent className="space-y-3 p-4">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <h2 className="text-xl font-semibold">{assignment.title}</h2>
+          <Badge variant="outline" className="text-[10px]">{assignment.subject ?? "Umum"}</Badge>
+          <Badge variant="secondary" className="text-[10px]">{statusLabel}</Badge>
         </div>
-        <p className="text-sm text-gray-900">
+        <p className="text-xs text-gray-900">
           {assignment.teacher} • {assignment.classes.filter(Boolean).join(", ")}
         </p>
         <Alert>
-          <AlertDescription className="space-y-1 text-sm">
+          <AlertDescription className="space-y-0.5 text-xs">
             <p>
               <strong>Dibuka:</strong> {formatDate(assignment.openDate)}
             </p>
@@ -40,24 +40,24 @@ export default function AssignmentHeaderCard({
           </AlertDescription>
         </Alert>
         {assignment.description && (
-          <p className="text-sm text-gray-900 whitespace-pre-wrap">
+          <p className="text-xs text-gray-900 whitespace-pre-wrap">
             {assignment.description}
           </p>
         )}
         {assignment.attachments.length > 0 && (
-          <div className="space-y-2">
-            <Label>File Referensi</Label>
+          <div className="space-y-1.5">
+            <Label className="text-xs">File Referensi</Label>
             {assignment.attachments.map((file) => (
               <div
                 key={file.id}
-                className="flex items-center justify-between rounded-xl border p-3 text-sm"
+                className="flex items-center justify-between rounded-lg border p-2 text-xs"
               >
-                <div className="flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                <div className="flex items-center gap-1.5">
+                  <FileText className="h-3.5 w-3.5 text-muted-foreground" />
                   <span>{file.name}</span>
                 </div>
                 {file.url && (
-                  <Button asChild variant="ghost" size="sm">
+                  <Button asChild variant="ghost" size="sm" className="h-6 px-2 text-[10px]">
                     <a href={file.url} target="_blank" rel="noreferrer">
                       Unduh
                     </a>

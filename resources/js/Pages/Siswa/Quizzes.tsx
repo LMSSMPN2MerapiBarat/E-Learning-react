@@ -111,20 +111,24 @@ export default function Quizzes() {
       return;
     }
 
-    router.visit(pendingTargetUrl);
+    // Tambahkan parameter autostart agar langsung mulai tanpa start screen
+    const urlWithAutostart = pendingTargetUrl.includes("?")
+      ? `${pendingTargetUrl}&autostart=1`
+      : `${pendingTargetUrl}?autostart=1`;
+    router.visit(urlWithAutostart);
     closeConfirmation();
   };
 
   return (
     <StudentLayout
-      title="Kuis Interaktif"
+      title="Kuis"
       subtitle={
         student.className
           ? `Kelas ${student.className} - Kerjakan kuis yang dibagikan guru`
           : "Silakan hubungi admin atau guru untuk penempatan kelas."
       }
     >
-      <Head title="Kuis Interaktif" />
+      <Head title="Kuis" />
 
       <div className="space-y-6">
         {!hasClass && (

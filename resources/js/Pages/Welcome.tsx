@@ -18,7 +18,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
     {
       icon: Users,
       title: 'Pembelajaran Interaktif',
-      description: 'Kuis interaktif dan diskusi untuk meningkatkan pemahaman siswa',
+      description: 'Kuis dan diskusi untuk meningkatkan pemahaman siswa',
       color: 'bg-green-500'
     },
     {

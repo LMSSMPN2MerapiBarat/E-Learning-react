@@ -90,10 +90,10 @@ export default function Grades() {
     >
       <Head title="Nilai Saya" />
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {!hasClass && (
           <Alert className="border-l-4 border-l-amber-500">
-            <AlertDescription>
+            <AlertDescription className="text-xs">
               Akun Anda belum terhubung ke kelas. Hubungi admin atau guru agar nilai dapat ditampilkan.
             </AlertDescription>
           </Alert>
@@ -104,10 +104,10 @@ export default function Grades() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Rekap Nilai</h2>
-              <p className="text-sm text-gray-600">
+              <h2 className="text-lg font-semibold text-gray-900">Rekap Nilai</h2>
+              <p className="text-xs text-gray-600">
                 Pantau perkembangan nilai Anda sepanjang semester.
               </p>
             </div>
@@ -130,21 +130,21 @@ export default function Grades() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-xl font-semibold text-gray-900">Riwayat Nilai</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="text-base font-semibold text-gray-900">Riwayat Nilai</h3>
+              <p className="text-xs text-gray-600">
                 Detail nilai untuk setiap kuis dan tugas
               </p>
             </div>
             <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-              <SelectTrigger className="w-full sm:w-[220px]">
+              <SelectTrigger className="w-full sm:w-[180px] h-8 text-xs">
                 <SelectValue placeholder="Semua Mata Pelajaran" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Semua Mata Pelajaran</SelectItem>
+                <SelectItem value="all" className="text-xs">Semua Mata Pelajaran</SelectItem>
                 {subjects.map((subject) => (
-                  <SelectItem key={subject} value={subject}>
+                  <SelectItem key={subject} value={subject} className="text-xs">
                     {subject}
                   </SelectItem>
                 ))}

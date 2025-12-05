@@ -20,25 +20,25 @@ const QuickActionsCard: React.FC<QuickActionsCardProps> = ({ routeHelper }) => {
 
   return (
     <Card className="border shadow-sm">
-      <CardHeader>
-        <CardTitle>Kegiatan Cepat</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">Kegiatan Cepat</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-3 md:grid-cols-3">
-        <Button asChild variant="outline" className="justify-start gap-3">
+      <CardContent className="grid gap-2 md:grid-cols-3">
+        <Button asChild variant="outline" size="sm" className="justify-start gap-2 text-xs">
           <Link href={materialsUrl}>
-            <BookOpen className="h-5 w-5 text-blue-600" />
+            <BookOpen className="h-4 w-4 text-blue-600" />
             Lihat Materi Pembelajaran
           </Link>
         </Button>
-        <Button asChild variant="outline" className="justify-start gap-3">
+        <Button asChild variant="outline" size="sm" className="justify-start gap-2 text-xs">
           <Link href={quizzesUrl}>
-            <ClipboardList className="h-5 w-5 text-emerald-600" />
+            <ClipboardList className="h-4 w-4 text-emerald-600" />
             Kerjakan Kuis Tersedia
           </Link>
         </Button>
-        <Button asChild variant="outline" className="justify-start gap-3">
+        <Button asChild variant="outline" size="sm" className="justify-start gap-2 text-xs">
           <Link href={gradesUrl}>
-            <FileText className="h-5 w-5 text-purple-600" />
+            <FileText className="h-4 w-4 text-purple-600" />
             Lihat Nilai Saya
           </Link>
         </Button>

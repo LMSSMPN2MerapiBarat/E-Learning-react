@@ -20,9 +20,9 @@ interface AssignmentTabsProps {
 const formatDeadline = (value?: string | null) =>
   value
     ? new Date(value).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-      })
+      day: "numeric",
+      month: "long",
+    })
     : "-";
 
 const AssignmentList = ({
@@ -38,24 +38,24 @@ const AssignmentList = ({
 }) => {
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed p-10 text-center text-sm text-muted-foreground">
+      <div className="rounded-lg border border-dashed p-8 text-center text-xs text-muted-foreground">
         {emptyText}
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {items.map((assignment) => (
         <Card key={assignment.id} className="border-l-4 border-l-blue-500">
-          <CardContent className="flex flex-col gap-3 p-5 md:flex-row md:items-center md:justify-between">
+          <CardContent className="flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-lg font-semibold">{assignment.title}</p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <p className="text-base font-semibold">{assignment.title}</p>
                 {assignment.subject && (
-                  <Badge variant="outline">{assignment.subject}</Badge>
+                  <Badge variant="outline" className="text-[10px]">{assignment.subject}</Badge>
                 )}
-                <Badge variant="secondary">
+                <Badge variant="secondary" className="text-[10px]">
                   {assignment.status === "pending"
                     ? "Belum dikumpulkan"
                     : assignment.status === "submitted"
@@ -65,23 +65,23 @@ const AssignmentList = ({
                         : "Dinilai"}
                 </Badge>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+              <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">
                 {assignment.description}
               </p>
-              <div className="mt-2 flex flex-wrap gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" />
+              <div className="mt-1.5 flex flex-wrap gap-3 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-0.5">
+                  <Calendar className="h-3 w-3" />
                   Batas: {formatDeadline(assignment.closeDate)}
                 </span>
                 {assignment.submittedDate && (
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" />
+                  <span className="flex items-center gap-0.5">
+                    <Clock className="h-3 w-3" />
                     Dikumpulkan: {formatDeadline(assignment.submittedDate)}
                   </span>
                 )}
               </div>
             </div>
-            <Button onClick={() => onSelect(assignment)}>{actionLabel}</Button>
+            <Button size="sm" className="text-xs" onClick={() => onSelect(assignment)}>{actionLabel}</Button>
           </CardContent>
         </Card>
       ))}
@@ -96,15 +96,15 @@ export default function AssignmentTabs({
   onSelect,
 }: AssignmentTabsProps) {
   return (
-    <Tabs defaultValue="pending" className="space-y-4">
+    <Tabs defaultValue="pending" className="space-y-3">
       <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="pending">
+        <TabsTrigger value="pending" className="text-xs">
           Belum Dikumpulkan ({pending.length})
         </TabsTrigger>
-        <TabsTrigger value="submitted">
+        <TabsTrigger value="submitted" className="text-xs">
           Menunggu Nilai ({submitted.length})
         </TabsTrigger>
-        <TabsTrigger value="graded">
+        <TabsTrigger value="graded" className="text-xs">
           Dinilai ({graded.length})
         </TabsTrigger>
       </TabsList>

@@ -20,7 +20,7 @@ export default function Materials() {
     >
       <Head title="Materi Pembelajaran" />
 
-      <div className="space-y-6">
+      <div className="space-y-4">
         {!hasClass && (
           <Alert className="border-l-4 border-l-amber-500">
             <AlertDescription>
