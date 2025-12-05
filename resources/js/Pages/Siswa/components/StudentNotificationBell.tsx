@@ -217,7 +217,14 @@ export default function StudentNotificationBell({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 p-0">
+      <DropdownMenuContent
+        align="end"
+        className="w-64 p-0"
+        style={{
+          transform: 'scale(0.7)',
+          transformOrigin: 'top right'
+        }}
+      >
         <DropdownMenuLabel className="flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide">
           <span>Notifikasi</span>
           {unreadCount > 0 && (

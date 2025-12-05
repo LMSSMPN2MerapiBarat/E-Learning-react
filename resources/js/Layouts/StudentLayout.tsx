@@ -241,7 +241,7 @@ export default function StudentLayout({
           </div>
         </div>
         <div className="border-t">
-          <nav className="mx-auto flex max-w-6xl gap-1.5 overflow-x-auto px-3 py-2 sm:flex-wrap sm:justify-start sm:overflow-visible">
+          <nav className="mx-auto flex gap-1.5 overflow-x-auto px-3 py-2 sm:flex-wrap sm:justify-start sm:overflow-visible">
             {NAV_ITEMS.map(({ key, label, routeName, icon: Icon }) => {
               const isActive = key === activeKey;
               const href = resolveHref(routeName, fallbackPaths[key]);
@@ -280,7 +280,7 @@ export default function StudentLayout({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-3 py-6">{children}</main>
+      <main className="px-4 py-6">{children}</main>
       <Toaster position="top-right" richColors closeButton />
     </div>
   );
