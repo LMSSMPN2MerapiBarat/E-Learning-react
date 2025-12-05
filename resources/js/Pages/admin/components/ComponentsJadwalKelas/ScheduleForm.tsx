@@ -146,11 +146,21 @@ export default function ScheduleForm({
                   </Command>
                 </PopoverContent>
               </Popover>
+              {/* Hidden input untuk native browser validation */}
+              <input
+                type="text"
+                value={values.guru_id || ""}
+                required
+                className="sr-only"
+                tabIndex={-1}
+                onFocus={() => setTeacherOpen(true)}
+              />
             </Field>
             <Field label="Mata Pelajaran" error={errors.mata_pelajaran_id}>
               <Select
                 value={values.mata_pelajaran_id?.toString() ?? ""}
                 onValueChange={(value) => onChange("mata_pelajaran_id", value)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih mata pelajaran" />
@@ -163,6 +173,13 @@ export default function ScheduleForm({
                   ))}
                 </SelectContent>
               </Select>
+              <input
+                type="text"
+                value={values.mata_pelajaran_id || ""}
+                required
+                className="sr-only"
+                tabIndex={-1}
+              />
             </Field>
           </div>
 
@@ -171,6 +188,7 @@ export default function ScheduleForm({
               <Select
                 value={values.kelas_id?.toString() ?? ""}
                 onValueChange={(value) => onChange("kelas_id", value)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih kelas" />
@@ -183,9 +201,16 @@ export default function ScheduleForm({
                   ))}
                 </SelectContent>
               </Select>
+              <input
+                type="text"
+                value={values.kelas_id || ""}
+                required
+                className="sr-only"
+                tabIndex={-1}
+              />
             </Field>
             <Field label="Hari" error={errors.day}>
-              <Select value={values.day} onValueChange={(value) => onChange("day", value)}>
+              <Select value={values.day} onValueChange={(value) => onChange("day", value)} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih hari" />
                 </SelectTrigger>
@@ -197,6 +222,13 @@ export default function ScheduleForm({
                   ))}
                 </SelectContent>
               </Select>
+              <input
+                type="text"
+                value={values.day || ""}
+                required
+                className="sr-only"
+                tabIndex={-1}
+              />
             </Field>
           </div>
 
@@ -206,6 +238,7 @@ export default function ScheduleForm({
                 type="time"
                 value={values.start_time}
                 onChange={(event) => onChange("start_time", event.target.value)}
+                required
               />
             </Field>
             <Field label="Jam Selesai" error={errors.end_time}>
@@ -213,6 +246,7 @@ export default function ScheduleForm({
                 type="time"
                 value={values.end_time}
                 onChange={(event) => onChange("end_time", event.target.value)}
+                required
               />
             </Field>
           </div>
