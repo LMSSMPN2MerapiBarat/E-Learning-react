@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/Components/ui/card";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 import { Button } from "@/Components/ui/button";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, FileText } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,16 +27,23 @@ export default function AssignmentSubmissionForm({
 }: AssignmentSubmissionFormProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
-  const form = useForm<{ text_answer: string; files: File[] }>({
+  const [removedFileIds, setRemovedFileIds] = useState<number[]>([]);
+  const form = useForm<{ text_answer: string; files: File[]; removed_file_ids: number[] }>({
     text_answer: assignment.textAnswer ?? "",
     files: [],
+    removed_file_ids: [],
   });
+
+  // File yang masih ada (belum dihapus)
+  const existingFiles = assignment.files.filter(f => !removedFileIds.includes(f.id));
 
   useEffect(() => {
     form.setData({
       text_answer: assignment.textAnswer ?? "",
       files: [],
+      removed_file_ids: [],
     });
+    setRemovedFileIds([]);
     form.clearErrors();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assignment.id]);
@@ -82,11 +89,22 @@ export default function AssignmentSubmissionForm({
     );
   };
 
+  const removeExistingFile = (fileId: number) => {
+    setRemovedFileIds(prev => [...prev, fileId]);
+    form.setData("removed_file_ids", [...removedFileIds, fileId]);
+  };
+
+  const restoreExistingFile = (fileId: number) => {
+    const newRemovedIds = removedFileIds.filter(id => id !== fileId);
+    setRemovedFileIds(newRemovedIds);
+    form.setData("removed_file_ids", newRemovedIds);
+  };
+
   // Validasi sebelum submit
   const validateSubmission = (): string | null => {
     const hasText = form.data.text_answer.trim().length > 0;
     const hasFiles = form.data.files.length > 0;
-    const hasExistingFiles = assignment.files.length > 0;
+    const hasExistingFiles = existingFiles.length > 0;
 
     // Cek apakah ada jawaban yang diisi
     if (!hasText && !hasFiles && !hasExistingFiles) {
@@ -135,8 +153,10 @@ export default function AssignmentSubmissionForm({
   const handleSaveDraft = () => {
     const hasText = form.data.text_answer.trim().length > 0;
     const hasFiles = form.data.files.length > 0;
+    const hasExistingFiles = existingFiles.length > 0;
+    const hasChanges = hasText || hasFiles || removedFileIds.length > 0;
 
-    if (!hasText && !hasFiles) {
+    if (!hasText && !hasFiles && !hasExistingFiles && removedFileIds.length === 0) {
       toast.error("Tidak ada perubahan untuk disimpan", {
         description: "Harap isi jawaban teks atau unggah file terlebih dahulu.",
       });
@@ -187,6 +207,64 @@ export default function AssignmentSubmissionForm({
           {assignment.allowFileUpload && (
             <div className="space-y-2">
               <Label>Lampiran jawaban</Label>
+
+              {/* File yang sudah ada sebelumnya */}
+              {assignment.files.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">File yang sudah dilampirkan:</p>
+                  {assignment.files.map((file) => {
+                    const isRemoved = removedFileIds.includes(file.id);
+                    return (
+                      <div
+                        key={file.id}
+                        className={`flex items-center justify-between rounded-xl border p-3 text-sm ${isRemoved
+                            ? "border-red-200 bg-red-50 opacity-60"
+                            : "border-green-200 bg-green-50"
+                          }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <FileText className={`h-4 w-4 ${isRemoved ? "text-red-600" : "text-green-600"}`} />
+                          <span className={isRemoved ? "text-red-800 line-through" : "text-green-800"}>
+                            {file.name}
+                          </span>
+                          {isRemoved && (
+                            <span className="text-xs text-red-600">(akan dihapus)</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {file.url && !isRemoved && (
+                            <Button asChild size="sm" variant="ghost">
+                              <a href={file.url} target="_blank" rel="noreferrer">
+                                Lihat
+                              </a>
+                            </Button>
+                          )}
+                          {isRemoved ? (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-green-600 hover:text-green-700"
+                              onClick={() => restoreExistingFile(file.id)}
+                            >
+                              Batalkan
+                            </Button>
+                          ) : (
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="text-red-500 hover:text-red-600"
+                              onClick={() => removeExistingFile(file.id)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
               <input
                 type="file"
                 ref={fileInputRef}
@@ -201,19 +279,22 @@ export default function AssignmentSubmissionForm({
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="mr-2 h-4 w-4" />
-                Unggah File
+                {assignment.files.length > 0 ? "Tambah File Baru" : "Unggah File"}
               </Button>
               <p className="text-xs text-muted-foreground">
                 Tipe diizinkan: {assignment.allowedFileTypes.join(", ")}
               </p>
+
+              {/* File baru yang akan diupload */}
               {form.data.files.length > 0 && (
                 <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground">File baru yang akan diunggah:</p>
                   {form.data.files.map((file, index) => (
                     <div
                       key={`${file.name}-${index}`}
-                      className="flex items-center justify-between rounded-xl border p-3 text-sm"
+                      className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm"
                     >
-                      <span>{file.name}</span>
+                      <span className="text-blue-800">{file.name}</span>
                       <Button
                         variant="ghost"
                         size="icon"

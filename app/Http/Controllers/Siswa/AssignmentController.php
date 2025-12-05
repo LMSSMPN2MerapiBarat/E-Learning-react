@@ -105,6 +105,11 @@ class AssignmentController extends Controller
             $this->replaceSubmissionFiles($submission, $assignment, $request);
         }
 
+        // Hapus file yang ditandai untuk dihapus
+        if (!empty($payload['removed_file_ids'])) {
+            $this->removeSubmissionFilesByIds($submission, $payload['removed_file_ids']);
+        }
+
         return back()->with('success', 'Draft tugas berhasil disimpan.');
     }
 
@@ -142,6 +147,11 @@ class AssignmentController extends Controller
 
         if ($request->hasFile('files')) {
             $this->replaceSubmissionFiles($submission, $assignment, $request);
+        }
+
+        // Hapus file yang ditandai untuk dihapus
+        if (!empty($payload['removed_file_ids'])) {
+            $this->removeSubmissionFilesByIds($submission, $payload['removed_file_ids']);
         }
 
         return back()->with('success', 'Tugas berhasil dikumpulkan.');
@@ -185,6 +195,8 @@ class AssignmentController extends Controller
             'text_answer' => 'nullable|string',
             'files' => 'nullable|array',
             'files.*' => 'file|max:51200',
+            'removed_file_ids' => 'nullable|array',
+            'removed_file_ids.*' => 'integer',
         ]);
 
         if (!$assignment->allow_file_upload && $request->hasFile('files')) {
@@ -239,6 +251,7 @@ class AssignmentController extends Controller
 
         return [
             'text_answer' => $assignment->allow_text_answer ? ($data['text_answer'] ?? null) : null,
+            'removed_file_ids' => $data['removed_file_ids'] ?? [],
         ];
     }
 
@@ -384,6 +397,19 @@ class AssignmentController extends Controller
 
             $file->delete();
         });
+    }
+
+    protected function removeSubmissionFilesByIds(AssignmentSubmission $submission, array $fileIds): void
+    {
+        if (empty($fileIds)) {
+            return;
+        }
+
+        $files = $submission->files()
+            ->whereIn('id', $fileIds)
+            ->get();
+
+        $this->purgeSubmissionFiles($files);
     }
 
     protected function defaultAllowedFileTypes(): array
