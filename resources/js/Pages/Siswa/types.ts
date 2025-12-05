@@ -110,6 +110,17 @@ export interface QuizAttemptLite {
   submittedAt?: string | null;
 }
 
+export interface QuizAttemptAnswerDetail {
+  questionId: number;
+  selectedOption?: number | null;
+  isCorrect?: boolean;
+}
+
+export interface QuizAttemptDetail extends QuizAttemptLite {
+  durationSeconds?: number | null;
+  answers: QuizAttemptAnswerDetail[];
+}
+
 export interface QuizItem {
   id: number;
   title: string;
