@@ -45,7 +45,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div className="space-y-2">
-        <Label htmlFor="title">Judul Kuis</Label>
+        <Label htmlFor="title">Judul Kuis <span className="text-red-500">*</span></Label>
         <Input
           id="title"
           required
@@ -57,7 +57,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="duration">Durasi (menit)</Label>
+        <Label htmlFor="duration">Durasi (menit) <span className="text-red-500">*</span></Label>
         <Input
           id="duration"
           type="number"
@@ -73,7 +73,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
       </div>
 
       <div className="space-y-2">
-        <Label>Limit Percobaan</Label>
+        <Label>Limit Percobaan <span className="text-red-500">*</span></Label>
         <Select
           value={data.max_attempts}
           onValueChange={(value) =>
@@ -82,6 +82,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
               value as QuizAttemptLimitOption,
             )
           }
+          required
         >
           <SelectTrigger aria-required="true">
             <SelectValue placeholder="Pilih batas percobaan" />
@@ -92,6 +93,13 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
             <SelectItem value="2">2 kali percobaan</SelectItem>
           </SelectContent>
         </Select>
+        <input
+          type="text"
+          value={data.max_attempts ?? ""}
+          required
+          className="sr-only"
+          tabIndex={-1}
+        />
         <p className="text-xs text-gray-500">
           Batasi berapa kali siswa dapat mengerjakan kuis ini.
         </p>
@@ -103,12 +111,13 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="mapel">Mata Pelajaran</Label>
+        <Label htmlFor="mapel">Mata Pelajaran <span className="text-red-500">*</span></Label>
         <Select
           value={data.mata_pelajaran_id?.toString() ?? ""}
           onValueChange={(value) =>
             setData("mata_pelajaran_id", value ? Number(value) : null)
           }
+          required
         >
           <SelectTrigger id="mapel" aria-required="true">
             <SelectValue placeholder="Pilih mata pelajaran" />
@@ -121,16 +130,24 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
             ))}
           </SelectContent>
         </Select>
+        <input
+          type="text"
+          value={data.mata_pelajaran_id ?? ""}
+          required
+          className="sr-only"
+          tabIndex={-1}
+        />
         {errors.mata_pelajaran_id && (
           <p className="text-xs text-red-500">{errors.mata_pelajaran_id}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label>Status Kuis</Label>
+        <Label>Status Kuis <span className="text-red-500">*</span></Label>
         <Select
           value={data.status}
           onValueChange={(value) => setData("status", value as QuizStatus)}
+          required
         >
           <SelectTrigger aria-required="true">
             <SelectValue placeholder="Pilih status" />
@@ -140,6 +157,13 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
             <SelectItem value="published">Dipublikasikan</SelectItem>
           </SelectContent>
         </Select>
+        <input
+          type="text"
+          value={data.status ?? ""}
+          required
+          className="sr-only"
+          tabIndex={-1}
+        />
         {errors.status && (
           <p className="text-xs text-red-500">{errors.status}</p>
         )}

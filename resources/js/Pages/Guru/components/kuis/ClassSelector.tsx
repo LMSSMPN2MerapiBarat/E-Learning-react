@@ -18,7 +18,7 @@ const ClassSelector: React.FC<ClassSelectorProps> = ({
 }) => (
   <div className="space-y-2">
     <div>
-      <p className="text-sm font-medium text-gray-700">Pilih Kelas</p>
+      <p className="text-sm font-medium text-gray-700">Pilih Kelas <span className="text-red-500">*</span></p>
       <p className="text-xs text-gray-500">
         Pilih satu atau lebih kelas untuk menerima kuis ini.
       </p>
@@ -39,8 +39,16 @@ const ClassSelector: React.FC<ClassSelectorProps> = ({
         );
       })}
     </div>
+    <input
+      type="text"
+      value={selectedIds.length > 0 ? selectedIds.join(",") : ""}
+      required
+      className="sr-only"
+      tabIndex={-1}
+    />
     {error && <p className="text-xs text-red-500">{error}</p>}
   </div>
 );
 
 export default ClassSelector;
+
