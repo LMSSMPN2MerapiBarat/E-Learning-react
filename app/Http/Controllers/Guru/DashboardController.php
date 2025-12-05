@@ -29,7 +29,6 @@ class DashboardController extends Controller
         $recentMateri = Materi::with(['kelas', 'mataPelajaran'])
             ->where('guru_id', $guru->id)
             ->latest()
-            ->take(5)
             ->get()
             ->map(function ($materi) {
                 return [
@@ -50,7 +49,6 @@ class DashboardController extends Controller
         $recentQuizzes = Quiz::with(['mataPelajaran', 'kelas', 'questions'])
             ->where('guru_id', $guru->id)
             ->latest()
-            ->take(5)
             ->get()
             ->map(function ($quiz) {
                 return [
