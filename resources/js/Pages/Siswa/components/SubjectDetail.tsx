@@ -225,12 +225,54 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                               <div className="mt-3 text-xs text-gray-500">
                                 {material.uploadedAt
                                   ? material.uploadedAt.toLocaleDateString("id-ID", {
-                                      day: "numeric",
-                                      month: "long",
-                                      year: "numeric",
-                                    })
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                  })
                                   : "Tanggal tidak tersedia"}
                               </div>
+
+                              {/* Tampilan File yang Dilampirkan */}
+                              {material.fileName && (
+                                <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                                  <div className="flex items-start gap-3">
+                                    <FileText className="h-5 w-5 text-gray-500 shrink-0 mt-0.5" />
+                                    <div className="flex-1">
+                                      <p className="font-medium text-sm text-gray-800 break-all">
+                                        {material.fileName}
+                                      </p>
+                                      <div className="flex items-center justify-between mt-2">
+                                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                                          <span className="uppercase font-semibold text-[10px] bg-gray-200 px-1.5 py-0.5 rounded">
+                                            {material.fileName.split('.').pop()?.toUpperCase() || 'FILE'}
+                                          </span>
+                                          {material.fileSize && (
+                                            <span>{formatFileSize(material.fileSize)}</span>
+                                          )}
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                          {previewHref && (
+                                            <Button size="sm" variant="ghost" className="h-7 px-2" asChild>
+                                              <a href={previewHref} target="_blank" rel="noopener noreferrer">
+                                                <Eye className="h-3.5 w-3.5 mr-1" />
+                                                Lihat
+                                              </a>
+                                            </Button>
+                                          )}
+                                          {downloadHref && (
+                                            <Button size="sm" variant="ghost" className="h-7 px-2" asChild>
+                                              <a href={downloadHref} download={material.fileName}>
+                                                <Download className="h-3.5 w-3.5 mr-1" />
+                                                Unduh
+                                              </a>
+                                            </Button>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
 
                               {(material.youtubeEmbedUrl || material.videoUrl) && (
                                 <div className="mt-4 space-y-4">
@@ -294,7 +336,8 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                               ) : null}
 
                               <div className="mt-4 flex flex-wrap gap-2">
-                                {previewHref && (
+                                {/* Tombol untuk file hanya ditampilkan jika tidak ada fileName (sudah ada di box file) */}
+                                {!material.fileName && previewHref && (
                                   <Button
                                     variant="default"
                                     size="sm"
@@ -311,7 +354,7 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                                     </a>
                                   </Button>
                                 )}
-                                {downloadHref && (
+                                {!material.fileName && downloadHref && (
                                   <Button variant="outline" size="sm" className="flex-1" asChild>
                                     <a href={downloadHref} target="_blank" rel="noopener noreferrer">
                                       <Download className="mr-2 h-4 w-4" />
@@ -374,16 +417,14 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                       transition={{ delay: index * 0.05 }}
                     >
                       <Card
-                        className={`border-l-4 ${
-                          completed ? "border-l-green-600 bg-green-50/30" : "border-l-blue-600"
-                        }`}
+                        className={`border-l-4 ${completed ? "border-l-green-600 bg-green-50/30" : "border-l-blue-600"
+                          }`}
                       >
                         <CardContent className="p-6">
                           <div className="flex gap-3">
                             <div
-                              className={`rounded-lg p-3 ${
-                                completed ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"
-                              }`}
+                              className={`rounded-lg p-3 ${completed ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"
+                                }`}
                             >
                               {completed ? (
                                 <CheckCircle className="h-6 w-6" />
@@ -413,12 +454,12 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                               <div className="mt-3 text-xs text-gray-500">
                                 {quiz.availableUntil
                                   ? `Batas akhir: ${new Date(
-                                      quiz.availableUntil,
-                                    ).toLocaleDateString("id-ID", {
-                                      day: "numeric",
-                                      month: "long",
-                                      year: "numeric",
-                                    })}`
+                                    quiz.availableUntil,
+                                  ).toLocaleDateString("id-ID", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                  })}`
                                   : "Tidak ada batas akhir"}
                               </div>
                               <div className="mt-4">
@@ -536,3 +577,12 @@ function subjectDecoration(id: number) {
   ];
   return palette[id % palette.length];
 }
+
+function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
