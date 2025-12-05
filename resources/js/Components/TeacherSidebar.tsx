@@ -46,29 +46,29 @@ export default function TeacherSidebar({ sidebarOpen, onToggle }: TeacherSidebar
     <>
       <div
         className={cn(
-          "fixed inset-y-0 z-30 w-64 border-r bg-white shadow-lg transition-transform duration-300",
+          "fixed inset-y-0 z-30 w-56 border-r bg-white shadow-lg transition-transform duration-300",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between border-b px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-lg">
-              <BookOpen className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between border-b px-3 py-3">
+          <div className="flex items-center gap-2">
+            <div className="bg-blue-600 p-1.5 rounded-lg">
+              <BookOpen className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h2 className="text-sm font-semibold text-gray-800">Panel Guru</h2>
-              <p className="text-xs text-gray-500">SMP Negeri 2 Merapi Barat</p>
+              <h2 className="text-xs font-semibold text-gray-800">Panel Guru</h2>
+              <p className="text-[10px] text-gray-500">SMP Negeri 2 Merapi Barat</p>
             </div>
           </div>
           <button
             onClick={onToggle}
-            className="rounded-md p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+            className="rounded-md p-0.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 lg:hidden"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-4 h-4" />
           </button>
         </div>
 
-        <nav className="mt-4 space-y-1 px-4">
+        <nav className="mt-3 space-y-0.5 px-3">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const active = activeHref === item.href;
@@ -78,26 +78,27 @@ export default function TeacherSidebar({ sidebarOpen, onToggle }: TeacherSidebar
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition",
+                  "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition",
                   active
                     ? "bg-blue-100 text-blue-700"
                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-800",
                 )}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-3.5 h-3.5" />
                 {item.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="absolute bottom-4 w-full px-4">
+        <div className="absolute bottom-3 w-full px-3">
           <Button
             variant="outline"
-            className="flex w-full items-center justify-start gap-2"
+            size="sm"
+            className="flex w-full items-center justify-start gap-1.5 text-xs"
             onClick={handleLogout}
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-3.5 h-3.5" />
             Logout
           </Button>
         </div>

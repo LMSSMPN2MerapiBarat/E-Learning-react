@@ -14,23 +14,23 @@ const MateriListHeader: React.FC<MateriListHeaderProps> = ({
   onSearchChange,
   onCreateClick,
 }) => (
-  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
     <div>
-      <h2 className="text-xl font-semibold text-gray-900">Materi Pembelajaran</h2>
-      <p className="text-sm text-gray-600">
+      <h2 className="text-base font-semibold text-gray-900">Materi Pembelajaran</h2>
+      <p className="text-xs text-gray-600">
         Unggah dan kelola materi yang dapat diakses oleh siswa di kelas yang Anda pilih.
       </p>
     </div>
-    <div className="flex w-full items-center gap-2 md:w-auto">
+    <div className="flex w-full items-center gap-1.5 md:w-auto">
       <Input
         type="search"
         placeholder="Cari materi..."
         value={searchTerm}
         onChange={(event) => onSearchChange(event.target.value)}
-        className="w-full md:w-64"
+        className="w-full md:w-56 h-8 text-xs"
       />
-      <Button onClick={onCreateClick}>
-        <Plus className="mr-2 h-4 w-4" />
+      <Button size="sm" onClick={onCreateClick}>
+        <Plus className="mr-1.5 h-3.5 w-3.5" />
         Unggah Materi
       </Button>
     </div>

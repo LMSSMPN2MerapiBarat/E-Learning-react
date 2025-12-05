@@ -93,7 +93,7 @@ export default function KuisPage() {
 
   return (
     <TeacherLayout title="Kelola Kuis">
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Card>
           <CardHeader>
             <QuizListHeader
@@ -128,7 +128,7 @@ export default function KuisPage() {
       />
 
       <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
             <AlertDialogTitle>{feedback?.title}</AlertDialogTitle>
             <AlertDialogDescription>

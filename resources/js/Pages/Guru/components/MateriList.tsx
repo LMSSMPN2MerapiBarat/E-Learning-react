@@ -11,7 +11,7 @@ import {
 import {
   FileText,
   Download,
-  Pencil,
+  Edit,
   Trash2,
   PlayCircle,
   Youtube,
@@ -60,13 +60,13 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
   }, [items.length, totalPages, currentPage]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {items.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-gray-500">
-            <FileText className="mx-auto mb-3 h-12 w-12 text-gray-400" />
-            <p>Belum ada materi yang diunggah.</p>
-            <p className="text-sm">
+          <CardContent className="py-8 text-center text-gray-500">
+            <FileText className="mx-auto mb-2 h-10 w-10 text-gray-400" />
+            <p className="text-sm">Belum ada materi yang diunggah.</p>
+            <p className="text-xs">
               Klik tombol "Unggah Materi" untuk menambahkan.
             </p>
           </CardContent>
@@ -87,23 +87,23 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
 
             return (
               <Card key={materi.id} className="border transition-shadow hover:shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                <CardContent className="p-4">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div className="flex-1">
-                      <div className="flex items-start gap-3">
-                        <div className="rounded-lg bg-blue-100 p-2">
-                          <FileText className="h-5 w-5 text-blue-600" />
+                      <div className="flex items-start gap-2">
+                        <div className="rounded-lg bg-blue-100 p-1.5">
+                          <FileText className="h-4 w-4 text-blue-600" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-base font-semibold text-gray-800">
+                          <h3 className="text-sm font-semibold text-gray-800">
                             {materi.judul}
                           </h3>
                           {materi.deskripsi && (
-                            <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                            <p className="mt-0.5 text-xs text-gray-600 line-clamp-2">
                               {materi.deskripsi}
                             </p>
                           )}
-                          <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
+                          <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] text-gray-500">
                             {materi.mapel?.nama && (
                               <Badge variant="outline">{materi.mapel.nama}</Badge>
                             )}
@@ -132,21 +132,23 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5">
                       <Button
                         variant="outline"
                         size="sm"
+                        className="h-7 text-xs"
                         onClick={() => setDetailItem(materi)}
                       >
-                        <Eye className="mr-2 h-4 w-4" />
+                        <Eye className="mr-1.5 h-3.5 w-3.5" />
                         Detail
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
+                        className="h-7 text-xs"
                         onClick={() => onDelete(materi.id)}
                       >
-                        <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+                        <Trash2 className="mr-1.5 h-3.5 w-3.5 text-red-600" />
                         Hapus
                       </Button>
                     </div>
@@ -158,31 +160,33 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t pt-4">
-              <p className="text-sm text-gray-500">
+            <div className="flex items-center justify-between border-t pt-3">
+              <p className="text-xs text-gray-500">
                 Menampilkan {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, items.length)} dari {items.length} materi
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 text-xs"
                   onClick={() => setCurrentPage((p) => p - 1)}
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-3.5 w-3.5" />
                   Prev
                 </Button>
-                <span className="text-sm font-medium px-2">
+                <span className="text-xs font-medium px-1.5">
                   {currentPage} / {totalPages}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 text-xs"
                   onClick={() => setCurrentPage((p) => p + 1)}
                   disabled={currentPage === totalPages}
                 >
                   Next
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
@@ -199,7 +203,7 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
               Detail Materi
             </DialogTitle>
           </DialogHeader>
-          
+
           {detailItem && (
             <div className="space-y-6">
               {/* Judul */}
@@ -336,11 +340,11 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
                 <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                   {detailItem.created_at
                     ? new Date(detailItem.created_at).toLocaleDateString("id-ID", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
                     : <span className="italic text-gray-400">-</span>}
                 </p>
               </div>
@@ -354,7 +358,7 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
                   onEdit(detailItem);
                   setDetailItem(null);
                 }}>
-                  <Pencil className="mr-2 h-4 w-4" />
+                  <Edit className="mr-2 h-4 w-4" />
                   Edit Materi
                 </Button>
               </div>

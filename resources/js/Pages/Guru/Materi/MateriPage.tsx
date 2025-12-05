@@ -90,7 +90,7 @@ export default function MateriPage() {
 
   return (
     <TeacherLayout title="Kelola Materi Pembelajaran">
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Card>
           <CardHeader>
             <MateriListHeader
@@ -124,7 +124,7 @@ export default function MateriPage() {
       />
 
       <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
             <AlertDialogTitle>{feedback?.title}</AlertDialogTitle>
             <AlertDialogDescription>

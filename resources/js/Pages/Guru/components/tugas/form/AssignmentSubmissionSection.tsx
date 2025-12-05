@@ -75,7 +75,7 @@ export default function AssignmentSubmissionSection({
                     onKeyDown={(event) =>
                       event.key === "Enter" && toggleFileType(ext)
                     }
-                    className={active ? "" : "border-dashed bg-transparent"}
+                    className={active ? "" : "border-dashed bg-transparent text-foreground"}
                   >
                     {ext.toUpperCase()}
                   </Badge>

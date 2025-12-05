@@ -18,12 +18,12 @@ const SubjectsCard: React.FC<SubjectsCardProps> = ({ subjects }) => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Mata Pelajaran Diampu</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">Mata Pelajaran Diampu</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
+      <CardContent className="flex flex-wrap gap-1.5">
         {subjects.map((nama) => (
-          <Badge key={nama} variant="outline" className="px-3 py-1">
+          <Badge key={nama} variant="outline" className="px-2 py-0.5 text-xs">
             {nama}
           </Badge>
         ))}

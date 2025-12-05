@@ -26,12 +26,12 @@ export default function GuruDashboard() {
 
   return (
     <TeacherLayout title="Dashboard Guru">
-      <div className="space-y-6">
+      <div className="space-y-4">
         <StatOverview stats={stats} />
 
         <SubjectsCard subjects={mataPelajaran} />
 
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid gap-3 lg:grid-cols-2">
           <RecentMateriCard items={recentMateri} />
           <RecentQuizzesCard items={recentQuizzes} />
         </div>

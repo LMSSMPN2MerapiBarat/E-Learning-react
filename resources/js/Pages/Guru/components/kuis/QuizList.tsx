@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
-import { ClipboardList, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ClipboardList, Edit, Trash2, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import type { QuizItem } from "@/Pages/Guru/components/kuis/formTypes";
 
 const ITEMS_PER_PAGE = 5;
@@ -126,21 +126,21 @@ const QuizList: React.FC<QuizListProps> = ({ quizzes, onView, onEdit, onDelete }
                       )}
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button variant="outline" size="sm" onClick={() => onView(quiz)}>
-                      Detail
+                  <div className="flex flex-wrap gap-1">
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onView(quiz)} title="Detail">
+                      <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => onEdit(quiz)}>
-                      <Pencil className="mr-2 h-4 w-4" />
-                      Edit
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onEdit(quiz)} title="Edit">
+                      <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="outline"
-                      size="sm"
+                      size="icon"
+                      className="h-8 w-8"
                       onClick={() => onDelete(quiz.id)}
+                      title="Hapus"
                     >
-                      <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                      Hapus
+                      <Trash2 className="h-4 w-4 text-red-600" />
                     </Button>
                   </div>
                 </CardContent>

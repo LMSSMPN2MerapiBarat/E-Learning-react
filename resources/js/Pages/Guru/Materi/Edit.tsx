@@ -109,8 +109,8 @@ export default function EditMateri({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-3">
+      <div className="space-y-1">
         <Label htmlFor="judul_edit">Judul Materi <span className="text-red-500">*</span></Label>
         <Input
           id="judul_edit"
@@ -124,11 +124,11 @@ export default function EditMateri({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="deskripsi_edit">Deskripsi <span className="text-red-500">*</span></Label>
         <Textarea
           id="deskripsi_edit"
-          rows={4}
+          rows={3}
           value={data.deskripsi}
           onChange={(e) => setData("deskripsi", e.target.value)}
           placeholder="Tambahkan deskripsi singkat mengenai materi"
@@ -139,8 +139,8 @@ export default function EditMateri({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="space-y-1">
           <Label htmlFor="kelas_edit">Kelas <span className="text-red-500">*</span></Label>
           <Select
             value={data.kelas_id !== null ? String(data.kelas_id) : ""}
@@ -172,7 +172,7 @@ export default function EditMateri({
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label htmlFor="mapel_edit">Mata Pelajaran <span className="text-red-500">*</span></Label>
           <Select
             value={
@@ -209,7 +209,7 @@ export default function EditMateri({
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="file_edit">File Materi (opsional)</Label>
         <Input
           id="file_edit"
@@ -227,7 +227,7 @@ export default function EditMateri({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="video_edit">File Video (opsional)</Label>
         <Input
           id="video_edit"
@@ -272,7 +272,7 @@ export default function EditMateri({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="youtube_url_edit">Tautan YouTube (opsional)</Label>
         <Input
           id="youtube_url_edit"
@@ -295,11 +295,11 @@ export default function EditMateri({
         )}
       </div>
 
-  <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
+      <div className="flex justify-end gap-1.5 pt-1">
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
           Batal
         </Button>
-        <Button type="submit" disabled={processing}>
+        <Button type="submit" size="sm" disabled={processing}>
           {processing ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>

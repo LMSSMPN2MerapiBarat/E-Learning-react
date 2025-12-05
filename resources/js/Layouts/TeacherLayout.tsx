@@ -59,40 +59,40 @@ export default function TeacherLayout({
       <div
         className={cn(
           "flex flex-1 flex-col transition-all duration-300",
-          sidebarOpen ? "lg:ml-64" : "lg:ml-0",
+          sidebarOpen ? "lg:ml-56" : "lg:ml-0",
         )}
       >
-        <header className="flex items-center justify-between border-b bg-white px-6 py-4 shadow-sm">
-          <div className="flex items-center gap-3">
+        <header className="flex items-center justify-between border-b bg-white px-4 py-3 shadow-sm">
+          <div className="flex items-center gap-2">
             <button
               onClick={toggleSidebar}
-              className="rounded-md p-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-800"
+              className="rounded-md p-1.5 text-gray-600 transition hover:bg-gray-100 hover:text-gray-800"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-lg font-semibold text-gray-800">
+              <h1 className="text-base font-semibold text-gray-800">
                 {title || "Dashboard Guru"}
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs text-gray-600">
                 Kelola materi, kuis, dan aktivitas pembelajaran
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="hidden text-right sm:block">
-              <p className="text-xs text-gray-500">Guru Aktif</p>
-              <p className="text-sm font-semibold text-gray-800">
+              <p className="text-[10px] text-gray-500">Guru Aktif</p>
+              <p className="text-xs font-semibold text-gray-800">
                 {displayName}
               </p>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
               {initials}
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4">{children}</main>
         <Toaster />
       </div>
     </div>

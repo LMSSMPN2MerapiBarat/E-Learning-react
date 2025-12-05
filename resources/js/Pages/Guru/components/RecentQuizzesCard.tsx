@@ -25,20 +25,20 @@ const RecentQuizzesCard: React.FC<RecentQuizzesCardProps> = ({ items }) => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Kuis Terbaru</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">Kuis Terbaru</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         {items.length === 0 && (
-          <p className="text-sm text-gray-500">Belum ada kuis yang dibuat.</p>
+          <p className="text-xs text-gray-500">Belum ada kuis yang dibuat.</p>
         )}
         {paginatedItems.map((quiz) => (
           <div
             key={quiz.id}
-            className="rounded-lg border p-4 transition hover:bg-gray-50"
+            className="rounded-lg border p-3 transition hover:bg-gray-50"
           >
-            <h3 className="text-base font-medium text-gray-800">{quiz.judul}</h3>
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+            <h3 className="text-sm font-medium text-gray-800">{quiz.judul}</h3>
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-gray-500">
               {quiz.mapel && <Badge variant="outline">{quiz.mapel}</Badge>}
               <Badge variant="outline">{quiz.durasi} Menit</Badge>
               <Badge
@@ -58,7 +58,7 @@ const RecentQuizzesCard: React.FC<RecentQuizzesCardProps> = ({ items }) => {
               )}
             </div>
             {quiz.kelas.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-2 flex flex-wrap gap-1.5">
                 {quiz.kelas.map((kelas) => (
                   <Badge key={kelas} variant="secondary">
                     {kelas}
@@ -71,20 +71,21 @@ const RecentQuizzesCard: React.FC<RecentQuizzesCardProps> = ({ items }) => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t pt-4">
-            <p className="text-sm text-gray-500">
+          <div className="flex items-center justify-between border-t pt-3">
+            <p className="text-xs text-gray-500">
               Menampilkan {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, items.length)} dari {items.length}
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((p) => p - 1)}
                 disabled={currentPage === 1}
+                className="h-7 w-7 p-0"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3.5 w-3.5" />
               </Button>
-              <span className="text-sm font-medium">
+              <span className="text-xs font-medium">
                 {currentPage} / {totalPages}
               </span>
               <Button
@@ -92,8 +93,9 @@ const RecentQuizzesCard: React.FC<RecentQuizzesCardProps> = ({ items }) => {
                 size="sm"
                 onClick={() => setCurrentPage((p) => p + 1)}
                 disabled={currentPage === totalPages}
+                className="h-7 w-7 p-0"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>

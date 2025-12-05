@@ -76,8 +76,8 @@ export default function CreateMateri({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-3">
+      <div className="space-y-1">
         <Label htmlFor="judul">Judul Materi <span className="text-red-500">*</span></Label>
         <Input
           id="judul"
@@ -91,11 +91,11 @@ export default function CreateMateri({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="deskripsi">Deskripsi <span className="text-red-500">*</span></Label>
         <Textarea
           id="deskripsi"
-          rows={4}
+          rows={3}
           value={data.deskripsi}
           onChange={(e) => setData("deskripsi", e.target.value)}
           placeholder="Tambahkan deskripsi singkat mengenai materi"
@@ -106,8 +106,8 @@ export default function CreateMateri({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="space-y-1">
           <Label htmlFor="kelas">Kelas <span className="text-red-500">*</span></Label>
           <Select
             value={data.kelas_id !== null ? String(data.kelas_id) : ""}
@@ -139,7 +139,7 @@ export default function CreateMateri({
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label htmlFor="mata_pelajaran_id">Mata Pelajaran <span className="text-red-500">*</span></Label>
           <Select
             value={
@@ -176,7 +176,7 @@ export default function CreateMateri({
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="file">File Materi <span className="text-red-500">*</span></Label>
         <Input
           id="file"
@@ -190,7 +190,7 @@ export default function CreateMateri({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="video">File Video (opsional)</Label>
         <Input
           id="video"
@@ -203,7 +203,7 @@ export default function CreateMateri({
         )}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1">
         <Label htmlFor="youtube_url">Tautan YouTube (opsional)</Label>
         <Input
           id="youtube_url"
@@ -221,13 +221,13 @@ export default function CreateMateri({
         )}
       </div>
 
-      <div className="flex justify-end gap-2 pt-2">
+      <div className="flex justify-end gap-1.5 pt-1">
         {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" size="sm" onClick={onCancel}>
             Batal
           </Button>
         )}
-        <Button type="submit" disabled={processing}>
+        <Button type="submit" size="sm" disabled={processing}>
           {processing ? "Menyimpan..." : "Simpan Materi"}
         </Button>
       </div>

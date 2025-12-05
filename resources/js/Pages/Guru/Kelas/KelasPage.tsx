@@ -160,23 +160,23 @@ export default function KelasPage() {
     <TeacherLayout title="Kelas Saya">
       {classes.length === 0 ? (
         <Card>
-          <CardHeader>
-            <CardTitle>Tidak ada kelas</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Tidak ada kelas</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Anda belum memiliki kelas yang terdaftar. Silakan hubungi admin
               untuk menugaskan kelas.
             </p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[1fr,2fr]">
+        <div className="grid gap-4 lg:grid-cols-[1fr,2fr]">
           <Card className="h-full">
-            <CardHeader className="space-y-4">
+            <CardHeader className="space-y-3 pb-3">
               <div>
-                <CardTitle>Daftar Kelas</CardTitle>
-                <p className="text-sm text-muted-foreground">
+                <CardTitle className="text-base">Daftar Kelas</CardTitle>
+                <p className="text-xs text-muted-foreground">
                   Pilih kelas untuk melihat daftar siswanya.
                 </p>
               </div>
@@ -187,26 +187,26 @@ export default function KelasPage() {
                     onChange={(event) => setSearchTerm(event.target.value)}
                     placeholder="Cari kelas..."
                     aria-label="Cari kelas atau siswa"
-                    className="pr-10"
+                    className="pr-10 h-8 text-xs"
                   />
                   {searchTerm !== "" && (
                     <button
                       type="button"
                       onClick={() => setSearchTerm("")}
                       aria-label="Bersihkan pencarian kelas"
-                      className="absolute inset-y-0 right-3 flex items-center text-muted-foreground transition hover:text-foreground"
+                      className="absolute inset-y-0 right-2 flex items-center text-muted-foreground transition hover:text-foreground"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3.5 w-3.5" />
                     </button>
                   )}
                 </div>
               )}
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-[420px] pr-2">
-                <div className="space-y-2">
+              <ScrollArea className="h-[360px] pr-2">
+                <div className="space-y-1.5">
                   {filteredClasses.length === 0 ? (
-                    <p className="px-2 text-sm text-muted-foreground">
+                    <p className="px-2 text-xs text-muted-foreground">
                       {searchTerm.trim()
                         ? "Tidak ada kelas yang cocok dengan pencarian."
                         : "Belum ada kelas yang tersedia."}
@@ -218,22 +218,22 @@ export default function KelasPage() {
                         type="button"
                         onClick={() => setSelectedId(kelas.id)}
                         className={cn(
-                          "w-full rounded-lg border px-4 py-3 text-left transition",
+                          "w-full rounded-lg border px-3 py-2 text-left transition",
                           selectedClass?.id === kelas.id
                             ? "border-blue-600 bg-blue-50 text-blue-800 shadow-sm"
                             : "border-transparent bg-gray-50 hover:border-gray-200 hover:bg-white",
                         )}
                       >
-                        <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center justify-between gap-3">
                           <div>
-                            <p className="text-sm font-semibold">{kelas.nama}</p>
+                            <p className="text-xs font-semibold">{kelas.nama}</p>
                             {kelas.tahun_ajaran && (
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-[10px] text-muted-foreground">
                                 Tahun Ajaran {kelas.tahun_ajaran}
                               </p>
                             )}
                           </div>
-                          <Badge variant="secondary">
+                          <Badge variant="secondary" className="text-[10px]">
                             {kelas.jumlah_siswa} Siswa
                           </Badge>
                         </div>
@@ -246,9 +246,9 @@ export default function KelasPage() {
           </Card>
 
           <Card className="h-full">
-            <CardHeader className="space-y-4">
+            <CardHeader className="space-y-3 pb-3">
               <div>
-                <CardTitle>
+                <CardTitle className="text-base">
                   {hasFilteredResults
                     ? selectedClass
                       ? selectedClass.nama
@@ -256,24 +256,24 @@ export default function KelasPage() {
                     : "Tidak ada hasil"}
                 </CardTitle>
                 {hasFilteredResults && selectedClass?.deskripsi && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {selectedClass.deskripsi}
                   </p>
                 )}
                 {hasFilteredResults && selectedClass && (
-                  <div className="flex flex-wrap gap-2 pt-1 text-xs text-muted-foreground">
+                  <div className="flex flex-wrap gap-1.5 pt-0.5 text-[10px] text-muted-foreground">
                     {selectedClass.tingkat && (
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="text-[10px]">
                         Tingkat {selectedClass.tingkat}
                       </Badge>
                     )}
                     {selectedClass.kelas && (
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="text-[10px]">
                         Rombel {selectedClass.kelas}
                       </Badge>
                     )}
                     {selectedClass.tahun_ajaran && (
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="text-[10px]">
                         {selectedClass.tahun_ajaran}
                       </Badge>
                     )}
@@ -291,16 +291,16 @@ export default function KelasPage() {
                       }
                       placeholder="Cari siswa berdasarkan nama, NIS, email, atau telepon..."
                       aria-label="Cari siswa pada kelas ini"
-                      className="pr-10"
+                      className="pr-10 h-8 text-xs"
                     />
                     {studentSearchTerm !== "" && (
                       <button
                         type="button"
                         onClick={() => setStudentSearchTerm("")}
                         aria-label="Bersihkan pencarian siswa"
-                        className="absolute inset-y-0 right-3 flex items-center text-muted-foreground transition hover:text-foreground"
+                        className="absolute inset-y-0 right-2 flex items-center text-muted-foreground transition hover:text-foreground"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3.5 w-3.5" />
                       </button>
                     )}
                   </div>
@@ -308,38 +308,38 @@ export default function KelasPage() {
             </CardHeader>
             <CardContent>
               {!hasFilteredResults ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {searchTerm.trim()
                     ? "Tidak ada kelas yang cocok dengan pencarian."
                     : "Belum ada kelas yang tersedia."}
                 </p>
               ) : !selectedClass ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Silakan pilih kelas dari daftar untuk melihat data siswa.
                 </p>
               ) : selectedClass.students.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Belum ada siswa yang terdaftar pada kelas ini.
                 </p>
               ) : filteredStudents.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Tidak ada siswa yang cocok dengan pencarian.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 text-sm">
+                  <table className="min-w-full divide-y divide-gray-200 text-xs">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-600">
+                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
                           Nama
                         </th>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-600">
+                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
                           NIS
                         </th>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-600">
+                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
                           Email
                         </th>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-600">
+                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
                           No. Telepon
                         </th>
                       </tr>
@@ -347,16 +347,16 @@ export default function KelasPage() {
                     <tbody className="divide-y divide-gray-100 bg-white">
                       {paginatedStudents.map((student, index) => (
                         <tr key={student.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-2 font-medium text-gray-900">
+                          <td className="px-3 py-1.5 font-medium text-gray-900">
                             {student.nama ?? "-"}
                           </td>
-                          <td className="px-4 py-2 text-gray-600">
+                          <td className="px-3 py-1.5 text-gray-600">
                             {student.nis ?? "-"}
                           </td>
-                          <td className="px-4 py-2 text-gray-600">
+                          <td className="px-3 py-1.5 text-gray-600">
                             {student.email ?? "-"}
                           </td>
-                          <td className="px-4 py-2 text-gray-600">
+                          <td className="px-3 py-1.5 text-gray-600">
                             {student.no_telp ?? "-"}
                           </td>
                         </tr>
@@ -366,17 +366,17 @@ export default function KelasPage() {
 
                   {/* Pagination Controls */}
                   {filteredStudents.length > itemsPerPage && (
-                    <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t pt-4">
+                    <div className="mt-3 flex flex-col sm:flex-row items-center justify-between gap-2 border-t pt-3">
                       <button
                         onClick={() =>
                           setCurrentPage((prev) => Math.max(prev - 1, 1))
                         }
                         disabled={currentPage === 1}
-                        className="w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        className="w-full sm:w-auto px-3 py-1.5 text-xs font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
                       >
                         ← Sebelumnya
                       </button>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-xs text-gray-600">
                         Halaman {currentPage} dari {totalPages} | Menampilkan{" "}
                         {paginatedStudents.length} dari {filteredStudents.length}{" "}
                         siswa
@@ -388,7 +388,7 @@ export default function KelasPage() {
                           )
                         }
                         disabled={currentPage === totalPages}
-                        className="w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        className="w-full sm:w-auto px-3 py-1.5 text-xs font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
                       >
                         Berikutnya →
                       </button>

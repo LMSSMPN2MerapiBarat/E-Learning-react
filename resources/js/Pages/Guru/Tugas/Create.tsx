@@ -92,7 +92,7 @@ export default function CreateAssignment({
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <AssignmentBasicSection
         data={data}
         errors={errors}
@@ -126,11 +126,11 @@ export default function CreateAssignment({
         existingAttachments={[]}
       />
 
-      <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
+      <div className="flex justify-end gap-1.5 pt-1">
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
           Batal
         </Button>
-        <Button type="submit" disabled={processing}>
+        <Button type="submit" size="sm" disabled={processing}>
           {processing ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>

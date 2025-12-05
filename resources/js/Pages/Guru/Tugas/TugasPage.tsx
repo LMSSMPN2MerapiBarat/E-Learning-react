@@ -96,9 +96,9 @@ export default function TugasPage() {
 
   return (
     <TeacherLayout title="Kelola Tugas">
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Card>
-          <CardContent className="space-y-6 pt-6">
+          <CardContent className="space-y-4 pt-4">
             <AssignmentToolbar
               search={search}
               onSearchChange={setSearch}
@@ -119,29 +119,31 @@ export default function TugasPage() {
             />
 
             {filteredAssignments.length > 0 && (
-              <div className="flex items-center justify-between pt-4 border-t">
-                <p className="text-sm text-muted-foreground">
+              <div className="flex items-center justify-between pt-3 border-t">
+                <p className="text-xs text-muted-foreground">
                   Halaman {currentPage} dari {totalPages} | Menampilkan{" "}
                   {paginatedAssignments.length} dari {filteredAssignments.length} tugas
                 </p>
-                <div className="flex gap-2">
+                <div className="flex gap-1.5">
                   <Button
                     variant="outline"
                     size="sm"
+                    className="h-7 text-xs"
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-3.5 w-3.5" />
                     Sebelumnya
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
+                    className="h-7 text-xs"
                     onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
                   >
                     Berikutnya
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
@@ -152,15 +154,15 @@ export default function TugasPage() {
 
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
         <DialogContent
-          className="max-w-4xl w-[95vw] overflow-hidden p-0"
+          className="max-w-3xl w-[95vw] overflow-hidden p-0"
           onInteractOutside={(event) => event.preventDefault()}
           onEscapeKeyDown={(event) => event.preventDefault()}
         >
-          <div className="flex flex-col gap-4 p-6">
+          <div className="flex flex-col gap-3 p-4">
             <DialogHeader className="text-left">
-              <DialogTitle>Buat Tugas Baru</DialogTitle>
+              <DialogTitle className="text-base">Buat Tugas Baru</DialogTitle>
             </DialogHeader>
-            <ScrollArea className="max-h-[70vh] pr-3">
+            <ScrollArea className="max-h-[65vh] pr-3">
               <div className="pb-2">
                 <CreateAssignment
                   kelasOptions={kelasOptions}
@@ -177,15 +179,15 @@ export default function TugasPage() {
 
       <Dialog open={editAssignment !== null} onOpenChange={(open) => !open && setEditAssignment(null)}>
         <DialogContent
-          className="max-w-4xl w-[95vw] overflow-hidden p-0"
+          className="max-w-3xl w-[95vw] overflow-hidden p-0"
           onInteractOutside={(event) => event.preventDefault()}
           onEscapeKeyDown={(event) => event.preventDefault()}
         >
-          <div className="flex flex-col gap-4 p-6">
+          <div className="flex flex-col gap-3 p-4">
             <DialogHeader className="text-left">
-              <DialogTitle>Edit Tugas</DialogTitle>
+              <DialogTitle className="text-base">Edit Tugas</DialogTitle>
             </DialogHeader>
-            <ScrollArea className="max-h-[70vh] pr-3">
+            <ScrollArea className="max-h-[65vh] pr-3">
               <div className="pb-2">
                 {editAssignment && (
                   <EditAssignment

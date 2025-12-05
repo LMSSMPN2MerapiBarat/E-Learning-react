@@ -207,7 +207,7 @@ export default function EditQuiz({
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <QuizMetadataFields
         data={data}
         setData={setData}
@@ -231,11 +231,11 @@ export default function EditQuiz({
         error={questionsError as string | undefined}
       />
 
-      <div className="flex justify-end gap-2 pt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
+      <div className="flex justify-end gap-1.5 pt-3">
+        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
           Batal
         </Button>
-        <Button type="submit" disabled={processing}>
+        <Button type="submit" size="sm" disabled={processing}>
           {processing ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>

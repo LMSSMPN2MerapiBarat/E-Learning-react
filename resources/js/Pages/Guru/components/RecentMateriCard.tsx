@@ -29,12 +29,12 @@ const RecentMateriCard: React.FC<RecentMateriCardProps> = ({ items }) => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Materi Terbaru</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">Materi Terbaru</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         {items.length === 0 && (
-          <p className="text-sm text-gray-500">Belum ada materi yang diunggah.</p>
+          <p className="text-xs text-gray-500">Belum ada materi yang diunggah.</p>
         )}
         {paginatedItems.map((materi) => {
           const extension = getFileExtension(materi.file_name, materi.file_mime);
@@ -46,17 +46,17 @@ const RecentMateriCard: React.FC<RecentMateriCardProps> = ({ items }) => {
           return (
             <div
               key={materi.id}
-              className="rounded-lg border p-4 transition hover:bg-gray-50"
+              className="rounded-lg border p-3 transition hover:bg-gray-50"
             >
-              <h3 className="text-base font-medium text-gray-800">
+              <h3 className="text-sm font-medium text-gray-800">
                 {materi.judul}
               </h3>
               {materi.deskripsi && (
-                <p className="mt-1 line-clamp-2 text-sm text-gray-600">
+                <p className="mt-0.5 line-clamp-2 text-xs text-gray-600">
                   {materi.deskripsi}
                 </p>
               )}
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+              <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-gray-500">
                 {materi.mapel && (
                   <Badge variant="outline">{materi.mapel}</Badge>
                 )}
@@ -88,20 +88,21 @@ const RecentMateriCard: React.FC<RecentMateriCardProps> = ({ items }) => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t pt-4">
-            <p className="text-sm text-gray-500">
+          <div className="flex items-center justify-between border-t pt-3">
+            <p className="text-xs text-gray-500">
               Menampilkan {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, items.length)} dari {items.length}
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((p) => p - 1)}
                 disabled={currentPage === 1}
+                className="h-7 w-7 p-0"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-3.5 w-3.5" />
               </Button>
-              <span className="text-sm font-medium">
+              <span className="text-xs font-medium">
                 {currentPage} / {totalPages}
               </span>
               <Button
@@ -109,8 +110,9 @@ const RecentMateriCard: React.FC<RecentMateriCardProps> = ({ items }) => {
                 size="sm"
                 onClick={() => setCurrentPage((p) => p + 1)}
                 disabled={currentPage === totalPages}
+                className="h-7 w-7 p-0"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
