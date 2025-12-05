@@ -152,23 +152,23 @@ export default function QuizDetail() {
     >
       <Head title={`Hasil Kuis - ${quiz.title}`} />
 
-      <div className="space-y-6">
+      <div className="relative left-1/2 right-1/2 w-screen -mx-[50vw] px-4 md:px-8 space-y-4 md:space-y-6 transform origin-top scale-[0.9]">
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm" onClick={handleBack}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Kembali
           </Button>
-          <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-green-600 to-green-700 p-3 rounded-lg">
-              <FileQuestion className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Detail Hasil Kuis</h2>
-              <p className="text-sm text-gray-600">
-                {quiz.title}
-                {quiz.subject ? ` • ${quiz.subject}` : ""}
-              </p>
-            </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-br from-green-600 to-green-700 p-3 rounded-lg">
+            <FileQuestion className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">Detail Hasil Kuis</h2>
+            <p className="text-sm text-gray-600">
+              {quiz.title}
+              {quiz.subject ? ` • ${quiz.subject}` : ""}
+            </p>
           </div>
         </div>
 
@@ -258,10 +258,10 @@ export default function QuizDetail() {
             transition={{ delay: 0.2 }}
           >
             <Card
-              className={`border-2 border-purple-200 transition-all group hover:shadow-lg ${hasReviewLink ? "hover:border-purple-400 cursor-pointer" : "opacity-90"}`}
+              className={`h-full border-2 border-purple-200 transition-all group hover:shadow-lg ${hasReviewLink ? "hover:border-purple-400 cursor-pointer" : "opacity-90"}`}
               onClick={hasReviewLink ? handleViewReview : undefined}
             >
-              <CardContent className="p-6">
+              <CardContent className="p-6 h-full flex flex-col gap-4">
                 <div className="flex items-start gap-4">
                   <div className="bg-purple-100 p-3 rounded-lg group-hover:bg-purple-200 transition-colors">
                     <BookOpen className="w-6 h-6 text-purple-600" />
@@ -270,19 +270,19 @@ export default function QuizDetail() {
                     <h3 className="mb-2 group-hover:text-purple-600 transition-colors">
                       Lihat Pembahasan Detail
                     </h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <p className="text-sm text-gray-600">
                       Pelajari pembahasan lengkap untuk setiap soal dan tingkatkan pemahaman Anda.
                     </p>
-                    <Button
-                      className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
-                      disabled={!hasReviewLink}
-                      onClick={handleViewReview}
-                    >
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      {hasReviewLink ? "Buka Pembahasan" : "Pembahasan belum tersedia"}
-                    </Button>
                   </div>
                 </div>
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
+                  disabled={!hasReviewLink}
+                  onClick={handleViewReview}
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  {hasReviewLink ? "Buka Pembahasan" : "Pembahasan belum tersedia"}
+                </Button>
               </CardContent>
             </Card>
           </motion.div>
@@ -292,8 +292,8 @@ export default function QuizDetail() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
-              <CardContent className="p-6">
+            <Card className="h-full border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
+              <CardContent className="p-6 h-full flex flex-col">
                 <div className="flex items-start gap-4">
                   <div className="bg-blue-100 p-3 rounded-lg">
                     <Trophy className="w-6 h-6 text-blue-600" />
@@ -324,23 +324,7 @@ export default function QuizDetail() {
             </Card>
           </motion.div>
         </div>
-
-        <div className="flex justify-center gap-4">
-          <Button onClick={handleBack} size="lg" variant="outline" className="min-w-[200px]">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Kembali ke Daftar
-          </Button>
-          <Button
-            onClick={handleViewReview}
-            size="lg"
-            className="min-w-[200px] bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
-            disabled={!hasReviewLink}
-          >
-            <BookOpen className="w-4 h-4 mr-2" />
-            {hasReviewLink ? "Lihat Pembahasan" : "Pembahasan belum tersedia"}
-          </Button>
         </div>
-      </div>
     </StudentLayout>
   );
 }
