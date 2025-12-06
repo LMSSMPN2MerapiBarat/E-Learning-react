@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
-import { Calendar, Clock, MapPin, User } from "lucide-react";
+import { Calendar } from "lucide-react";
 import type { StudentScheduleItem } from "@/Pages/Siswa/types";
 
 interface StudentScheduleListProps {
@@ -57,7 +57,7 @@ export default function StudentScheduleList({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="space-y-2"
+      className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
     >
       {hasSchedules ? (
         schedules.map((schedule, index) => {
@@ -75,10 +75,10 @@ export default function StudentScheduleList({
             >
               <Card
                 className={`border-l-4 transition-all hover:shadow-lg ${isActive
-                    ? "border-l-green-600 bg-green-50/60 shadow-md"
-                    : isNext
-                      ? "border-l-blue-600 bg-blue-50/40"
-                      : "border-l-gray-200"
+                  ? "border-l-green-600 bg-green-50/60 shadow-md"
+                  : isNext
+                    ? "border-l-blue-600 bg-blue-50/40"
+                    : "border-l-gray-200"
                   }`}
               >
                 <CardContent className="p-4">
@@ -87,7 +87,6 @@ export default function StudentScheduleList({
                       className={`flex min-w-[90px] flex-col items-center justify-center rounded-lg bg-gradient-to-br ${DAY_COLORS[day] ?? "from-gray-500 to-gray-700"
                         } p-3 text-white shadow-md`}
                     >
-                      <Clock className="mb-1.5 h-4 w-4" />
                       <div className="text-center">
                         <p className="text-xs font-semibold">{startTime}</p>
                         <p className="text-[10px] opacity-80">-</p>
@@ -96,8 +95,7 @@ export default function StudentScheduleList({
                     </div>
                     <div className="flex-1 space-y-2">
                       <div className="flex flex-col gap-1.5 md:flex-row md:items-center md:justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">{formatEmoji(schedule.subject)}</span>
+                        <div>
                           <div>
                             <h3 className="text-base font-semibold text-gray-900">
                               {schedule.subject ?? "Tanpa Mata Pelajaran"}
@@ -114,15 +112,8 @@ export default function StudentScheduleList({
                           <Badge className="bg-blue-600 text-white text-[10px]">Berikutnya</Badge>
                         )}
                       </div>
-                      <div className="grid gap-2 text-xs text-gray-600 sm:grid-cols-2">
-                        <div className="flex items-center gap-1.5">
-                          <User className="h-3.5 w-3.5 text-gray-500" />
-                          <span>{schedule.teacher ?? "-"}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <MapPin className="h-3.5 w-3.5 text-gray-500" />
-                          <span>{schedule.room ?? "Belum ditentukan"}</span>
-                        </div>
+                      <div className="text-xs text-gray-600">
+                        <span>{schedule.teacher ?? "-"}</span>
                       </div>
                     </div>
                   </div>
@@ -132,7 +123,7 @@ export default function StudentScheduleList({
           );
         })
       ) : (
-        <Card>
+        <Card className="col-span-full">
           <CardContent className="py-12">
             <div className="text-center text-gray-500">
               <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
