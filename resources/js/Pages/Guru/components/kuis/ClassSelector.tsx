@@ -33,7 +33,6 @@ const ClassSelector: React.FC<ClassSelectorProps> = ({
             variant={selected ? "default" : "outline"}
             onClick={() => onToggle(kelas.id)}
           >
-            {selected && <Badge className="mr-2">Dipilih</Badge>}
             {kelas.nama}
           </Button>
         );

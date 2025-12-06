@@ -15,11 +15,12 @@ class KelasController extends Controller
                 'kelas' => function ($query) {
                     $query->with(['siswa.user']);
                 },
+                'kelasMapel.mataPelajaran',
             ])
             ->firstOrFail();
 
         $classes = $guru->kelas
-            ->map(function ($kelas) {
+            ->map(function ($kelas) use ($guru) {
                 $students = $kelas->siswa
                     ->map(function ($siswa) {
                         return [
@@ -37,6 +38,16 @@ class KelasController extends Controller
 
                 $kelasName = trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? ''));
 
+                // Get subjects for this specific class
+                $subjects = $guru->kelasMapel
+                    ->where('kelas_id', $kelas->id)
+                    ->map(function ($km) {
+                        return $km->mataPelajaran->nama_mapel ?? null;
+                    })
+                    ->filter()
+                    ->values()
+                    ->toArray();
+
                 return [
                     'id'            => $kelas->id,
                     'nama'          => $kelasName !== '' ? $kelasName : ($kelas->kelas ?? 'Kelas'),
@@ -46,6 +57,7 @@ class KelasController extends Controller
                     'deskripsi'     => $kelas->deskripsi,
                     'jumlah_siswa'  => $students->count(),
                     'students'      => $students,
+                    'subjects'      => $subjects,
                 ];
             })
             ->sortBy(function ($kelas) {

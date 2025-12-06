@@ -248,7 +248,7 @@ export default function CreateMateri({
 
       <div className="flex justify-end gap-1.5 pt-1">
         {onCancel && (
-          <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+          <Button type="button" variant="destructive" size="sm" onClick={onCancel}>
             Batal
           </Button>
         )}

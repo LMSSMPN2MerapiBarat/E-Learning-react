@@ -31,6 +31,7 @@ interface QuizManagementDialogsProps {
   onDeleteCancel: () => void;
   kelasOptions: Option[];
   mapelOptions: Option[];
+  kelasMapelOptions?: Record<number, number[]>;
 }
 
 const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
@@ -45,6 +46,7 @@ const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
   onDeleteCancel,
   kelasOptions,
   mapelOptions,
+  kelasMapelOptions,
 }) => (
   <>
     <Dialog open={isCreateOpen} onOpenChange={onCreateClose}>
@@ -58,6 +60,7 @@ const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
         <CreateQuiz
           kelasOptions={kelasOptions}
           mapelOptions={mapelOptions}
+          kelasMapelOptions={kelasMapelOptions}
           onSuccess={onCreateSuccess}
           onCancel={onCreateClose}
         />
@@ -77,6 +80,7 @@ const QuizManagementDialogs: React.FC<QuizManagementDialogsProps> = ({
             quiz={editItem}
             kelasOptions={kelasOptions}
             mapelOptions={mapelOptions}
+            kelasMapelOptions={kelasMapelOptions}
             onSuccess={onEditSuccess}
             onCancel={onEditClose}
           />

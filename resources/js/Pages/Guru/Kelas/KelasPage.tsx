@@ -31,6 +31,7 @@ interface TeacherClassItem {
   deskripsi: string | null;
   jumlah_siswa: number;
   students: StudentItem[];
+  subjects: string[];
 }
 
 interface KelasPageProps {
@@ -237,6 +238,19 @@ export default function KelasPage() {
                             {kelas.jumlah_siswa} Siswa
                           </Badge>
                         </div>
+                        {kelas.subjects && kelas.subjects.length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-1">
+                            {kelas.subjects.map((subject, idx) => (
+                              <Badge
+                                key={idx}
+                                variant="outline"
+                                className="text-[10px] px-1.5 py-0 h-5 font-normal bg-white"
+                              >
+                                {subject}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
                       </button>
                     ))
                   )}
@@ -276,6 +290,19 @@ export default function KelasPage() {
                       <Badge variant="outline" className="text-[10px]">
                         {selectedClass.tahun_ajaran}
                       </Badge>
+                    )}
+                    {selectedClass.subjects && selectedClass.subjects.length > 0 && (
+                      <div className="flex flex-wrap gap-1 ml-2 pl-2 border-l border-gray-200">
+                        {selectedClass.subjects.map((subject, idx) => (
+                          <Badge
+                            key={idx}
+                            variant="secondary"
+                            className="text-[10px] px-1.5 py-0 h-5"
+                          >
+                            {subject}
+                          </Badge>
+                        ))}
+                      </div>
                     )}
                   </div>
                 )}

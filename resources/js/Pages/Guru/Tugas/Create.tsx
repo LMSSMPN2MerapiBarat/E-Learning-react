@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
 import { useToast } from "@/Components/ui/use-toast";
@@ -15,6 +15,7 @@ import type {
 interface CreateAssignmentProps {
   kelasOptions: Option[];
   mapelOptions: Option[];
+  kelasMapelOptions?: Record<number, number[]>;
   fileTypeOptions: string[];
   onSuccess: () => void;
   onCancel: () => void;
@@ -26,6 +27,7 @@ const futureDate = (hours: number) =>
 export default function CreateAssignment({
   kelasOptions,
   mapelOptions,
+  kelasMapelOptions,
   fileTypeOptions,
   onSuccess,
   onCancel,
@@ -54,6 +56,56 @@ export default function CreateAssignment({
 
   const form = useForm<AssignmentFormState>(initialData);
   const { data, setData, processing, errors } = form;
+
+  // Filter mapel options based on selected class
+  const filteredMapelOptions = useMemo(() => {
+    if (data.kelas_ids.length === 0) return mapelOptions;
+
+    // Get all mapel IDs allowed for the selected classes
+    const allowedMapelIds = new Set<number>();
+    data.kelas_ids.forEach((kelasId) => {
+      const mapelIds = kelasMapelOptions?.[kelasId] || [];
+      mapelIds.forEach((id) => allowedMapelIds.add(id));
+    });
+
+    return mapelOptions.filter((option) =>
+      allowedMapelIds.has(option.id),
+    );
+  }, [data.kelas_ids, mapelOptions, kelasMapelOptions]);
+
+  // Reset selected mapel if it's no longer valid for the selected class
+  useEffect(() => {
+    if (data.mata_pelajaran_id && filteredMapelOptions.length > 0) {
+      const isValid = filteredMapelOptions.some(
+        (option) => option.id === data.mata_pelajaran_id,
+      );
+      if (!isValid) {
+        setData("mata_pelajaran_id", null);
+      }
+    }
+  }, [filteredMapelOptions, data.mata_pelajaran_id]);
+
+  // Filter kelas options based on selected mapel
+  const filteredKelasOptions = useMemo(() => {
+    if (!data.mata_pelajaran_id) return kelasOptions;
+
+    return kelasOptions.filter((kelas) => {
+      const mapelIds = kelasMapelOptions?.[kelas.id] || [];
+      return mapelIds.includes(data.mata_pelajaran_id!);
+    });
+  }, [data.mata_pelajaran_id, kelasOptions, kelasMapelOptions]);
+
+  // Reset selected kelas if they are no longer valid for the selected mapel
+  useEffect(() => {
+    if (data.mata_pelajaran_id) {
+      const validClassIds = new Set(filteredKelasOptions.map((k) => k.id));
+      const nextKelasIds = data.kelas_ids.filter((id) => validClassIds.has(id));
+
+      if (nextKelasIds.length !== data.kelas_ids.length) {
+        setData("kelas_ids", nextKelasIds);
+      }
+    }
+  }, [data.mata_pelajaran_id, filteredKelasOptions, data.kelas_ids]);
 
   const setFieldValue = <K extends keyof AssignmentFormState>(
     key: K,
@@ -97,8 +149,8 @@ export default function CreateAssignment({
         data={data}
         errors={errors}
         setFieldValue={setFieldValue}
-        kelasOptions={kelasOptions}
-        mapelOptions={mapelOptions}
+        kelasOptions={filteredKelasOptions}
+        mapelOptions={filteredMapelOptions}
       />
 
       <AssignmentScheduleSection
@@ -127,7 +179,7 @@ export default function CreateAssignment({
       />
 
       <div className="flex justify-end gap-1.5 pt-1">
-        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+        <Button type="button" variant="destructive" size="sm" onClick={onCancel}>
           Batal
         </Button>
         <Button type="submit" size="sm" disabled={processing}>

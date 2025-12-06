@@ -325,7 +325,7 @@ export default function EditMateri({
       </div>
 
       <div className="flex justify-end gap-1.5 pt-1">
-        <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+        <Button type="button" variant="destructive" size="sm" onClick={onCancel}>
           Batal
         </Button>
         <Button type="submit" size="sm" disabled={processing}>

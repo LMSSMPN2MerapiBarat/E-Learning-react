@@ -29,11 +29,12 @@ interface TugasPageProps extends Record<string, unknown> {
   assignments: AssignmentItem[];
   kelasOptions: Option[];
   mapelOptions: Option[];
+  kelasMapelOptions?: Record<number, number[]>;
   fileTypeOptions: string[];
 }
 
 export default function TugasPage() {
-  const { assignments, kelasOptions, mapelOptions, fileTypeOptions } =
+  const { assignments, kelasOptions, mapelOptions, kelasMapelOptions, fileTypeOptions } =
     usePage<PageProps<TugasPageProps>>().props;
 
   const [search, setSearch] = useState("");
@@ -167,6 +168,7 @@ export default function TugasPage() {
                 <CreateAssignment
                   kelasOptions={kelasOptions}
                   mapelOptions={mapelOptions}
+                  kelasMapelOptions={kelasMapelOptions}
                   fileTypeOptions={fileTypeOptions}
                   onSuccess={() => setIsCreateOpen(false)}
                   onCancel={() => setIsCreateOpen(false)}
@@ -194,6 +196,7 @@ export default function TugasPage() {
                     assignment={editAssignment}
                     kelasOptions={kelasOptions}
                     mapelOptions={mapelOptions}
+                    kelasMapelOptions={kelasMapelOptions}
                     fileTypeOptions={fileTypeOptions}
                     onSuccess={() => setEditAssignment(null)}
                     onCancel={() => setEditAssignment(null)}

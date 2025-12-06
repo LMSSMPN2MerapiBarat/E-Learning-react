@@ -25,12 +25,13 @@ interface QuizPageData {
   quizzes: QuizItem[];
   kelasOptions: Option[];
   mapelOptions: Option[];
+  kelasMapelOptions?: Record<number, number[]>;
 }
 
 type QuizPageInertiaProps = InertiaPageProps & QuizPageData;
 
 export default function KuisPage() {
-  const { quizzes, kelasOptions, mapelOptions } =
+  const { quizzes, kelasOptions, mapelOptions, kelasMapelOptions } =
     usePage<QuizPageInertiaProps>().props;
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -125,6 +126,7 @@ export default function KuisPage() {
         onDeleteCancel={() => setDeleteId(null)}
         kelasOptions={kelasOptions}
         mapelOptions={mapelOptions}
+        kelasMapelOptions={kelasMapelOptions}
       />
 
       <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>
