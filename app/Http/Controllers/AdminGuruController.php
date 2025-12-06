@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Guru;
+use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +15,7 @@ class AdminGuruController extends Controller
 {
     public function index()
     {
-        $gurus = Guru::with(['user', 'mataPelajaran', 'kelas'])
+        $gurus = Guru::with(['user', 'mataPelajaran', 'kelas', 'kelasMapel'])
             ->get()
             ->map(function ($g) {
                 $mapelList = $g->mataPelajaran
@@ -31,6 +32,11 @@ class AdminGuruController extends Controller
                     ->unique()
                     ->values();
 
+                // Build kelas_mapel data: grouped by kelas_id with mapel_ids array
+                $kelasMapelGrouped = $g->kelasMapel->groupBy('kelas_id')->map(function ($items) {
+                    return $items->pluck('mata_pelajaran_id')->values()->all();
+                })->all();
+
                 return [
                     'id'       => $g->id,
                     'name'     => $g->user->name,
@@ -41,15 +47,23 @@ class AdminGuruController extends Controller
                     'mapel_ids' => $g->mataPelajaran->pluck('id')->all(),
                     'kelas'    => $kelasList->implode(', '),
                     'kelas_ids' => $g->kelas->pluck('id')->all(),
+                    'kelas_mapel' => $kelasMapelGrouped,
                     'no_telp'  => $g->no_telp,
                 ];
             });
 
         $mapels = MataPelajaran::all(['id', 'nama_mapel']);
+        $kelasList = Kelas::all(['id', 'tingkat', 'kelas'])->map(function ($k) {
+            return [
+                'id' => $k->id,
+                'nama' => trim(($k->tingkat ?? '') . ' ' . ($k->kelas ?? '')),
+            ];
+        });
 
         return Inertia::render('admin/Guru/GuruPage', [
             'gurus'  => $gurus,
             'mapels' => $mapels,
+            'kelasList' => $kelasList,
         ]);
     }
 
@@ -67,6 +81,9 @@ class AdminGuruController extends Controller
                 'kelas_ids' => 'nullable|array',
                 'kelas_ids.*' => 'exists:kelas,id',
                 'mapel_ids.*' => 'exists:mata_pelajarans,id',
+                'kelas_mapel' => 'nullable|array',
+                'kelas_mapel.*' => 'array',
+                'kelas_mapel.*.*' => 'exists:mata_pelajarans,id',
             ],
             [
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
@@ -95,6 +112,11 @@ class AdminGuruController extends Controller
         $guru->mataPelajaran()->sync($validated['mapel_ids'] ?? []);
         $guru->kelas()->sync($validated['kelas_ids'] ?? []);
 
+        // Sync kelas_mapel if provided
+        if (!empty($validated['kelas_mapel'])) {
+            $guru->syncKelasMapel($validated['kelas_mapel']);
+        }
+
         return back()->with('success', 'Guru berhasil ditambahkan!');
     }
 
@@ -115,6 +137,9 @@ class AdminGuruController extends Controller
                 'mapel_ids.*' => 'exists:mata_pelajarans,id',
                 'kelas_ids' => 'nullable|array',
                 'kelas_ids.*' => 'exists:kelas,id',
+                'kelas_mapel' => 'nullable|array',
+                'kelas_mapel.*' => 'array',
+                'kelas_mapel.*.*' => 'exists:mata_pelajarans,id',
             ],
             [
                 'name.regex'                => 'Nama hanya boleh berisi huruf dan spasi.',
@@ -139,6 +164,11 @@ class AdminGuruController extends Controller
 
         $guru->mataPelajaran()->sync($validated['mapel_ids'] ?? []);
         $guru->kelas()->sync($validated['kelas_ids'] ?? []);
+
+        // Sync kelas_mapel if provided
+        if (!empty($validated['kelas_mapel'])) {
+            $guru->syncKelasMapel($validated['kelas_mapel']);
+        }
 
         return back()->with('success', 'Data guru berhasil diperbarui!');
     }

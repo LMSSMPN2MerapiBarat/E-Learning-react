@@ -488,47 +488,53 @@ class DashboardController extends Controller
         $classSubjects = collect();
 
         if ($kelas) {
-            $guruUserIds = DB::table('guru_kelas')
-                ->where('kelas_id', $kelas->id)
-                ->pluck('user_id');
+            // Get guru-kelas-mapel assignments for this specific class
+            $kelasMapelData = DB::table('guru_kelas_mapel')
+                ->join('gurus', 'guru_kelas_mapel.guru_id', '=', 'gurus.id')
+                ->join('mata_pelajarans', 'guru_kelas_mapel.mata_pelajaran_id', '=', 'mata_pelajarans.id')
+                ->join('users', 'gurus.user_id', '=', 'users.id')
+                ->where('guru_kelas_mapel.kelas_id', $kelas->id)
+                ->select([
+                    'gurus.id as guru_id',
+                    'gurus.user_id',
+                    'users.name as guru_name',
+                    'users.email as guru_email',
+                    'mata_pelajarans.id as mapel_id',
+                    'mata_pelajarans.nama_mapel',
+                ])
+                ->get();
 
-            if ($guruUserIds->isNotEmpty()) {
-                $guruModels = Guru::with(['user', 'mataPelajaran'])
-                    ->whereIn('user_id', $guruUserIds)
-                    ->get();
+            if ($kelasMapelData->isNotEmpty()) {
+                $classSubjects = $kelasMapelData
+                    ->map(function ($row) use ($materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel, $scheduleLookup) {
+                        $subjectMaterials = $materialsBySubject
+                            ->get($row->mapel_id, collect())
+                            ->values()
+                            ->all();
 
-                $classSubjects = $guruModels
-                    ->flatMap(function (Guru $guru) use ($materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel, $scheduleLookup) {
-                        return $guru->mataPelajaran->map(function ($subject) use ($guru, $materialsBySubject, $quizzesBySubject, $kelas, $formatKelasLabel, $scheduleLookup) {
-                            $subjectMaterials = $materialsBySubject
-                                ->get($subject->id, collect())
-                                ->values()
-                                ->all();
+                        $subjectQuizzes = $quizzesBySubject
+                            ->get($row->mapel_id, collect())
+                            ->values()
+                            ->all();
 
-                            $subjectQuizzes = $quizzesBySubject
-                                ->get($subject->id, collect())
-                                ->values()
-                                ->all();
+                        $sampleMaterial = $subjectMaterials[0] ?? null;
+                        $subjectScheduleSlots = $this->extractScheduleSlots($scheduleLookup, $row->mapel_id, $row->guru_id);
 
-                            $sampleMaterial = $subjectMaterials[0] ?? null;
-                            $subjectScheduleSlots = $this->extractScheduleSlots($scheduleLookup, $subject->id, $guru->id);
-
-                            return [
-                                'id' => $subject->id,
-                                'name' => $subject->nama_mapel,
-                                'teacher' => $guru->user?->name,
-                                'teacherEmail' => $guru->user?->email,
-                                'teacherId' => $guru->id,
-                                'className' => $formatKelasLabel($kelas),
-                                'description' => $sampleMaterial['description'] ?? null,
-                                'schedule' => $this->summarizeScheduleSlots($subjectScheduleSlots),
-                                'scheduleSlots' => $subjectScheduleSlots,
-                                'materialCount' => count($subjectMaterials),
-                                'quizCount' => count($subjectQuizzes),
-                                'materials' => $subjectMaterials,
-                                'quizzes' => $subjectQuizzes,
-                            ];
-                        });
+                        return [
+                            'id' => $row->mapel_id,
+                            'name' => $row->nama_mapel,
+                            'teacher' => $row->guru_name,
+                            'teacherEmail' => $row->guru_email,
+                            'teacherId' => $row->guru_id,
+                            'className' => $formatKelasLabel($kelas),
+                            'description' => $sampleMaterial['description'] ?? null,
+                            'schedule' => $this->summarizeScheduleSlots($subjectScheduleSlots),
+                            'scheduleSlots' => $subjectScheduleSlots,
+                            'materialCount' => count($subjectMaterials),
+                            'quizCount' => count($subjectQuizzes),
+                            'materials' => $subjectMaterials,
+                            'quizzes' => $subjectQuizzes,
+                        ];
                     })
                     ->unique(function ($subject) {
                         return ($subject['id'] ?? '0') . '|' . ($subject['teacherId'] ?? '0');

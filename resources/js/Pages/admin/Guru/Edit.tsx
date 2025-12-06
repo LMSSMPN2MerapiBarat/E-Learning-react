@@ -33,6 +33,7 @@ type GuruType = {
   no_telp?: string;
   mapel_ids?: number[];
   kelas_ids?: number[];
+  kelas_mapel?: Record<number, number[]>; // { kelas_id: [mapel_ids] }
 };
 
 type Mapel = {
@@ -62,6 +63,7 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
     no_telp: guru.no_telp || "",
     mapel_ids: guru.mapel_ids || [],
     kelas_ids: guru.kelas_ids || [],
+    kelas_mapel: guru.kelas_mapel || {},
   });
 
   const [loading, setLoading] = useState(false);
@@ -130,12 +132,39 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
     setForm({ ...form, mapel_ids: selected });
   };
 
-  const handleKelasSelect = (id: number) => {
-    const selected = form.kelas_ids?.includes(id)
-      ? form.kelas_ids.filter((kelasId) => kelasId !== id)
-      : [...(form.kelas_ids || []), id];
+  const handleKelasSelect = (kelasId: number) => {
+    const isSelected = form.kelas_ids?.includes(kelasId);
+    let newKelasIds: number[];
+    let newKelasMapel = { ...form.kelas_mapel };
 
-    setForm({ ...form, kelas_ids: selected });
+    if (isSelected) {
+      // Remove kelas and its mapel assignments
+      newKelasIds = form.kelas_ids?.filter((id) => id !== kelasId) || [];
+      delete newKelasMapel[kelasId];
+    } else {
+      // Add kelas with all selected mapel as default
+      newKelasIds = [...(form.kelas_ids || []), kelasId];
+      newKelasMapel[kelasId] = form.mapel_ids || [];
+    }
+
+    setForm({ ...form, kelas_ids: newKelasIds, kelas_mapel: newKelasMapel });
+  };
+
+  const handleKelasMapelToggle = (kelasId: number, mapelId: number) => {
+    const currentMapels = form.kelas_mapel?.[kelasId] || [];
+    const isSelected = currentMapels.includes(mapelId);
+
+    const newMapels = isSelected
+      ? currentMapels.filter((id) => id !== mapelId)
+      : [...currentMapels, mapelId];
+
+    setForm({
+      ...form,
+      kelas_mapel: {
+        ...form.kelas_mapel,
+        [kelasId]: newMapels,
+      },
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -266,8 +295,8 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
               key={m.id}
               onClick={() => handleMapelSelect(m.id)}
               className={`rounded-md border px-2 py-0.5 text-xs transition ${form.mapel_ids?.includes(m.id)
-                  ? "border-blue-700 bg-blue-600 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
+                ? "border-blue-700 bg-blue-600 text-white"
+                : "bg-gray-100 hover:bg-gray-200"
                 }`}
             >
               {m.nama_mapel}
@@ -282,8 +311,8 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
         )}
       </div>
 
-      <div className="space-y-1">
-        <Label className="text-xs">Kelas yang Diajar</Label>
+      <div className="space-y-2">
+        <Label className="text-xs">Kelas yang Diajar & Penugasan Mapel</Label>
         <div className="flex flex-wrap gap-1.5 rounded-md border p-1.5">
           {kelasList.map((kelas: Kelas) => {
             const namaKelas =
@@ -298,8 +327,8 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
                 key={kelas.id}
                 onClick={() => handleKelasSelect(kelas.id)}
                 className={`rounded-md border px-2 py-0.5 text-xs transition ${isSelected
-                    ? "border-blue-700 bg-blue-600 text-white"
-                    : "bg-gray-100 hover:bg-gray-200"
+                  ? "border-blue-700 bg-blue-600 text-white"
+                  : "bg-gray-100 hover:bg-gray-200"
                   }`}
               >
                 {namaKelas}
@@ -315,6 +344,55 @@ export default function EditGuru({ guru, onSuccess, onCancel }: EditGuruProps) {
           <p className="text-xs text-gray-500">
             Dipilih: {form.kelas_ids.length} kelas
           </p>
+        )}
+
+        {/* Mapel per Kelas Assignment */}
+        {form.kelas_ids && form.kelas_ids.length > 0 && form.mapel_ids && form.mapel_ids.length > 0 && (
+          <div className="mt-2 space-y-2">
+            <p className="text-xs font-medium text-gray-700">
+              Pilih mapel yang diajarkan di setiap kelas:
+            </p>
+            <div className="space-y-2 rounded-md border bg-gray-50 p-2">
+              {form.kelas_ids.map((kelasId) => {
+                const kelas = kelasList.find((k) => k.id === kelasId);
+                const namaKelas = kelas
+                  ? `${kelas.tingkat ?? ""} ${kelas.kelas ?? ""}`.trim() || kelas.kelas || "Tanpa Nama"
+                  : `Kelas ${kelasId}`;
+                const selectedMapelsForKelas = form.kelas_mapel?.[kelasId] || [];
+
+                return (
+                  <div key={kelasId} className="rounded-md border bg-white p-2">
+                    <p className="mb-1.5 text-xs font-semibold text-gray-800">{namaKelas}</p>
+                    <div className="flex flex-wrap gap-1">
+                      {form.mapel_ids?.map((mapelId) => {
+                        const mapel = mapels.find((m) => m.id === mapelId);
+                        const isMapelSelected = selectedMapelsForKelas.includes(mapelId);
+
+                        return (
+                          <button
+                            type="button"
+                            key={mapelId}
+                            onClick={() => handleKelasMapelToggle(kelasId, mapelId)}
+                            className={`rounded border px-1.5 py-0.5 text-[11px] transition ${isMapelSelected
+                              ? "border-green-600 bg-green-500 text-white"
+                              : "border-gray-300 bg-white text-gray-600 hover:bg-gray-100"
+                              }`}
+                          >
+                            {mapel?.nama_mapel || `Mapel ${mapelId}`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {selectedMapelsForKelas.length === 0 && (
+                      <p className="mt-1 text-[10px] text-orange-600">
+                        ⚠️ Belum ada mapel dipilih untuk kelas ini
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
       </div>
 
