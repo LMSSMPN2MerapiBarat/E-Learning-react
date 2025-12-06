@@ -46,7 +46,7 @@ const RecentMateriCard: React.FC<RecentMateriCardProps> = ({ items }) => {
           return (
             <div
               key={materi.id}
-              className="rounded-lg border p-3 transition hover:bg-gray-50"
+              className="rounded-lg border border-blue-100 bg-blue-50 p-3 transition hover:bg-blue-100"
             >
               <h3 className="text-sm font-medium text-gray-800">
                 {materi.judul}

@@ -35,7 +35,7 @@ const RecentQuizzesCard: React.FC<RecentQuizzesCardProps> = ({ items }) => {
         {paginatedItems.map((quiz) => (
           <div
             key={quiz.id}
-            className="rounded-lg border p-3 transition hover:bg-gray-50"
+            className="rounded-lg border border-blue-100 bg-blue-50 p-3 transition hover:bg-blue-100"
           >
             <h3 className="text-sm font-medium text-gray-800">{quiz.judul}</h3>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] text-gray-500">
