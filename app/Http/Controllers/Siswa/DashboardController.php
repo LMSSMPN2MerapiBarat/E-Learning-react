@@ -573,10 +573,13 @@ class DashboardController extends Controller
         }
 
         $dayOrder = ClassSchedule::DAY_OPTIONS;
+        $orderCase = collect($dayOrder)->map(function ($day, $index) {
+            return "WHEN day = '{$day}' THEN {$index}";
+        })->implode(' ');
 
         return ClassSchedule::with(['guru.user', 'mataPelajaran', 'kelas'])
             ->where('kelas_id', $kelas->id)
-            ->orderByRaw("FIELD(day, '" . implode("','", $dayOrder) . "')")
+            ->orderByRaw("CASE {$orderCase} ELSE 999 END")
             ->orderBy('start_time')
             ->get();
     }

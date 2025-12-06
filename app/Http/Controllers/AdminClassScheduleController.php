@@ -82,8 +82,13 @@ class AdminClassScheduleController extends Controller
 
     private function schedulesPayload()
     {
+        $dayOrder = ClassSchedule::DAY_OPTIONS;
+        $orderCase = collect($dayOrder)->map(function ($day, $index) {
+            return "WHEN day = '{$day}' THEN {$index}";
+        })->implode(' ');
+
         return ClassSchedule::with(['guru.user', 'mataPelajaran', 'kelas'])
-            ->orderByRaw("FIELD(day, '" . implode("','", ClassSchedule::DAY_OPTIONS) . "')")
+            ->orderByRaw("CASE {$orderCase} ELSE 999 END")
             ->orderBy('start_time')
             ->get()
             ->map(fn ($schedule) => $this->transformSchedule($schedule));
