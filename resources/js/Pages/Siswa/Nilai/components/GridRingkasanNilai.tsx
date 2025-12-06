@@ -57,7 +57,7 @@ const GradeSummaryGrid: React.FC<GradeSummaryGridProps> = ({
   assignmentCount,
 }) => {
   return (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
       {summaryConfig.map(({ key, title, description, icon: Icon, gradient }, index) => {
         const value = summary[key];
         const descriptionText =
