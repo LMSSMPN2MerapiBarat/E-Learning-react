@@ -23,12 +23,13 @@ interface MateriPageData {
   materis: MateriItem[];
   kelasOptions: Option[];
   mapelOptions: Option[];
+  kelasMapelOptions?: Record<number, number[]>;
 }
 
 type MateriPageInertiaProps = InertiaPageProps & MateriPageData;
 
 export default function MateriPage() {
-  const { materis, kelasOptions, mapelOptions } =
+  const { materis, kelasOptions, mapelOptions, kelasMapelOptions } =
     usePage<MateriPageInertiaProps>().props;
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -121,6 +122,7 @@ export default function MateriPage() {
         onDeleteCancel={() => setDeleteId(null)}
         kelasOptions={kelasOptions}
         mapelOptions={mapelOptions}
+        kelasMapelOptions={kelasMapelOptions}
       />
 
       <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>

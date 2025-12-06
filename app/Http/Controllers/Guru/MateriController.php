@@ -14,7 +14,7 @@ class MateriController extends Controller
     {
         $user = auth()->user();
         $guru = $user->guru()
-            ->with(['kelas', 'mataPelajaran'])
+            ->with(['kelas', 'mataPelajaran', 'kelasMapel'])
             ->firstOrFail();
 
         $materiList = Materi::with(['kelas', 'mataPelajaran'])
@@ -68,10 +68,21 @@ class MateriController extends Controller
             ];
         })->filter(fn($item) => !empty($item['nama']))->values();
 
+        // Build kelas-mapel options from guru_kelas_mapel table
+        $kelasMapelOptions = [];
+        foreach ($guru->kelasMapel as $km) {
+            $kelasId = $km->kelas_id;
+            if (!isset($kelasMapelOptions[$kelasId])) {
+                $kelasMapelOptions[$kelasId] = [];
+            }
+            $kelasMapelOptions[$kelasId][] = $km->mata_pelajaran_id;
+        }
+
         return Inertia::render('Guru/Materi/MateriPage', [
             'materis'       => $materiList,
             'kelasOptions'  => $kelasOptions,
             'mapelOptions'  => $mapelOptions,
+            'kelasMapelOptions' => $kelasMapelOptions,
         ]);
     }
 

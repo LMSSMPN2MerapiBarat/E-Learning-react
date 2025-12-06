@@ -32,6 +32,7 @@ interface MateriManagementDialogsProps {
   onDeleteCancel: () => void;
   kelasOptions: Option[];
   mapelOptions: Option[];
+  kelasMapelOptions?: Record<number, number[]>;
 }
 
 const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
@@ -46,6 +47,7 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
   onDeleteCancel,
   kelasOptions,
   mapelOptions,
+  kelasMapelOptions,
 }) => (
   <>
     <Dialog open={isCreateOpen} onOpenChange={onCreateClose}>
@@ -59,6 +61,7 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
         <CreateMateri
           kelasOptions={kelasOptions}
           mapelOptions={mapelOptions}
+          kelasMapelOptions={kelasMapelOptions}
           onSuccess={onCreateSuccess}
           onCancel={onCreateClose}
         />
@@ -78,6 +81,7 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
             materi={editItem}
             kelasOptions={kelasOptions}
             mapelOptions={mapelOptions}
+            kelasMapelOptions={kelasMapelOptions}
             onSuccess={onEditSuccess}
             onCancel={onEditClose}
           />

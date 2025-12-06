@@ -28,7 +28,7 @@ class AssignmentController extends Controller
         $user = auth()->user();
 
         /** @var Guru $guru */
-        $guru = $user->guru()->with(['kelas', 'mataPelajaran'])->firstOrFail();
+        $guru = $user->guru()->with(['kelas', 'mataPelajaran', 'kelasMapel'])->firstOrFail();
 
         $assignments = Assignment::with([
                 'kelas',
@@ -59,10 +59,21 @@ class AssignmentController extends Controller
             ->filter(fn($mapel) => !empty($mapel['nama']))
             ->values();
 
+        // Build kelas-mapel options from guru_kelas_mapel table
+        $kelasMapelOptions = [];
+        foreach ($guru->kelasMapel as $km) {
+            $kelasId = $km->kelas_id;
+            if (!isset($kelasMapelOptions[$kelasId])) {
+                $kelasMapelOptions[$kelasId] = [];
+            }
+            $kelasMapelOptions[$kelasId][] = $km->mata_pelajaran_id;
+        }
+
         return Inertia::render('Guru/Tugas/TugasPage', [
             'assignments' => $assignments,
             'kelasOptions' => $kelasOptions,
             'mapelOptions' => $mapelOptions,
+            'kelasMapelOptions' => $kelasMapelOptions,
             'fileTypeOptions' => $this->defaultAllowedFileTypes(),
         ]);
     }

@@ -1,5 +1,5 @@
 import { useForm } from "@inertiajs/react";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useMemo } from "react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -31,6 +31,7 @@ type CreateMateriForm = {
 interface CreateMateriProps {
   kelasOptions: Option[];
   mapelOptions: Option[];
+  kelasMapelOptions?: Record<number, number[]>;
   onSuccess: () => void;
   onCancel?: () => void;
 }
@@ -38,6 +39,7 @@ interface CreateMateriProps {
 export default function CreateMateri({
   kelasOptions,
   mapelOptions,
+  kelasMapelOptions = {},
   onSuccess,
   onCancel,
 }: CreateMateriProps) {
@@ -51,6 +53,24 @@ export default function CreateMateri({
     youtube_url: "",
   });
   const { data, setData, post, processing, reset, errors } = form;
+
+  // Filter mapel based on selected kelas
+  const filteredMapelOptions = useMemo(() => {
+    if (!data.kelas_id || !kelasMapelOptions[data.kelas_id]) {
+      return mapelOptions; // Show all if no kelas selected or no specific assignments
+    }
+    const allowedMapelIds = kelasMapelOptions[data.kelas_id];
+    return mapelOptions.filter((m) => allowedMapelIds.includes(m.id));
+  }, [data.kelas_id, kelasMapelOptions, mapelOptions]);
+
+  const handleKelasChange = (value: string) => {
+    const kelasId = value ? Number(value) : null;
+    setData((prev) => ({
+      ...prev,
+      kelas_id: kelasId,
+      mata_pelajaran_id: null, // Reset mapel when kelas changes
+    }));
+  };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -111,9 +131,7 @@ export default function CreateMateri({
           <Label htmlFor="kelas">Kelas <span className="text-red-500">*</span></Label>
           <Select
             value={data.kelas_id !== null ? String(data.kelas_id) : ""}
-            onValueChange={(value: string) =>
-              setData("kelas_id", value ? Number(value) : null)
-            }
+            onValueChange={handleKelasChange}
             required
           >
             <SelectTrigger id="kelas">
@@ -149,16 +167,23 @@ export default function CreateMateri({
               setData("mata_pelajaran_id", value ? Number(value) : null)
             }
             required
+            disabled={!data.kelas_id}
           >
             <SelectTrigger id="mata_pelajaran_id">
-              <SelectValue placeholder="Pilih mata pelajaran" />
+              <SelectValue placeholder={data.kelas_id ? "Pilih mata pelajaran" : "Pilih kelas dulu"} />
             </SelectTrigger>
             <SelectContent>
-              {mapelOptions.map((mapel) => (
-                <SelectItem key={mapel.id} value={String(mapel.id)}>
-                  {mapel.nama}
-                </SelectItem>
-              ))}
+              {filteredMapelOptions.length === 0 ? (
+                <div className="px-2 py-1.5 text-sm text-gray-500">
+                  Tidak ada mapel untuk kelas ini
+                </div>
+              ) : (
+                filteredMapelOptions.map((mapel) => (
+                  <SelectItem key={mapel.id} value={String(mapel.id)}>
+                    {mapel.nama}
+                  </SelectItem>
+                ))
+              )}
             </SelectContent>
           </Select>
           <input
