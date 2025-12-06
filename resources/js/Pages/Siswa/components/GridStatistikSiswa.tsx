@@ -41,7 +41,7 @@ interface StudentStatsGridProps {
 
 export default function StudentStatsGrid({ stats }: StudentStatsGridProps) {
   return (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
       {STAT_CONFIG.map(({ key, label, icon: Icon, accent }, index) => (
         <motion.div
           key={key}

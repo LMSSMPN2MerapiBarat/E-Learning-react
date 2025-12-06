@@ -8,7 +8,7 @@ interface StatOverviewProps {
 }
 
 const StatOverview: React.FC<StatOverviewProps> = ({ stats }) => (
-  <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+  <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
     {statCards.map(({ key, label, icon: Icon, color, bg }) => (
       <Card key={key}>
         <CardContent className="flex items-center justify-between p-4">
