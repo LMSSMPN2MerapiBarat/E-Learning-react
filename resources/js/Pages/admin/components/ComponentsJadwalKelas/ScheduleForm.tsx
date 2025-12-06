@@ -56,18 +56,35 @@ export default function ScheduleForm({
   );
 
   const subjectOptions = useMemo(() => {
-    if (selectedTeacher?.subjects?.length) {
-      return selectedTeacher.subjects;
+    if (!selectedTeacher) return reference.subjects;
+
+    let availableSubjects = selectedTeacher.subjects;
+
+    // Filter by selected class if any
+    if (values.kelas_id) {
+      const allowedSubjectIds = selectedTeacher.class_subjects[Number(values.kelas_id)] || [];
+      availableSubjects = availableSubjects.filter(sub => allowedSubjectIds.includes(sub.id));
     }
-    return reference.subjects;
-  }, [reference.subjects, selectedTeacher]);
+
+    return availableSubjects;
+  }, [reference.subjects, selectedTeacher, values.kelas_id]);
 
   const classOptions = useMemo(() => {
-    if (selectedTeacher?.classes?.length) {
-      return selectedTeacher.classes;
+    if (!selectedTeacher) return reference.classes;
+
+    let availableClasses = selectedTeacher.classes;
+
+    // Filter by selected subject if any
+    if (values.mata_pelajaran_id) {
+      // Find classes that have this subject assigned
+      availableClasses = availableClasses.filter(cls => {
+        const subjectsInClass = selectedTeacher.class_subjects[cls.id] || [];
+        return subjectsInClass.includes(Number(values.mata_pelajaran_id));
+      });
     }
-    return reference.classes;
-  }, [reference.classes, selectedTeacher]);
+
+    return availableClasses;
+  }, [reference.classes, selectedTeacher, values.mata_pelajaran_id]);
 
   useEffect(() => {
     if (!values.mata_pelajaran_id) return;

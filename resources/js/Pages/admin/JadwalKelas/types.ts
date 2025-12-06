@@ -14,6 +14,7 @@ export interface TeacherOption {
   nip?: string | null;
   subjects: SubjectOption[];
   classes: ClassOption[];
+  class_subjects: Record<number, number[]>;
 }
 
 export interface ScheduleReference {

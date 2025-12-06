@@ -123,7 +123,7 @@ class AdminClassScheduleController extends Controller
 
     private function referenceOptions(): array
     {
-        $teachers = Guru::with(['user', 'kelas', 'mataPelajaran'])
+        $teachers = Guru::with(['user', 'kelas', 'mataPelajaran', 'kelasMapel'])
             ->get()
             ->map(function ($guru) {
                 $name = $guru->user->name ?? $guru->user->email ?? ('Guru #' . $guru->id);
@@ -152,12 +152,18 @@ class AdminClassScheduleController extends Controller
                         ->all()
                     : [];
 
+                $classMapel = $guru->kelasMapel
+                    ->groupBy('kelas_id')
+                    ->map(fn ($items) => $items->pluck('mata_pelajaran_id')->all())
+                    ->all();
+
                 return [
-                    'id'       => $guru->id,
-                    'name'     => $name,
-                    'nip'      => $guru->nip,
-                    'subjects' => $subjects,
-                    'classes'  => $classes,
+                    'id'             => $guru->id,
+                    'name'           => $name,
+                    'nip'            => $guru->nip,
+                    'subjects'       => $subjects,
+                    'classes'        => $classes,
+                    'class_subjects' => $classMapel,
                 ];
             })
             ->sortBy('name')
