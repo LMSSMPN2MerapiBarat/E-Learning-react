@@ -335,12 +335,13 @@ class GuruImport implements ToCollection, WithHeadingRow, WithValidation, WithCh
             return 'Kelas 11';
         }
 
-        if (str_contains($nama, 'x') || str_contains($nama, '10')) {
-            return 'Kelas 10';
-        }
-
+        // Check for IX (9) before X (10) to avoid misclassification because 'ix' contains 'x'
         if (str_contains($nama, 'ix') || str_contains($nama, '9')) {
             return 'Kelas 9';
+        }
+
+        if (str_contains($nama, 'x') || str_contains($nama, '10')) {
+            return 'Kelas 10';
         }
 
         if (str_contains($nama, 'viii') || str_contains($nama, '8')) {
