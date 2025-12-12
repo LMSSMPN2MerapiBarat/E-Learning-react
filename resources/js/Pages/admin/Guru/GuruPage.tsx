@@ -132,7 +132,7 @@ export default function GuruPage() {
   // 📦 Export
   const handleExport = () => {
     setIsLoading(true);
-    const toastId = toast.loading("📦 Mengekspor data guru...");
+    const toastId = toast.loading("Mengekspor data guru...");
     window.location.href = "/admin/users/export/guru";
     setTimeout(() => {
       toast.success("File guru berhasil diekspor!", { id: toastId });

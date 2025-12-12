@@ -109,10 +109,10 @@ export default function SiswaHeader({
 
   const handleExport = () => {
     setIsLoading(true);
-    const toastId = toast.loading("?? Mengekspor data siswa...");
+    const toastId = toast.loading("Mengekspor data siswa...");
     window.location.href = "/admin/users/export/siswa";
     setTimeout(() => {
-      toast.success("? File berhasil diekspor!", { id: toastId });
+      toast.success("File berhasil diekspor!", { id: toastId });
       setIsLoading(false);
     }, 1500);
   };
