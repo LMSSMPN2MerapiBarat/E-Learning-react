@@ -52,9 +52,11 @@ export default function TeacherSidebar({ sidebarOpen, onToggle }: TeacherSidebar
       >
         <div className="flex items-center justify-between border-b px-3 py-3">
           <div className="flex items-center gap-2">
-            <div className="bg-blue-600 p-1.5 rounded-lg">
-              <BookOpen className="w-4 h-4 text-white" />
-            </div>
+            <img
+              src="/img/LogoSekolah.png"
+              alt="Logo SMPN 2 Merapi Barat"
+              className="w-7 h-7 object-contain"
+            />
             <div>
               <h2 className="text-xs font-semibold text-gray-800">Panel Guru</h2>
               <p className="text-[10px] text-gray-500">SMP Negeri 2 Merapi Barat</p>
