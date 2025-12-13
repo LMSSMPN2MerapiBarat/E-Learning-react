@@ -13,7 +13,7 @@ import LayarMulaiKuis from "./components/LayarMulaiKuis";
 import HeaderUjianKuis from "./components/HeaderUjianKuis";
 import KartuSoalKuis from "./components/KartuSoalKuis";
 import PanelNavigasiSoal from "./components/PanelNavigasiSoal";
-import TampilanHasilKuis from "./components/TampilanHasilKuis";
+
 import DialogKonfirmasiKuis from "./components/DialogKonfirmasiKuis";
 
 type QuizExamPageProps = PageProps<{ quiz: QuizItem; backUrl: string }>;
@@ -152,12 +152,20 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
       };
       const response = await axios.post(`/siswa/quizzes/${quiz.id}/attempts`, payload);
       const a = response.data?.attempt ?? null;
-      const normalized: QuizAttemptLite | null = a ? {
-        id: a.id, score: a.score, correctAnswers: a.correct_answers ?? a.correctAnswers ?? 0,
-        totalQuestions: a.total_questions ?? a.totalQuestions ?? totalQuestions,
-        submittedAt: a.submitted_at ?? a.submittedAt ?? null,
-      } : null;
-      setResult(normalized); setShowResults(true); setShowSubmitConfirm(false); clearSavedProgress();
+      clearSavedProgress();
+      setShowSubmitConfirm(false);
+      // Redirect directly to quiz detail page
+      if (a?.id) {
+        let detailUrl = `/siswa/quizzes/${quiz.id}/attempts/${a.id}`;
+        try {
+          if (typeof route === "function") {
+            detailUrl = route("siswa.quizzes.attempts.show", { quiz: quiz.id, attempt: a.id });
+          }
+        } catch { }
+        router.visit(detailUrl);
+      } else {
+        router.visit(backUrl);
+      }
     } catch (error: any) {
       const msg = error?.response?.data?.message || error?.response?.data?.errors?.quiz?.[0] || "Terjadi kesalahan saat mengirim jawaban.";
       setSubmitError(msg); if (!autoSubmit) setIsTimerActive(true);
@@ -172,15 +180,27 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
   const previousQuestion = () => { if (currentQuestionIndex > 0) { setDirection(-1); setCurrentQuestionIndex((p) => p - 1); } };
   const jumpToQuestion = (i: number) => { setDirection(i > currentQuestionIndex ? 1 : -1); setCurrentQuestionIndex(i); };
   const startQuiz = () => { ensureStartTime(); setHasStarted(true); setIsTimerActive(true); };
-  const finishQuiz = () => { clearSavedProgress(); router.visit(backUrl); };
+  const finishQuiz = () => {
+    clearSavedProgress();
+    if (result?.id) {
+      // Redirect to quiz detail page with attempt ID
+      let detailUrl = `/siswa/quizzes/${quiz.id}/attempts/${result.id}`;
+      try {
+        if (typeof route === "function") {
+          detailUrl = route("siswa.quizzes.attempts.show", { quiz: quiz.id, attempt: result.id });
+        }
+      } catch { }
+      router.visit(detailUrl);
+    } else {
+      router.visit(backUrl);
+    }
+  };
 
   if (!hasStarted && !showResults) {
     return (<><Head title={quiz.title} /><LayarMulaiKuis quiz={quiz} totalQuestions={totalQuestions} backUrl={backUrl} onStart={startQuiz} /></>);
   }
 
-  if (showResults) {
-    return (<><Head title={quiz.title} /><TampilanHasilKuis questions={questions} answers={answers} result={result} onFinish={finishQuiz} /></>);
-  }
+
 
   const activeQuestion = questions[currentQuestionIndex];
 
