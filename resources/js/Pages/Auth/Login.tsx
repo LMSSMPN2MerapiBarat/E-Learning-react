@@ -60,7 +60,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Head title="Login - E-Learning SMPN 2 Merapi Barat" />
+      <Head title="Login" />
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader className="space-y-2 text-center">

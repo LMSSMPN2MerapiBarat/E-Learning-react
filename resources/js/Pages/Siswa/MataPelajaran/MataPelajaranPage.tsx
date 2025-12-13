@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Head } from "@inertiajs/react";
 import { motion } from "motion/react";
 import {
   BookOpen,
@@ -126,6 +127,7 @@ export default function Subjects({
       }
       {...rest}
     >
+      <Head title="Mata Pelajaran" />
       {enhancedSubjects.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-10 text-center text-xs text-gray-500">

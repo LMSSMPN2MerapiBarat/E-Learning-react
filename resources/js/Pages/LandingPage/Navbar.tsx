@@ -28,7 +28,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            {/* <img src="/img/LogoSekolah.png" alt="Logo SMPN 2 Merapi Barat" className="h-16 w-16 md:h-20 md:w-20 object-contain" /> */}
+            <img src="/img/LogoSekolah.png" alt="Logo SMPN 2 Merapi Barat" className="h-10 w-10 md:h-10 md:w-10 object-contain" />
             <div className={`font-bold text-xl md:text-2xl ${scrolled ? 'text-blue-900' : 'text-white'}`}>
               SMPN 2 Merapi Barat
             </div>
