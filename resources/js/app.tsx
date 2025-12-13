@@ -5,7 +5,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 
-const appName = import.meta.env.VITE_APP_NAME || 'E-Learning SMPN 2 Merapi Barat';
+const appName = import.meta.env.VITE_APP_NAME || 'SMPN 2 Merapi Barat';
 const pages = import.meta.glob('./Pages/**/*.tsx');
 
 const capitalizeSegments = (name: string) =>
