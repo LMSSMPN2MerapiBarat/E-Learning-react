@@ -59,6 +59,7 @@ export default function Jadwal() {
     day: "",
     start_time: "",
     end_time: "",
+    room: "",
   };
 
   const createForm = useForm<ScheduleFormValues>(defaultFormValues);
@@ -108,6 +109,7 @@ export default function Jadwal() {
       day: schedule.day,
       start_time: schedule.startTime,
       end_time: schedule.endTime,
+      room: schedule.room ?? "",
     });
     setIsEditOpen(true);
   };
