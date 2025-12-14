@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import { useEffect, useRef, type PropsWithChildren } from "react";
 import { Link, usePage } from "@inertiajs/react";
 import { motion } from "motion/react";
 import {
@@ -161,6 +161,21 @@ export default function StudentLayout({
 
   const activeKey = resolveActiveKey();
 
+  // Generate dynamic subtitle based on active menu and kelas
+  const getActiveMenuSubtitle = (): string => {
+    const menuSubtitles: Record<StudentNavKey, string> = {
+      dashboard: kelasName || "Pantau materi, kerjakan kuis, dan ikuti progres belajar Anda.",
+      schedule: "Jadwal Kelas",
+      assignments: kelasName ? `Tugas ${kelasName}` : "Daftar Tugas",
+      subjects: kelasName ? `Mata Pelajaran ${kelasName}` : "Mata Pelajaran",
+      materials: kelasName ? `Materi ${kelasName}` : "Materi Pembelajaran",
+      quizzes: kelasName ? `Kuis ${kelasName}` : "Daftar Kuis",
+      grades: kelasName ? `Nilai ${kelasName}` : "Nilai Saya",
+    };
+
+    return menuSubtitles[activeKey];
+  };
+
   const fallbackPaths: Record<StudentNavKey, string> = {
     dashboard: "/siswa/dashboard",
     assignments: "/siswa/tugas",
@@ -182,6 +197,23 @@ export default function StudentLayout({
     return fallback;
   };
 
+  // Ref for nav container to scroll active item into view on mobile
+  const navRef = useRef<HTMLElement>(null);
+
+  // Auto-scroll to active nav item on mobile
+  useEffect(() => {
+    if (navRef.current) {
+      const activeElement = navRef.current.querySelector('[data-active="true"]');
+      if (activeElement) {
+        activeElement.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }
+  }, [activeKey]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-20 bg-white shadow-sm">
@@ -193,8 +225,7 @@ export default function StudentLayout({
                 {title ?? "Dashboard Siswa"}
               </h1>
               <p className="text-xs text-gray-600">
-                {subtitle ??
-                  "Pantau materi, kerjakan kuis, dan ikuti progres belajar Anda."}
+                {subtitle ?? getActiveMenuSubtitle()}
               </p>
             </div>
           </div>
@@ -238,7 +269,7 @@ export default function StudentLayout({
           </div>
         </div>
         <div className="border-t">
-          <nav className="mx-auto flex gap-1.5 overflow-x-auto px-3 py-2 sm:flex-wrap sm:justify-start sm:overflow-visible">
+          <nav ref={navRef} className="mx-auto flex gap-1.5 overflow-x-auto px-3 py-2 sm:flex-wrap sm:justify-start sm:overflow-visible">
             {NAV_ITEMS.map(({ key, label, routeName, icon: Icon }) => {
               const isActive = key === activeKey;
               const href = resolveHref(routeName, fallbackPaths[key]);
@@ -247,6 +278,7 @@ export default function StudentLayout({
                   key={key}
                   href={href}
                   className="relative inline-flex shrink-0"
+                  data-active={isActive ? "true" : undefined}
                 >
                   <motion.span
                     className={`relative flex items-center gap-1.5 overflow-hidden rounded-md px-3 py-1.5 text-xs font-medium transition ${isActive

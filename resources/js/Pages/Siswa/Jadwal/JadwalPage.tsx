@@ -80,11 +80,7 @@ export default function Schedule() {
   return (
     <StudentLayout
       title="Jadwal Pelajaran"
-      subtitle={
-        student.className
-          ? `Kelas ${student.className}`
-          : "Terhubung otomatis dengan jadwal kelas Anda."
-      }
+      subtitle="Jadwal Kelas"
     >
       <Head title="Jadwal Pelajaran" />
 

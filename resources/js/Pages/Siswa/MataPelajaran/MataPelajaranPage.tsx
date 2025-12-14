@@ -121,11 +121,7 @@ export default function Subjects({
   return (
     <StudentLayout
       title="Mata Pelajaran"
-      subtitle={
-        student?.className
-          ? `Daftar pelajaran untuk kelas ${student.className}.`
-          : "Daftar pelajaran yang kamu ikuti."
-      }
+      subtitle="Daftar pelajaran yang kamu ikuti"
       {...rest}
     >
       <Head title="Mata Pelajaran" />
