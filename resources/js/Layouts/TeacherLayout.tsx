@@ -62,7 +62,7 @@ export default function TeacherLayout({
           sidebarOpen ? "lg:ml-56" : "lg:ml-0",
         )}
       >
-        <header className="flex items-center justify-between border-b bg-white px-4 py-3 shadow-sm">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-4 py-3 shadow-sm">
           <div className="flex items-center gap-2">
             <button
               onClick={toggleSidebar}
