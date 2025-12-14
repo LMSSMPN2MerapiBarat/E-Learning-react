@@ -48,7 +48,7 @@ export default function AdminLayout({
           }`}
       >
         {/* Header */}
-        <header className="flex items-center justify-between border-b bg-white px-3 py-2 shadow-sm sm:px-4 sm:py-3">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-3 py-2 shadow-sm sm:px-4 sm:py-3">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
