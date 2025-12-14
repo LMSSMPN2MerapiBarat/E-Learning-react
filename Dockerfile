@@ -12,7 +12,6 @@ RUN composer install \
   --no-dev \
   --prefer-dist \
   --no-interaction \
-  --no-scripts \
   --optimize-autoloader \
   --ignore-platform-req=ext-gd \
   --ignore-platform-req=php
@@ -32,6 +31,11 @@ COPY --from=frontend /app/public/build /app/public/build
 
 RUN mkdir -p storage bootstrap/cache \
   && chmod -R 775 storage bootstrap/cache
+
+
+RUN php artisan config:cache || true \
+  && php artisan route:cache || true \
+  && php artisan view:cache || true
 
 EXPOSE 8080
 CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
