@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
-import EditGuru from "@/Pages/Admin/Guru/Edit";
+import EditGuru from "@/Pages/admin/Guru/Edit";
 
 export default function GuruDialogs({
   isEditOpen,

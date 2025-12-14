@@ -2,10 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Head, useForm, router, usePage } from "@inertiajs/react";
 import { toast } from "sonner";
 import AdminLayout from "@/Layouts/AdminLayout";
-import ScheduleHeader from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleHeader";
-import ScheduleFilters from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleFilters";
-import ScheduleTabs from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleTabs";
-import ScheduleForm from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleForm";
+import ScheduleHeader from "@/Pages/admin/components/ComponentsJadwalKelas/ScheduleHeader";
+import ScheduleFilters from "@/Pages/admin/components/ComponentsJadwalKelas/ScheduleFilters";
+import ScheduleTabs from "@/Pages/admin/components/ComponentsJadwalKelas/ScheduleTabs";
+import ScheduleForm from "@/Pages/admin/components/ComponentsJadwalKelas/ScheduleForm";
 import {
   Dialog,
   DialogContent,

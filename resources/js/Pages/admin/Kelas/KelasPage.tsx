@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/Components/ui/card";
 import AdminLayout from "@/Layouts/AdminLayout";
-import KelasHeader from "@/Pages/Admin/components/ComponentsKelas/KelasHeader";
-import KelasTable from "@/Pages/Admin/components/ComponentsKelas/KelasTable";
-import KelasDialogs from "@/Pages/Admin/components/ComponentsKelas/KelasDialogs";
+import KelasHeader from "@/Pages/admin/components/ComponentsKelas/KelasHeader";
+import KelasTable from "@/Pages/admin/components/ComponentsKelas/KelasTable";
+import KelasDialogs from "@/Pages/admin/components/ComponentsKelas/KelasDialogs";
 
 const TINGKAT_ORDER: Record<string, number> = {
   "Kelas 7": 0,

@@ -10,7 +10,7 @@ import {
 import { Card, CardContent } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
-import type { ScheduleItem } from "@/Pages/Admin/JadwalKelas/types";
+import type { ScheduleItem } from "@/Pages/admin/JadwalKelas/types";
 
 const dayAccentMap: Record<string, string> = {
   Senin: "from-blue-500 to-blue-700",

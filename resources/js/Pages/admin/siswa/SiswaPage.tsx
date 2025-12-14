@@ -3,12 +3,12 @@ import { Head, usePage, router } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
-import { LoadingOverlay, FilterBar } from "@/Pages/Admin/components/ComponentsSiswa/SiswaComponents";
+import { LoadingOverlay, FilterBar } from "@/Pages/admin/components/ComponentsSiswa/SiswaComponents";
 import SimplePagination from "@/Components/SimplePagination";
 
-import SiswaHeader from "@/Pages/Admin/components/ComponentsSiswa/SiswaHeader";
-import SiswaTable from "@/Pages/Admin/components/ComponentsSiswa/SiswaTable";
-import SiswaDialogs from "@/Pages/Admin/components/ComponentsSiswa/SiswaDialogs";
+import SiswaHeader from "@/Pages/admin/components/ComponentsSiswa/SiswaHeader";
+import SiswaTable from "@/Pages/admin/components/ComponentsSiswa/SiswaTable";
+import SiswaDialogs from "@/Pages/admin/components/ComponentsSiswa/SiswaDialogs";
 
 export default function SiswaPage() {
   const { props }: any = usePage();

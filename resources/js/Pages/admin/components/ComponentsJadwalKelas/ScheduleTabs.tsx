@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import ScheduleCard from "./ScheduleCard";
-import type { ScheduleItem } from "@/Pages/Admin/JadwalKelas/types";
+import type { ScheduleItem } from "@/Pages/admin/JadwalKelas/types";
 
 const ITEMS_PER_PAGE = 5;
 

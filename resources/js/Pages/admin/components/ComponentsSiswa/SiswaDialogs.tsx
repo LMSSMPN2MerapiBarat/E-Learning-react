@@ -17,8 +17,8 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
-import CreateSiswa from "@/Pages/Admin/Siswa/Create";
-import EditSiswa from "@/Pages/Admin/Siswa/Edit";
+import CreateSiswa from "@/Pages/admin/Siswa/Create";
+import EditSiswa from "@/Pages/admin/Siswa/Edit";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Badge } from "@/Components/ui/badge";
 import { Separator } from "@/Components/ui/separator";
