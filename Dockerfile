@@ -12,6 +12,7 @@ RUN composer install \
   --no-dev \
   --prefer-dist \
   --no-interaction \
+  --no-scripts \
   --optimize-autoloader \
   --ignore-platform-req=ext-gd \
   --ignore-platform-req=php
