@@ -8,7 +8,13 @@ RUN npm run build
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --ignore-platform-req=ext-gd
+RUN composer install \
+  --no-dev \
+  --prefer-dist \
+  --no-interaction \
+  --optimize-autoloader \
+  --ignore-platform-req=ext-gd \
+  --ignore-platform-req=php
 
 FROM php:8.3-cli
 WORKDIR /app
