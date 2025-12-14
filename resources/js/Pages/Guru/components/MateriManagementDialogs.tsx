@@ -52,11 +52,11 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
   <>
     <Dialog open={isCreateOpen} onOpenChange={onCreateClose}>
       <DialogContent
-        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+        className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto mx-auto"
         onInteractOutside={(event) => event.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>Unggah Materi Baru</DialogTitle>
+          <DialogTitle className="text-base">Unggah Materi Baru</DialogTitle>
         </DialogHeader>
         <CreateMateri
           kelasOptions={kelasOptions}
@@ -70,11 +70,11 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
 
     <Dialog open={!!editItem} onOpenChange={onEditClose}>
       <DialogContent
-        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+        className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto mx-auto"
         onInteractOutside={(event) => event.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>Edit Materi</DialogTitle>
+          <DialogTitle className="text-base">Edit Materi</DialogTitle>
         </DialogHeader>
         {editItem && (
           <EditMateri
