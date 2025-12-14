@@ -120,12 +120,12 @@ export default function TugasPage() {
             />
 
             {filteredAssignments.length > 0 && (
-              <div className="flex items-center justify-between pt-3 border-t">
-                <p className="text-xs text-muted-foreground">
+              <div className="flex flex-col gap-2 pt-3 border-t sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-muted-foreground text-center sm:text-left">
                   Halaman {currentPage} dari {totalPages} | Menampilkan{" "}
                   {paginatedAssignments.length} dari {filteredAssignments.length} tugas
                 </p>
-                <div className="flex gap-1.5">
+                <div className="flex justify-center gap-1.5">
                   <Button
                     variant="outline"
                     size="sm"
@@ -134,8 +134,12 @@ export default function TugasPage() {
                     disabled={currentPage === 1}
                   >
                     <ChevronLeft className="h-3.5 w-3.5" />
-                    Sebelumnya
+                    <span className="hidden sm:inline">Sebelumnya</span>
+                    <span className="sm:hidden">Prev</span>
                   </Button>
+                  <span className="text-xs font-medium px-2 min-w-[50px] text-center flex items-center justify-center">
+                    {currentPage} / {totalPages}
+                  </span>
                   <Button
                     variant="outline"
                     size="sm"
@@ -143,7 +147,8 @@ export default function TugasPage() {
                     onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
                   >
-                    Berikutnya
+                    <span className="hidden sm:inline">Berikutnya</span>
+                    <span className="sm:hidden">Next</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </Button>
                 </div>
