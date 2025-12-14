@@ -187,9 +187,7 @@ export default function StudentLayout({
       <header className="sticky top-0 z-20 bg-white shadow-sm">
         <div className="flex w-full items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <div className="rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 p-1.5 text-white shadow-md">
-              <BookOpen className="h-5 w-5" />
-            </div>
+            <img src="/img/LogoSekolah.png" alt="Logo SMPN 2 Merapi Barat" className="h-8 w-8 object-contain" />
             <div>
               <h1 className="text-base font-semibold text-gray-900">
                 {title ?? "Dashboard Siswa"}

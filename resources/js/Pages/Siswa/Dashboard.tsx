@@ -37,7 +37,7 @@ export default function Dashboard() {
           : "Silakan hubungi admin atau guru untuk penempatan kelas."
       }
     >
-      <Head title="Dashboard Siswa" />
+      <Head title="Dashboard" />
 
       <div className="space-y-4">
         {!hasClass && (

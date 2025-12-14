@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { Calendar, Layers, Users, Plus, Clock } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
-import type { ScheduleStats } from "@/Pages/Admin/JadwalKelas/types";
+import type { ScheduleStats } from "@/Pages/admin/JadwalKelas/types";
 
 interface ScheduleHeaderProps {
   stats?: ScheduleStats | null;

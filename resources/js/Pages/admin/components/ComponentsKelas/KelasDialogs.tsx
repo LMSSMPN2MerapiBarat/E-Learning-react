@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
-import EditKelas from "@/Pages/Admin/Kelas/Edit";
+import EditKelas from "@/Pages/admin/Kelas/Edit";
 import {
   Table,
   TableBody,

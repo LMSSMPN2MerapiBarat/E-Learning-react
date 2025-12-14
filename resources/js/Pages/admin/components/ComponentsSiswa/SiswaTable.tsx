@@ -195,14 +195,6 @@ export default function SiswaTable({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-7 text-xs"
-                  onClick={() => onViewDetail(student)}
-                >
-                  Detail
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
                   className="h-7 w-7 p-0"
                   onClick={() => {
                     setSelectedStudent(student);

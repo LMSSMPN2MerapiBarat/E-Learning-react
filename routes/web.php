@@ -154,6 +154,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('users', AdminUserController::class);
         Route::post('/users/import', [AdminUserController::class, 'importExcel'])->name('users.import');
         Route::get('/users/export/{role}', [AdminUserController::class, 'exportExcel'])->name('users.export');
+        Route::get('/users/template/{role}', [AdminUserController::class, 'downloadTemplate'])->name('users.template');
         Route::post('/users/bulk-delete', [AdminUserController::class, 'bulkDelete'])->name('users.bulk-delete');
     });
 

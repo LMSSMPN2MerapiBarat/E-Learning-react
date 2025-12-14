@@ -25,7 +25,7 @@ import {
 } from "@/Components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/Components/ui/utils";
-import type { ScheduleFormValues, ScheduleReference } from "@/Pages/Admin/JadwalKelas/types";
+import type { ScheduleFormValues, ScheduleReference } from "@/Pages/admin/JadwalKelas/types";
 
 interface ScheduleFormProps {
   reference: ScheduleReference;

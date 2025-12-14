@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Upload, Download, Plus, Trash, Trash2 } from "lucide-react";
+import { Upload, Download, Plus, Trash, Trash2, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
@@ -13,6 +13,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/Components/ui/dialog";
 
 interface Props {
   selectedIds: number[];
@@ -35,17 +41,38 @@ export default function SiswaHeader({
 }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [isDeleteAllOpen, setIsDeleteAllOpen] = useState(false);
   const [isClearingAll, setIsClearingAll] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const resetImportState = () => {
     setSelectedFile(null);
+    setIsDragOver(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  };
+
+  // File selection handler (both click and drag-drop)
+  const handleFileSelect = (file: File | null) => {
+    if (!file) return;
+
+    const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+    const validExtensions = ['.xlsx', '.xls'];
+    const hasValidExtension = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+
+    if (!validTypes.includes(file.type) && !hasValidExtension) {
+      toast.error("Format file tidak valid. Gunakan file Excel (.xlsx atau .xls)");
+      return;
+    }
+
+    setSelectedFile(file);
+    setIsImportModalOpen(false);
+    setIsConfirmOpen(true);
   };
 
   const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,10 +80,29 @@ export default function SiswaHeader({
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    if (!file) return;
+    handleFileSelect(file ?? null);
+  };
 
-    setSelectedFile(file);
-    setIsConfirmOpen(true);
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const file = e.dataTransfer.files?.[0];
+    handleFileSelect(file ?? null);
   };
 
   const performImport = () => {
@@ -109,10 +155,10 @@ export default function SiswaHeader({
 
   const handleExport = () => {
     setIsLoading(true);
-    const toastId = toast.loading("?? Mengekspor data siswa...");
+    const toastId = toast.loading("Mengekspor data siswa...");
     window.location.href = "/admin/users/export/siswa";
     setTimeout(() => {
-      toast.success("? File berhasil diekspor!", { id: toastId });
+      toast.success("File berhasil diekspor!", { id: toastId });
       setIsLoading(false);
     }, 1500);
   };
@@ -151,20 +197,19 @@ export default function SiswaHeader({
       <div className="flex flex-wrap items-center justify-end gap-2">
         <Button
           variant="outline"
-          className="relative overflow-hidden w-full sm:w-auto"
-          asChild
+          size="sm"
+          onClick={() => window.location.href = "/admin/users/template/siswa"}
+          className="w-full sm:w-auto"
         >
-          <label className="cursor-pointer flex items-center gap-1.5 text-sm">
-            <Upload className="w-3 h-3" />
-            Import
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".xls,.xlsx"
-              onChange={handleSelectFile}
-              className="absolute inset-0 cursor-pointer opacity-0"
-            />
-          </label>
+          <Download className="w-3 h-3 mr-1.5" /> Download Template
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full sm:w-auto"
+          onClick={() => setIsImportModalOpen(true)}
+        >
+          <Upload className="w-3 h-3 mr-1.5" /> Import Excel
         </Button>
         <Button
           variant="outline"
@@ -282,6 +327,86 @@ export default function SiswaHeader({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Import Modal with Drag & Drop */}
+      <Dialog open={isImportModalOpen} onOpenChange={setIsImportModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileSpreadsheet className="w-5 h-5 text-green-600" />
+              Import Data Siswa
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div
+              className={`
+                relative border-2 border-dashed rounded-lg p-8 text-center
+                transition-all duration-200 cursor-pointer
+                ${isDragOver
+                  ? 'border-blue-500 bg-blue-50 scale-[1.02]'
+                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                }
+              `}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".xlsx,.xls"
+                className="hidden"
+                onChange={handleSelectFile}
+              />
+              <div className="flex flex-col items-center gap-3">
+                <div className={`
+                  p-4 rounded-full transition-colors duration-200
+                  ${isDragOver ? 'bg-blue-100' : 'bg-gray-100'}
+                `}>
+                  <Upload className={`
+                    w-8 h-8 transition-colors duration-200
+                    ${isDragOver ? 'text-blue-600' : 'text-gray-500'}
+                  `} />
+                </div>
+                <div>
+                  <p className={`
+                    font-medium transition-colors duration-200
+                    ${isDragOver ? 'text-blue-700' : 'text-gray-700'}
+                  `}>
+                    {isDragOver ? 'Lepas file di sini...' : 'Drag & drop file Excel di sini'}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    atau <span className="text-blue-600 font-medium">klik untuk memilih file</span>
+                  </p>
+                </div>
+                <p className="text-xs text-gray-400">
+                  Format yang didukung: .xlsx, .xls
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.location.href = "/admin/users/template/siswa"}
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              >
+                <Download className="w-4 h-4 mr-1.5" />
+                Download Template
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsImportModalOpen(false)}
+              >
+                Batal
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

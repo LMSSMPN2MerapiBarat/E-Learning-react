@@ -143,7 +143,7 @@ class DashboardController extends Controller
         }
 
         $now = now();
-        $notificationWindowDays = 7;
+        $notificationWindowDays = 3;
         $notificationCutoff = $now->copy()->subDays($notificationWindowDays);
 
         $materiCollection = $materiQuery->latest()->get();

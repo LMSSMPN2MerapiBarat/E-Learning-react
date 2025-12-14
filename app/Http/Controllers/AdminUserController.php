@@ -417,9 +417,9 @@ class AdminUserController extends Controller
             ]);
         } catch (ValidationException $e) {
             $firstError = collect($e->errors())->flatten()->first();
-            return back()->with('error', '❌ Gagal mengimpor: ' . ($firstError ?? $e->getMessage()));
+            return back()->with('error', 'Gagal mengimpor: ' . ($firstError ?? $e->getMessage()));
         } catch (\Exception $e) {
-            return back()->with('error', '❌ Gagal mengimpor: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengimpor: ' . $e->getMessage());
         }
     }
 
@@ -433,5 +433,43 @@ class AdminUserController extends Controller
             'siswa' => Excel::download(new SiswaExport, 'Data_Siswa.xlsx'),
             default => back()->with('error', 'Role tidak valid!'),
         };
+    }
+
+    /**
+     * Download import template Excel
+     */
+    public function downloadTemplate($role)
+    {
+        $headers = match ($role) {
+            'guru'  => ['Nama', 'Email', 'NIP', 'Jenis Kelamin', 'Mapel', 'Kelas', 'No Telepon'],
+            'siswa' => ['Nama', 'Email', 'NIS', 'Jenis Kelamin', 'Kelas', 'No Telepon', 'Tempat Lahir', 'Tanggal Lahir'],
+            default => null,
+        };
+
+        if ($headers === null) {
+            return back()->with('error', 'Role tidak valid!');
+        }
+
+        $filename = 'Template_Import_' . ucfirst($role) . '.xlsx';
+
+        return Excel::download(new class($headers) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings {
+            private array $headers;
+
+            public function __construct(array $headers)
+            {
+                $this->headers = $headers;
+            }
+
+            public function array(): array
+            {
+                // Return empty array - template only needs headers
+                return [];
+            }
+
+            public function headings(): array
+            {
+                return $this->headers;
+            }
+        }, $filename);
     }
 }

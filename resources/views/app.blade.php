@@ -4,11 +4,12 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title inertia>{{ config('app.name', 'E-Learning SMPN 2 Merapi Barat') }}</title>
+        <title inertia>{{ config('app.name', 'SMPN 2 Merapi Barat') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="icon" href="/img/LogoSekolah.png" type="image/png">
 
         <!-- Scripts -->
         @routes

@@ -17,8 +17,8 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { router } from "@inertiajs/react";
 import { toast } from "sonner";
-import CreateSiswa from "@/Pages/Admin/Siswa/Create";
-import EditSiswa from "@/Pages/Admin/Siswa/Edit";
+import CreateSiswa from "@/Pages/admin/siswa/Create";
+import EditSiswa from "@/Pages/admin/siswa/Edit";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { Badge } from "@/Components/ui/badge";
 import { Separator } from "@/Components/ui/separator";
@@ -136,13 +136,13 @@ export default function SiswaDialogs({
                         label: "Tanggal Lahir",
                         value: detailStudent.tanggal_lahir
                           ? new Date(detailStudent.tanggal_lahir).toLocaleDateString(
-                              "id-ID",
-                              {
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                              },
-                            )
+                            "id-ID",
+                            {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            },
+                          )
                           : "-",
                       },
                       { label: "Email", value: detailStudent.email ?? "-" },
@@ -213,8 +213,8 @@ export default function SiswaDialogs({
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}
-                className="bg-red-600 hover:bg-red-700 text-white focus:ring-red-700">
-                Ya, Hapus</AlertDialogAction>
+              className="bg-red-600 hover:bg-red-700 text-white focus:ring-red-700">
+              Ya, Hapus</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/Components/ui/dialog";
-import CreateKelas from "@/Pages/Admin/Kelas/Create";
+import CreateKelas from "@/Pages/admin/Kelas/Create";
 
 interface KelasHeaderProps {
   selectedIds: number[];

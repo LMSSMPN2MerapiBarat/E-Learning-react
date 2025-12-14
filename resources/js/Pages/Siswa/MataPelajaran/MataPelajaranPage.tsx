@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
+import { Head } from "@inertiajs/react";
 import { motion } from "motion/react";
 import {
+  Book,
   BookOpen,
   ChevronLeft,
   ChevronRight,
@@ -126,6 +128,7 @@ export default function Subjects({
       }
       {...rest}
     >
+      <Head title="Mata Pelajaran" />
       {enhancedSubjects.length === 0 ? (
         <Card className="border-dashed">
           <CardContent className="py-10 text-center text-xs text-gray-500">
@@ -218,14 +221,14 @@ export default function Subjects({
                       className="group cursor-pointer overflow-hidden border-2 border-transparent transition hover:border-indigo-200 hover:shadow-lg"
                       onClick={() => setSelectedKey(key)}
                     >
-                      <div className={`h-1.5 ${decoration.background}`} />
+                      <div className={`h-1.5 bg-gradient-to-r ${decoration.background}`} />
                       <CardContent className="p-4">
                         <div className="mb-3 flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2">
                             <div
-                              className={`rounded-lg bg-gradient-to-br ${decoration.background} p-2 text-xl text-white shadow`}
+                              className={`rounded-lg bg-gradient-to-br ${decoration.background} p-2 text-white shadow flex items-center justify-center`}
                             >
-                              {decoration.icon}
+                              <Book size={20} color="white" strokeWidth={2.5} />
                             </div>
                             <div>
                               <h3 className="text-sm font-semibold text-gray-900">
@@ -329,11 +332,11 @@ function StatCard({
 
 function subjectDecoration(index: number) {
   const palette = [
-    { background: "bg-gradient-to-r from-indigo-500 to-indigo-700", icon: "📘" },
-    { background: "bg-gradient-to-r from-pink-500 to-rose-700", icon: "📗" },
-    { background: "bg-gradient-to-r from-amber-500 to-orange-600", icon: "📙" },
-    { background: "bg-gradient-to-r from-emerald-500 to-green-600", icon: "📒" },
-    { background: "bg-gradient-to-r from-blue-500 to-blue-700", icon: "📔" },
+    { background: "from-indigo-500 to-indigo-700", iconColor: "#6366f1" },
+    { background: "from-pink-500 to-rose-700", iconColor: "#ec4899" },
+    { background: "from-amber-500 to-orange-600", iconColor: "#f59e0b" },
+    { background: "from-emerald-500 to-green-600", iconColor: "#10b981" },
+    { background: "from-blue-500 to-blue-700", iconColor: "#3b82f6" },
   ];
   return palette[index % palette.length];
 }

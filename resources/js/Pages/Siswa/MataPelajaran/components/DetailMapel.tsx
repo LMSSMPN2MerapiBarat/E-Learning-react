@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import {
   ArrowLeft,
   Award,
+  Book,
   Calendar,
   CheckCircle,
   Clock,
@@ -72,9 +73,7 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
           <CardContent className="p-6">
             <div className="flex flex-col gap-4 md:flex-row">
               <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-white/5 to-white/30 p-4 shadow-inner backdrop-blur-md md:w-36">
-                <span className="text-5xl drop-shadow-sm">
-                  {subjectDecoration(subject.id).icon}
-                </span>
+                <Book size={48} color={subjectDecoration(subject.id).iconColor} strokeWidth={2.5} className="drop-shadow-sm" />
               </div>
               <div className="flex-1">
                 <div className="mb-3">
@@ -569,11 +568,11 @@ function guessMaterialType(material: MaterialItem) {
 
 function subjectDecoration(id: number) {
   const palette = [
-    { background: "bg-gradient-to-r from-blue-500 to-blue-700", icon: "📘" },
-    { background: "bg-gradient-to-r from-red-500 to-red-700", icon: "📕" },
-    { background: "bg-gradient-to-r from-green-500 to-green-700", icon: "📗" },
-    { background: "bg-gradient-to-r from-purple-500 to-purple-700", icon: "📔" },
-    { background: "bg-gradient-to-r from-indigo-500 to-indigo-700", icon: "📙" },
+    { background: "bg-gradient-to-r from-blue-500 to-blue-700", iconColor: "#2563eb" },
+    { background: "bg-gradient-to-r from-red-500 to-red-700", iconColor: "#dc2626" },
+    { background: "bg-gradient-to-r from-green-500 to-green-700", iconColor: "#16a34a" },
+    { background: "bg-gradient-to-r from-purple-500 to-purple-700", iconColor: "#9333ea" },
+    { background: "bg-gradient-to-r from-indigo-500 to-indigo-700", iconColor: "#4f46e5" },
   ];
   return palette[id % palette.length];
 }

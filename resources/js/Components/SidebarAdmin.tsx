@@ -51,26 +51,12 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
       <div className="px-3 py-3 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Ikon biru */}
-            <div className="bg-blue-500 p-2 rounded-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-users w-4 h-4 text-white"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-              </svg>
-            </div>
+            {/* Logo Sekolah */}
+            <img
+              src="/img/LogoSekolah.png"
+              alt="Logo SMPN 2 Merapi Barat"
+              className="w-8 h-8 object-contain"
+            />
 
             {/* Judul dan subjudul */}
             <div className="flex flex-col">

@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/Components/ui/alert-dialog";
-import EditGuru from "@/Pages/Admin/Guru/Edit";
+import EditGuru from "@/Pages/admin/Guru/Edit";
 
 export default function GuruDialogs({
   isEditOpen,
@@ -38,11 +38,11 @@ export default function GuruDialogs({
     router.delete(`/admin/guru/${deleteConfirm}`, {
       preserveScroll: true,
       onSuccess: () => {
-        toast.success("🗑️ Data guru berhasil dihapus!");
+        toast.success("Data guru berhasil dihapus!");
         setDeleteConfirm(null);
         reloadGurus();
       },
-      onError: () => toast.error("❌ Gagal menghapus data guru."),
+      onError: () => toast.error("Gagal menghapus data guru."),
     });
   };
 
@@ -59,7 +59,7 @@ export default function GuruDialogs({
         toast.success("Beberapa guru berhasil dihapus!", { id: toastId });
         reloadGurus();
       },
-      onError: () => toast.error("❌ Gagal menghapus beberapa data.", { id: toastId }),
+      onError: () => toast.error("Gagal menghapus beberapa data.", { id: toastId }),
       onFinish: () => setTimeout(() => setIsBulkDeleting(false), 700),
     });
   };

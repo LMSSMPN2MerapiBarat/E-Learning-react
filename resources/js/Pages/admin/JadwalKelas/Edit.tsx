@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Button } from "@/Components/ui/button";
-import ScheduleForm from "@/Pages/Admin/components/ComponentsJadwalKelas/ScheduleForm";
+import ScheduleForm from "@/Pages/admin/components/ComponentsJadwalKelas/ScheduleForm";
 import type { PageProps } from "@/types";
 import type { ScheduleFormValues, ScheduleItem, ScheduleReference } from "./types";
 

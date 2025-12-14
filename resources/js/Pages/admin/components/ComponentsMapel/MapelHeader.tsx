@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/Components/ui/dialog";
-import CreateMapel from "@/Pages/Admin/Mapel/Create";
+import CreateMapel from "@/Pages/admin/Mapel/Create";
 
 interface MapelHeaderProps {
   selectedIds: number[];
