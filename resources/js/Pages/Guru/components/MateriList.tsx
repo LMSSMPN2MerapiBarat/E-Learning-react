@@ -160,11 +160,11 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t pt-3">
-              <p className="text-xs text-gray-500">
+            <div className="flex flex-col gap-2 border-t pt-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-gray-500 text-center sm:text-left">
                 Menampilkan {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, items.length)} dari {items.length} materi
               </p>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -175,7 +175,7 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
                   <ChevronLeft className="h-3.5 w-3.5" />
                   Prev
                 </Button>
-                <span className="text-xs font-medium px-1.5">
+                <span className="text-xs font-medium px-2 min-w-[50px] text-center">
                   {currentPage} / {totalPages}
                 </span>
                 <Button
