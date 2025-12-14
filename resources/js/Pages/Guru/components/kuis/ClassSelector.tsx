@@ -42,6 +42,7 @@ const ClassSelector: React.FC<ClassSelectorProps> = ({
       type="text"
       value={selectedIds.length > 0 ? selectedIds.join(",") : ""}
       required
+      readOnly
       className="sr-only"
       tabIndex={-1}
     />

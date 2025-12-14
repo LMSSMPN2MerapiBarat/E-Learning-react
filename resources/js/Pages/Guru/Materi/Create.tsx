@@ -149,6 +149,7 @@ export default function CreateMateri({
             type="text"
             value={data.kelas_id ?? ""}
             required
+            readOnly
             className="sr-only"
             tabIndex={-1}
           />
@@ -190,6 +191,7 @@ export default function CreateMateri({
             type="text"
             value={data.mata_pelajaran_id ?? ""}
             required
+            readOnly
             className="sr-only"
             tabIndex={-1}
           />

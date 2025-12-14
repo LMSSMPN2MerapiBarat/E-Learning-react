@@ -97,6 +97,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
           type="text"
           value={data.max_attempts ?? ""}
           required
+          readOnly
           className="sr-only"
           tabIndex={-1}
         />
@@ -134,6 +135,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
           type="text"
           value={data.mata_pelajaran_id ?? ""}
           required
+          readOnly
           className="sr-only"
           tabIndex={-1}
         />
@@ -161,6 +163,7 @@ const QuizMetadataFields: React.FC<QuizMetadataFieldsProps> = ({
           type="text"
           value={data.status ?? ""}
           required
+          readOnly
           className="sr-only"
           tabIndex={-1}
         />
