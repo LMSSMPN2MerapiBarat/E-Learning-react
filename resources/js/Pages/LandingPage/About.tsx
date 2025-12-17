@@ -28,7 +28,7 @@ export const About = () => {
                 <div>
                   <h3 className="text-xl font-bold text-blue-900 mb-2">Visi Kami</h3>
                   <p className="text-gray-700">
-                    Menjadi lembaga pendidikan terkemuka yang menghasilkan lulusan yang beriman, cerdas, dan kompetitif dengan karakter moral yang kuat.
+                    Mewujudkan peserta didik yang Bertaqwa, Kreatif, Bergotong-royong dan Berwawasan Lingkungan.
                   </p>
                 </div>
               </div>
@@ -42,10 +42,12 @@ export const About = () => {
                 <div>
                   <h3 className="text-xl font-bold text-blue-900 mb-2">Misi Kami</h3>
                   <ul className="text-gray-700 list-disc list-inside space-y-1">
-                    <li>Menumbuhkan nilai-nilai religius dan karakter mulia.</li>
-                    <li>Menerapkan pembelajaran yang aktif, kreatif, dan efektif.</li>
-                    <li>Mengembangkan potensi siswa dalam sains dan teknologi.</li>
-                    <li>Membudayakan lingkungan sekolah yang bersih, sehat, dan hijau.</li>
+                    <li>Mewujudkan siswa yang sadar dalam melaksanakan ibadah sesuai dengan keyakinannya.</li>
+                    <li>Menumbuhkan rasa hormat terhadap orang tua, guru dan sesama siswa dan menghindari perundungan.</li>
+                    <li>Mengembangkan pembelajaran yang aktif, kreatif & inovatif dengan memanfaatkan lingkungan sekitar sehingga mampu meningkatkan potensi secara optimal.</li>
+                    <li>Menumbuhkan kesadaran dan rasa cinta memiliki sekolah sebagai bagian dari kehidupan.</li>
+                    <li>Membangun kehidupan sekolah yang bersih dan rindang.</li>
+                    <li>Membangun kesadaran warga sekolah akan kebersihan lingkungan belajar.</li>
                   </ul>
                 </div>
               </div>

@@ -1,37 +1,31 @@
 
 import React from 'react';
-import { Monitor, FlaskConical, Book, Trophy, Users } from 'lucide-react';
+import { Monitor, FlaskConical, Trophy, Users } from 'lucide-react';
 
 const facilities = [
   {
-    name: "Ruang Kelas Modern",
+    name: "Ruang Kelas ",
     icon: <Users size={40} className="text-blue-600" />,
     description: "Ruang kelas yang luas dan berventilasi baik dengan peralatan pembelajaran multimedia.",
     image: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMGluJTIwY2xhc3Nyb29tJTIwbGVhcm5pbmd8ZW58MXx8fHwxNzY1NjUyMzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
   },
   {
-    name: "Laboratorium Sains",
+    name: "Laboratorium IPA",
     icon: <FlaskConical size={40} className="text-blue-600" />,
     description: "Laboratorium lengkap untuk praktikum Fisika, Kimia, dan Biologi.",
-    image: "https://images.unsplash.com/photo-1636386689060-37d233b5d345?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzY2hvb2wlMjBzY2llbmNlJTIwbGFib3JhdG9yeXxlbnwxfHx8fDE3NjU2MDc3NjV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+    image: "/img/Fasilitas/LabIPA2.jpeg"
   },
   {
     name: "Laboratorium Komputer",
     icon: <Monitor size={40} className="text-blue-600" />,
     description: "Komputer spesifikasi tinggi dengan akses internet untuk pembelajaran dan penelitian digital.",
-    image: "https://images.unsplash.com/photo-1719159381981-1327b22aff9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzY2hvb2wlMjBjb21wdXRlciUyMGxhYnxlbnwxfHx8fDE3NjU1NjE0MTd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-  },
-  {
-    name: "Perpustakaan Sekolah",
-    icon: <Book size={40} className="text-blue-600" />,
-    description: "Ruang tenang dengan koleksi buku yang luas dan sumber daya digital.",
-    image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=1080"
+    image: "/img/Fasilitas/LabKomputer.jpeg"
   },
   {
     name: "Lapangan Olahraga",
     icon: <Trophy size={40} className="text-blue-600" />,
     description: "Lapangan luas untuk sepak bola, basket, dan aktivitas atletik lainnya.",
-    image: "https://images.unsplash.com/photo-1649182462992-ea644b7f8155?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzY2hvb2wlMjBzcG9ydHMlMjBmaWVsZHxlbnwxfHx8fDE3NjU1NjE0MTZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+    image: "/img/Fasilitas/Lapangan.jpeg"
   }
 ];
 
