@@ -95,7 +95,13 @@ export default function LoginPage() {
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        // Only allow lowercase letters, numbers, . and @
+                        const filtered = e.target.value
+                          .toLowerCase()
+                          .replace(/[^a-z0-9.@]/g, '');
+                        setEmail(filtered);
+                      }}
                       className="w-full pl-10 pr-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="Masukkan email Anda"
                       required
