@@ -1,5 +1,5 @@
 import React from 'react';
-import { Monitor, FlaskConical, Book, Trophy, Users } from 'lucide-react';
+import { Monitor, FlaskConical, Trophy, Users, Book } from 'lucide-react';
 
 const facilities = [
   {
