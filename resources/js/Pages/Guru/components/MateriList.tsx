@@ -44,6 +44,8 @@ const formatFileSize = (bytes: number | null | undefined): string => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
+import { Separator } from "@/Components/ui/separator";
+
 const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [detailItem, setDetailItem] = useState<MateriItem | null>(null);
@@ -196,79 +198,84 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
 
       {/* Dialog Detail Materi */}
       <Dialog open={detailItem !== null} onOpenChange={() => setDetailItem(null)}>
-        <DialogContent className="w-[calc(100%-2rem)] max-w-lg sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-y-auto mx-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+        <DialogContent className="w-[calc(100%-2rem)] max-w-lg sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-y-auto mx-auto p-0 gap-0">
+          <DialogHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
+            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold text-gray-900">
+              <div className="p-1.5 bg-blue-100 rounded-lg">
+                <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+              </div>
               Detail Materi
             </DialogTitle>
           </DialogHeader>
 
+          <Separator />
+
           {detailItem && (
-            <div className="space-y-4 sm:space-y-6">
-              {/* Judul */}
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
-                  {detailItem.judul}
-                </h3>
-              </div>
-
-              {/* Deskripsi */}
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700">
-                  <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  Deskripsi
+            <div className="p-4 sm:p-6 space-y-6">
+              {/* Header Info */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
+                    {detailItem.judul}
+                  </h3>
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs sm:text-sm text-gray-500">
+                    <Badge variant="secondary" className="font-normal text-gray-600">
+                      <BookOpen className="mr-1.5 h-3.5 w-3.5" />
+                      {detailItem.mapel?.nama || "-"}
+                    </Badge>
+                    <Badge variant="secondary" className="font-normal text-gray-600">
+                      <GraduationCap className="mr-1.5 h-3.5 w-3.5" />
+                      Kelas {detailItem.kelas?.nama || "-"}
+                    </Badge>
+                    <Badge variant="secondary" className="font-normal text-gray-600">
+                      <Calendar className="mr-1.5 h-3.5 w-3.5" />
+                      {detailItem.created_at
+                        ? new Date(detailItem.created_at).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
+                        : "-"}
+                    </Badge>
+                  </div>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-2.5 sm:p-3 rounded-lg">
+
+                <div className="text-sm text-gray-600 leading-relaxed bg-gray-50/50 p-4 rounded-lg border border-gray-100">
                   {detailItem.deskripsi || <span className="italic text-gray-400">Tidak ada deskripsi</span>}
-                </p>
-              </div>
-
-              {/* Kelas & Mata Pelajaran */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div className="space-y-1.5 sm:space-y-2">
-                  <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700">
-                    <GraduationCap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    Kelas
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-2.5 sm:p-3 rounded-lg">
-                    {detailItem.kelas?.nama || <span className="italic text-gray-400">-</span>}
-                  </p>
-                </div>
-                <div className="space-y-1.5 sm:space-y-2">
-                  <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700">
-                    <BookOpen className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    Mata Pelajaran
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-2.5 sm:p-3 rounded-lg">
-                    {detailItem.mapel?.nama || <span className="italic text-gray-400">-</span>}
-                  </p>
                 </div>
               </div>
 
-              {/* File Materi */}
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700">
-                  <FileIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  File Materi
-                </div>
-                <div className="bg-gray-50 p-2.5 sm:p-3 rounded-lg">
+              {/* Attachments Section */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider text-[11px] sm:text-xs text-gray-500">
+                  Lampiran & Media
+                </h4>
+
+                <div className="grid grid-cols-1 gap-3">
+                  {/* File Materi */}
                   {detailItem.file_url ? (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm font-medium text-gray-800 truncate">{detailItem.file_name}</p>
-                        <p className="text-[10px] sm:text-xs text-gray-500">
-                          {getFileExtension(detailItem.file_name, detailItem.file_mime)?.toUpperCase()} • {formatFileSize(detailItem.file_size)}
-                        </p>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-white border rounded-xl hover:bg-gray-50 transition-colors gap-3 group">
+                      <div className="flex items-start gap-3 min-w-0 w-full sm:w-auto">
+                        <div className="p-2 bg-blue-50 text-blue-600 rounded-lg shrink-0">
+                          <FileIcon className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {detailItem.file_name}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {getFileExtension(detailItem.file_name, detailItem.file_mime)?.toUpperCase()} • {formatFileSize(detailItem.file_size)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex gap-2 shrink-0">
-                        <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
+                      <div className="flex gap-2 w-full sm:w-auto mt-1 sm:mt-0">
+                        <Button variant="outline" size="sm" className="flex-1 sm:flex-none h-8 text-xs" asChild>
                           <a href={detailItem.file_url} target="_blank" rel="noopener noreferrer">
                             <Eye className="mr-1.5 h-3.5 w-3.5" />
                             Lihat
                           </a>
                         </Button>
-                        <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
+                        <Button variant="outline" size="sm" className="flex-1 sm:flex-none h-8 text-xs" asChild>
                           <a href={detailItem.file_url} download rel="noopener noreferrer">
                             <Download className="mr-1.5 h-3.5 w-3.5" />
                             Unduh
@@ -276,89 +283,78 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
                         </Button>
                       </div>
                     </div>
-                  ) : (
-                    <p className="text-xs sm:text-sm italic text-gray-400">Tidak ada file</p>
-                  )}
-                </div>
-              </div>
+                  ) : null}
 
-              {/* Video */}
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700">
-                  <Video className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  Video
-                </div>
-                <div className="bg-gray-50 p-2.5 sm:p-3 rounded-lg">
+                  {/* Video */}
                   {detailItem.video_url ? (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs sm:text-sm font-medium text-gray-800 truncate">{detailItem.video_name}</p>
-                        <p className="text-[10px] sm:text-xs text-gray-500">{formatFileSize(detailItem.video_size)}</p>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-white border rounded-xl hover:bg-gray-50 transition-colors gap-3">
+                      <div className="flex items-start gap-3 min-w-0 w-full sm:w-auto">
+                        <div className="p-2 bg-purple-50 text-purple-600 rounded-lg shrink-0">
+                          <Video className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {detailItem.video_name}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            VIDEO • {formatFileSize(detailItem.video_size)}
+                          </p>
+                        </div>
                       </div>
-                      <Button variant="outline" size="sm" className="h-7 text-xs shrink-0 w-fit" asChild>
+                      <Button variant="secondary" size="sm" className="w-full sm:w-auto h-8 text-xs bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-100" asChild>
                         <a href={detailItem.video_url} target="_blank" rel="noopener noreferrer">
                           <PlayCircle className="mr-1.5 h-3.5 w-3.5" />
-                          Putar
+                          Putar Video
                         </a>
                       </Button>
                     </div>
-                  ) : (
-                    <p className="text-xs sm:text-sm italic text-gray-400">Tidak ada video</p>
-                  )}
-                </div>
-              </div>
+                  ) : null}
 
-              {/* YouTube */}
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700">
-                  <Youtube className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  Tautan YouTube
-                </div>
-                <div className="bg-gray-50 p-2.5 sm:p-3 rounded-lg">
+                  {/* YouTube */}
                   {detailItem.youtube_url ? (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                      <p className="text-xs sm:text-sm text-blue-600 truncate flex-1 min-w-0 break-all">{detailItem.youtube_url}</p>
-                      <Button variant="outline" size="sm" className="h-7 text-xs shrink-0 w-fit" asChild>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-white border rounded-xl hover:bg-gray-50 transition-colors gap-3">
+                      <div className="flex items-start gap-3 min-w-0 w-full sm:w-auto">
+                        <div className="p-2 bg-red-50 text-red-600 rounded-lg shrink-0">
+                          <Youtube className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            Video YouTube
+                          </p>
+                          <p className="text-xs text-blue-500 mt-0.5 truncate max-w-[200px] sm:max-w-xs">
+                            {detailItem.youtube_url}
+                          </p>
+                        </div>
+                      </div>
+                      <Button variant="secondary" size="sm" className="w-full sm:w-auto h-8 text-xs bg-red-50 text-red-700 hover:bg-red-100 border-red-100" asChild>
                         <a href={detailItem.youtube_url} target="_blank" rel="noopener noreferrer">
                           <LinkIcon className="mr-1.5 h-3.5 w-3.5" />
-                          Buka
+                          Buka Tautan
                         </a>
                       </Button>
                     </div>
-                  ) : (
-                    <p className="text-xs sm:text-sm italic text-gray-400">Tidak ada tautan YouTube</p>
+                  ) : null}
+
+                  {!detailItem.file_url && !detailItem.video_url && !detailItem.youtube_url && (
+                    <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed">
+                      <p className="text-sm text-gray-500 italic">Tidak ada lampiran materi</p>
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Tanggal Upload */}
-              <div className="space-y-1.5 sm:space-y-2">
-                <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-700">
-                  <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  Tanggal Diunggah
-                </div>
-                <p className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-2.5 sm:p-3 rounded-lg">
-                  {detailItem.created_at
-                    ? new Date(detailItem.created_at).toLocaleDateString("id-ID", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                    : <span className="italic text-gray-400">-</span>}
-                </p>
-              </div>
+              <Separator />
 
               {/* Actions */}
-              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3 sm:pt-4 border-t">
-                <Button variant="outline" size="sm" className="h-8 text-xs sm:text-sm sm:h-9" onClick={() => setDetailItem(null)}>
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
+                <Button variant="outline" className="h-9" onClick={() => setDetailItem(null)}>
                   Tutup
                 </Button>
-                <Button size="sm" className="h-8 text-xs sm:text-sm sm:h-9" onClick={() => {
+                <Button className="h-9" onClick={() => {
                   onEdit(detailItem);
                   setDetailItem(null);
                 }}>
-                  <Edit className="mr-1.5 h-3.5 w-3.5 sm:mr-2 sm:h-4 sm:w-4" />
+                  <Edit className="mr-2 h-4 w-4" />
                   Edit Materi
                 </Button>
               </div>
