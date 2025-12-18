@@ -239,7 +239,7 @@ export default function EditMateri({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="file_edit">File Materi (opsional)</Label>
+        <Label htmlFor="file_edit">File Materi <span className="text-red-500">(opsional)</span></Label>
         <Input
           id="file_edit"
           type="file"
@@ -257,7 +257,7 @@ export default function EditMateri({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="video_edit">File Video (opsional)</Label>
+        <Label htmlFor="video_edit">File Video <span className="text-red-500">(opsional)</span></Label>
         <Input
           id="video_edit"
           type="file"
@@ -302,7 +302,7 @@ export default function EditMateri({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="youtube_url_edit">Tautan YouTube (opsional)</Label>
+        <Label htmlFor="youtube_url_edit">Tautan YouTube <span className="text-red-500">(opsional)</span></Label>
         <Input
           id="youtube_url_edit"
           type="url"
