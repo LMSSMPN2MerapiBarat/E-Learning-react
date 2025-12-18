@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Separator } from "@/Components/ui/separator";
 import TeacherLayout from "@/Layouts/TeacherLayout";
 import type { PageProps } from "@/types";
-import { ArrowLeft, Clock, Users, Search, ChevronLeft, ChevronRight, FileText } from "lucide-react";
+import { ArrowLeft, Clock, Users, Search, ChevronLeft, ChevronRight, FileText, Calendar, Timer } from "lucide-react";
 import { Input } from "@/Components/ui/input";
 import {
   Table,
@@ -60,9 +60,9 @@ export default function QuizDetailPage() {
 
   return (
     <TeacherLayout title="Detail Kuis">
-      <div className="space-y-4">
+      <div className="space-y-4 px-1 sm:px-0">
         {/* Header Section */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2 sm:gap-3">
           <Button
             variant="ghost"
             size="sm"
@@ -74,18 +74,18 @@ export default function QuizDetailPage() {
           </Button>
 
           <div className="space-y-1.5">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
               <span>{quiz.mapel}</span>
               <span>•</span>
-              <div className="flex gap-0.5">
+              <div className="flex flex-wrap gap-0.5">
                 {quiz.kelas.map((k, i) => (
-                  <span key={i} className="bg-secondary px-1 py-0.5 rounded text-[10px] text-secondary-foreground">
+                  <span key={i} className="bg-secondary px-1.5 py-0.5 rounded text-[10px] text-secondary-foreground">
                     {k}
                   </span>
                 ))}
               </div>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">{quiz.title}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight break-words">{quiz.title}</h1>
             <div className="flex items-center gap-1.5">
               <Badge variant={quiz.status === "published" ? "default" : "secondary"} className="text-[10px]">
                 {quiz.status === "published" ? "Diterbitkan" : "Draft"}
@@ -94,50 +94,50 @@ export default function QuizDetailPage() {
           </div>
         </div>
 
-        {/* Stats & Description Grid */}
-        <div className="grid gap-3 md:grid-cols-3">
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center p-4 text-center">
-              <Users className="h-6 w-6 text-blue-500 mb-1.5" />
-              <p className="text-xs font-medium text-muted-foreground">Total Partisipan</p>
-              <p className="text-xl font-bold">{quiz.attempts.length}</p>
-              <p className="text-[10px] text-muted-foreground">Siswa</p>
+        {/* Stats & Description Grid - Responsive */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3">
+          <Card className="col-span-1">
+            <CardContent className="flex flex-col items-center justify-center p-3 sm:p-4 text-center">
+              <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500 mb-1 sm:mb-1.5" />
+              <p className="text-[10px] sm:text-xs font-medium text-muted-foreground">Total Partisipan</p>
+              <p className="text-lg sm:text-xl font-bold">{quiz.attempts.length}</p>
+              <p className="text-[9px] sm:text-[10px] text-muted-foreground">Siswa</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center p-4 text-center">
-              <Clock className="h-6 w-6 text-orange-500 mb-1.5" />
-              <p className="text-xs font-medium text-muted-foreground">Durasi Kuis</p>
-              <p className="text-xl font-bold">{quiz.duration}</p>
-              <p className="text-[10px] text-muted-foreground">Menit</p>
+          <Card className="col-span-1">
+            <CardContent className="flex flex-col items-center justify-center p-3 sm:p-4 text-center">
+              <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500 mb-1 sm:mb-1.5" />
+              <p className="text-[10px] sm:text-xs font-medium text-muted-foreground">Durasi Kuis</p>
+              <p className="text-lg sm:text-xl font-bold">{quiz.duration}</p>
+              <p className="text-[9px] sm:text-[10px] text-muted-foreground">Menit</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-1.5">
-              <CardTitle className="text-sm flex items-center gap-1.5">
-                <FileText className="h-3.5 w-3.5" />
+          <Card className="col-span-2 md:col-span-1">
+            <CardHeader className="pb-1 sm:pb-1.5 px-3 sm:px-6 pt-3 sm:pt-6">
+              <CardTitle className="text-xs sm:text-sm flex items-center gap-1.5">
+                <FileText className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                 Deskripsi
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-xs text-muted-foreground whitespace-pre-wrap line-clamp-3">
+            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+              <p className="text-[10px] sm:text-xs text-muted-foreground whitespace-pre-wrap line-clamp-3">
                 {quiz.description || "Tidak ada deskripsi tambahan untuk kuis ini."}
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Student Results Table */}
+        {/* Student Results */}
         <Card>
-          <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-3 space-y-0 pb-3">
-            <div>
-              <CardTitle className="text-base">Hasil Pengerjaan Siswa</CardTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">
+          <CardHeader className="flex flex-col gap-2 sm:gap-3 space-y-0 pb-2 sm:pb-3 px-3 sm:px-6">
+            <div className="text-center sm:text-left">
+              <CardTitle className="text-sm sm:text-base">Hasil Pengerjaan Siswa</CardTitle>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
                 Daftar nilai dan durasi pengerjaan siswa.
               </p>
             </div>
-            <div className="relative w-full sm:w-60">
-              <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
+            <div className="relative w-full">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 placeholder="Cari nama atau kelas..."
                 value={search}
@@ -145,12 +145,13 @@ export default function QuizDetailPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="pl-7 h-8 text-xs"
+                className="pl-7 h-8 text-xs w-full"
               />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="rounded-md border">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            {/* Desktop Table View */}
+            <div className="hidden sm:block rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -207,32 +208,82 @@ export default function QuizDetailPage() {
               </Table>
             </div>
 
+            {/* Mobile Card View */}
+            <div className="sm:hidden space-y-2">
+              {paginatedAttempts.length === 0 ? (
+                <div className="py-8 text-center text-muted-foreground text-xs">
+                  {search
+                    ? "Tidak ada siswa yang ditemukan dengan kata kunci tersebut."
+                    : "Belum ada siswa yang mengerjakan kuis ini."}
+                </div>
+              ) : (
+                paginatedAttempts.map((attempt) => (
+                  <div
+                    key={attempt.id}
+                    className="rounded-lg border bg-card p-3 space-y-2"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{attempt.student_name}</p>
+                        <Badge variant="outline" className="font-normal text-[10px] mt-1">
+                          {attempt.student_class}
+                        </Badge>
+                      </div>
+                      <Badge
+                        className={
+                          attempt.score >= 75
+                            ? "bg-green-100 text-green-700 hover:bg-green-100 text-xs px-2 py-1"
+                            : "bg-red-100 text-red-700 hover:bg-red-100 text-xs px-2 py-1"
+                        }
+                      >
+                        {attempt.score}
+                      </Badge>
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>{attempt.submitted_at}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Timer className="h-3 w-3" />
+                        <span>{attempt.duration_minutes} mnt</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Pagination */}
             {filteredAttempts.length > 0 && (
-              <div className="flex items-center justify-between pt-3">
-                <p className="text-xs text-muted-foreground">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3">
+                <p className="text-[10px] sm:text-xs text-muted-foreground text-center sm:text-left order-2 sm:order-1">
                   Halaman {page} dari {totalPages} | Menampilkan{" "}
                   {paginatedAttempts.length} dari {filteredAttempts.length} siswa
                 </p>
-                <div className="flex gap-1.5">
+                <div className="flex gap-1.5 order-1 sm:order-2 w-full sm:w-auto">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 text-xs"
+                    className="h-8 sm:h-7 text-xs flex-1 sm:flex-initial"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
                   >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                    Sebelumnya
+                    <ChevronLeft className="h-3.5 w-3.5 mr-1" />
+                    <span className="hidden xs:inline">Sebelumnya</span>
+                    <span className="xs:hidden">Prev</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 text-xs"
+                    className="h-8 sm:h-7 text-xs flex-1 sm:flex-initial"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                   >
-                    Berikutnya
-                    <ChevronRight className="h-3.5 w-3.5" />
+                    <span className="hidden xs:inline">Berikutnya</span>
+                    <span className="xs:hidden">Next</span>
+                    <ChevronRight className="h-3.5 w-3.5 ml-1" />
                   </Button>
                 </div>
               </div>
