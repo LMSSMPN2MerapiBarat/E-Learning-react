@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/react';
 import { Navbar } from '@/Pages/LandingPage/Navbar';
 import { Hero } from '@/Pages/LandingPage/Hero';
 import { About } from '@/Pages/LandingPage/About';
+import { Achievements } from '@/Pages/LandingPage/Achievements';
 import { Facilities } from '@/Pages/LandingPage/Facilities';
 import { Activities } from '@/Pages/LandingPage/Activities';
 import { Location } from '@/Pages/LandingPage/Location';
@@ -17,6 +18,7 @@ export default function Welcome() {
       <main>
         <Hero />
         <About />
+        <Achievements />
         <Facilities />
         <Activities />
         <Location />
