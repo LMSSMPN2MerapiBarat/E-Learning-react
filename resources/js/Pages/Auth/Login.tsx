@@ -128,7 +128,7 @@ export default function LoginPage() {
                 disabled={processing}
                 className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl transition-all text-[11px] uppercase tracking-[0.2em] shadow-lg shadow-blue-100 mt-2"
               >
-                {processing ? "Verifikasi..." : "Masuk ke Sistem"}
+                {processing ? "Verifikasi..." : "Login"}
               </button>
             </form>
 

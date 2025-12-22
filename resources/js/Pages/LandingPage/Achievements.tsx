@@ -30,26 +30,35 @@ const achievements: AchievementItem[] = [
 
 export const Achievements = () => {
   return (
-    <section id="achievements" className="py-20 bg-gray-50 overflow-hidden">
-      <div className="container mx-auto px-4 md:px-6">
+    <section id="achievements" className="py-24 bg-white overflow-hidden">
+      <div className="container mx-auto px-4 md:px-10">
         
-        {/* HEADER */}
-        <div className="text-center mb-12">
-          <div className="mb-6 md:mb-0">
-            <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4 uppercase tracking-tight">
-              Prestasi
+        {/* --- HEADER CONCEPT SYNCED WITH ABOUT SECTION --- */}
+        <div className="grid lg:grid-cols-2 gap-10 items-end mb-16">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-3">
+              <div className="w-12 h-[3px] bg-blue-600"></div>
+              <span className="text-blue-600 font-black text-sm uppercase tracking-[0.2em]">Pencapaian Kami</span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-black text-blue-950 uppercase leading-none tracking-tighter">
+              Prestasi <span className="text-blue-600">Siswa</span> <br />
+              SMPN 2 Merapi Barat
             </h2>
-            <div className="w-20 h-1 bg-blue-600 rounded-full mx-auto"></div>
-            <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
-              Apresiasi atas dedikasi dan kerja keras siswa kami dalam meraih keunggulan di tingkat nasional dan internasional.
+          </div>
+
+          <div className="lg:border-l-2 lg:border-blue-100 lg:pl-10">
+            <p className="text-slate-600 text-lg leading-relaxed max-w-xl font-medium">
+              Apresiasi atas dedikasi dan kerja keras siswa kami dalam meraih keunggulan di tingkat nasional dan internasional. Kami berkomitmen mendukung setiap potensi luar biasa.
             </p>
           </div>
         </div>
+        {/* --- END HEADER CONCEPT --- */}
 
-        {/* SLIDER SECTION - Updated for 4 cards */}
+        {/* SLIDER SECTION - TETAP SESUAI KODE ANDA */}
         <Swiper
           modules={[Pagination, Autoplay, FreeMode]}
-          spaceBetween={20} // Jarak antar kartu sedikit dikecilkan
+          spaceBetween={20}
           slidesPerView={1}
           loop={true}
           grabCursor={true}
@@ -59,21 +68,16 @@ export const Achievements = () => {
           }}
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           breakpoints={{
-            // Desktop: 4 kartu
             1280: { slidesPerView: 4 }, 
-            // Laptop/Large Tablet: 3 kartu
             1024: { slidesPerView: 3 },
-            // Tablet: 2 kartu
             640: { slidesPerView: 2 }
           }}
           className="achievement-swiper !pb-14"
         >
           {achievements.map((item, index) => (
             <SwiperSlide key={index}>
-              {/* Ukuran tinggi diturunkan ke 420px agar proporsional sebagai card kecil */}
               <div className="relative h-[420px] rounded-2xl overflow-hidden shadow-md border border-gray-100 bg-slate-900 group transition-all duration-500 hover:shadow-xl">
                 
-                {/* Background Image */}
                 <div className="absolute inset-0">
                   <img 
                     src={item.image} 
@@ -83,10 +87,7 @@ export const Achievements = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                 </div>
 
-                {/* Content Overlay */}
                 <div className="relative h-full flex flex-col p-6 text-white">
-                  
-                  {/* CATEGORY BADGE */}
                   <div className="flex justify-start">
                     <span className="inline-block px-3 py-1.5 bg-blue-500/30 backdrop-blur-md text-white text-[10px] font-bold rounded-full border border-blue-300/40">
                       {item.category}
@@ -103,7 +104,6 @@ export const Achievements = () => {
                       {item.title}
                     </h3>
                     
-                    {/* Animated Line */}
                     <div className="w-8 h-1 bg-blue-500 group-hover:w-full transition-all duration-500 rounded-full"></div>
                     
                     <p className="text-gray-300 text-xs font-light leading-relaxed line-clamp-3">
