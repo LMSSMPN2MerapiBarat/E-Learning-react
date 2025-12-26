@@ -30,6 +30,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import type { MaterialItem } from "../../types";
 
 const getFileExtension = (
@@ -193,7 +194,7 @@ export default function StudentMaterialBrowser({
         {filteredMaterials.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="py-10 text-center text-xs text-gray-500">
-              <FileText className="mx-auto mb-2 h-8 w-8 text-gray-400" />
+              <LibraryBooksIcon className="mx-auto mb-2 text-gray-400" style={{ fontSize: 32 }} />
               Tidak ada materi yang sesuai dengan pencarian.
             </CardContent>
           </Card>
@@ -226,8 +227,8 @@ export default function StudentMaterialBrowser({
                     {/* Header */}
                     <div className="flex items-start justify-between gap-2 border-b bg-gradient-to-r from-white to-gray-50 p-3">
                       <div className="flex items-start gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-lg">
-                          📚
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">
+                          <LibraryBooksIcon className="text-blue-600" style={{ fontSize: 20 }} />
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">

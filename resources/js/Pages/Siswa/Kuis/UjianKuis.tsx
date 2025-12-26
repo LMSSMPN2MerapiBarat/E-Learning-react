@@ -18,6 +18,7 @@ import DialogKonfirmasiKuis from "./components/DialogKonfirmasiKuis";
 
 type QuizExamPageProps = PageProps<{ quiz: QuizItem; backUrl: string }>;
 type AnswerMap = Record<number, number>;
+type MarkedSet = Set<number>;
 
 const createSeededRandom = (seed: number) => {
   let value = seed % 2147483647;
@@ -66,6 +67,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
   const [hasStarted, setHasStarted] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerMap>({});
+  const [markedQuestions, setMarkedQuestions] = useState<MarkedSet>(new Set());
   const [showResults, setShowResults] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
@@ -176,6 +178,17 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
 
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
   const handleAnswer = (qId: number, order: number) => setAnswers((prev) => ({ ...prev, [qId]: order }));
+  const clearAnswer = (qId: number) => setAnswers((prev) => {
+    const next = { ...prev };
+    delete next[qId];
+    return next;
+  });
+  const toggleMark = (qId: number) => setMarkedQuestions((prev) => {
+    const next = new Set(prev);
+    if (next.has(qId)) next.delete(qId);
+    else next.add(qId);
+    return next;
+  });
   const nextQuestion = () => { if (currentQuestionIndex < totalQuestions - 1) { setDirection(1); setCurrentQuestionIndex((p) => p + 1); } };
   const previousQuestion = () => { if (currentQuestionIndex > 0) { setDirection(-1); setCurrentQuestionIndex((p) => p - 1); } };
   const jumpToQuestion = (i: number) => { setDirection(i > currentQuestionIndex ? 1 : -1); setCurrentQuestionIndex(i); };
@@ -217,7 +230,15 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
               <Card><CardContent className="p-3"><div className="mb-1.5 flex items-center justify-between text-xs text-gray-600"><span>Soal {currentQuestionIndex + 1} dari {totalQuestions}</span><span>{answeredCount} terjawab</span></div><Progress value={totalQuestions > 0 ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0} /></CardContent></Card>
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div key={activeQuestion.id} custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}>
-                  <KartuSoalKuis question={activeQuestion} questionIndex={currentQuestionIndex} selectedAnswer={answers[activeQuestion.id]} onAnswer={handleAnswer} />
+                  <KartuSoalKuis
+                    question={activeQuestion}
+                    questionIndex={currentQuestionIndex}
+                    selectedAnswer={answers[activeQuestion.id]}
+                    isMarked={markedQuestions.has(activeQuestion.id)}
+                    onAnswer={handleAnswer}
+                    onClearAnswer={clearAnswer}
+                    onToggleMark={toggleMark}
+                  />
                 </motion.div>
               </AnimatePresence>
               <Card><CardContent className="flex items-center justify-between gap-3 p-3">
@@ -225,7 +246,7 @@ export default function QuizExam({ quiz, backUrl }: QuizExamPageProps) {
                 {currentQuestionIndex < totalQuestions - 1 ? (<Button onClick={nextQuestion} size="sm" className="text-xs">Selanjutnya<ChevronRight className="ml-1 h-3.5 w-3.5" /></Button>) : (<Button onClick={() => setShowSubmitConfirm(true)} size="sm" className="bg-green-600 hover:bg-green-700 text-xs" disabled={isSubmitting}><CheckCircle className="mr-1 h-3.5 w-3.5" />{isSubmitting ? "Mengumpulkan..." : "Selesai & Kumpulkan"}</Button>)}
               </CardContent></Card>
             </div>
-            <div className="lg:col-span-1"><PanelNavigasiSoal questions={questions} answers={answers} currentQuestionIndex={currentQuestionIndex} isSubmitting={isSubmitting} onJumpToQuestion={jumpToQuestion} onSubmit={() => setShowSubmitConfirm(true)} /></div>
+            <div className="lg:col-span-1"><PanelNavigasiSoal questions={questions} answers={answers} markedQuestions={markedQuestions} currentQuestionIndex={currentQuestionIndex} isSubmitting={isSubmitting} onJumpToQuestion={jumpToQuestion} onSubmit={() => setShowSubmitConfirm(true)} /></div>
           </div>
         </div>
       </div>

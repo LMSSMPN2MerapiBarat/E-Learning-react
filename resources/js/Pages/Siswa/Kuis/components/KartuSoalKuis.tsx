@@ -3,20 +3,28 @@ import { motion } from "motion/react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { Label } from "@/Components/ui/label";
+import { Button } from "@/Components/ui/button";
+import { Flag, X } from "lucide-react";
 import type { QuizQuestion, QuizQuestionOption } from "../../types";
 
 interface KartuSoalKuisProps {
     question: QuizQuestion;
     questionIndex: number;
     selectedAnswer?: number;
+    isMarked?: boolean;
     onAnswer: (questionId: number, optionOrder: number) => void;
+    onClearAnswer?: (questionId: number) => void;
+    onToggleMark?: (questionId: number) => void;
 }
 
 export default function KartuSoalKuis({
     question,
     questionIndex,
     selectedAnswer,
+    isMarked = false,
     onAnswer,
+    onClearAnswer,
+    onToggleMark,
 }: KartuSoalKuisProps) {
     const [imageError, setImageError] = useState(false);
 
@@ -26,16 +34,24 @@ export default function KartuSoalKuis({
     }, [question.id]);
 
     return (
-        <Card className="border-2 border-blue-100 shadow-md">
+        <Card className={`border-2 shadow-md ${isMarked ? 'border-orange-400 bg-orange-50/30' : 'border-blue-100'}`}>
             <CardContent className="p-5">
                 <div className="mb-4 flex items-start gap-3">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 text-base font-semibold text-white shadow-md">
+                    <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-base font-semibold text-white shadow-md ${isMarked ? 'bg-gradient-to-br from-orange-500 to-orange-600' : 'bg-gradient-to-br from-blue-600 to-blue-700'}`}>
                         {questionIndex + 1}
                     </div>
                     <div className="flex-1">
-                        <p className="pt-1 text-sm text-gray-800">
-                            {question.prompt}
-                        </p>
+                        <div className="flex items-start justify-between gap-2">
+                            <p className="pt-1 text-sm text-gray-800 flex-1">
+                                {question.prompt}
+                            </p>
+                            {isMarked && (
+                                <span className="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                    <Flag className="h-3 w-3" />
+                                    Ditandai
+                                </span>
+                            )}
+                        </div>
                         {question.image && !imageError && (
                             <div className="mt-3">
                                 <img
@@ -106,7 +122,34 @@ export default function KartuSoalKuis({
                         );
                     })}
                 </RadioGroup>
+
+                {/* Action buttons */}
+                <div className="mt-4 flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className={`text-xs ${isMarked ? 'border-orange-400 bg-orange-50 text-orange-600 hover:bg-orange-100' : 'text-gray-600 hover:text-orange-600'}`}
+                        onClick={() => onToggleMark?.(question.id)}
+                    >
+                        <Flag className="mr-1.5 h-3 w-3" />
+                        {isMarked ? 'Hapus Tandai' : 'Tandai Soal'}
+                    </Button>
+                    {selectedAnswer !== undefined && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => onClearAnswer?.(question.id)}
+                        >
+                            <X className="mr-1.5 h-3 w-3" />
+                            Batalkan Jawaban
+                        </Button>
+                    )}
+                </div>
             </CardContent>
         </Card>
     );
 }
+

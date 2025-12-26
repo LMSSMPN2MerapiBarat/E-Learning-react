@@ -25,6 +25,7 @@ import {
   Video,
   Link as LinkIcon,
 } from "lucide-react";
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import type { MateriItem } from "@/Pages/Guru/components/materiTypes";
 import { getFileExtension, getFileTypeColor } from "@/Pages/Guru/components/materiHelpers";
 
@@ -66,7 +67,7 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
       {items.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center text-gray-500">
-            <FileText className="mx-auto mb-2 h-10 w-10 text-gray-400" />
+            <LibraryBooksIcon className="mx-auto mb-2 text-gray-400" style={{ fontSize: 40 }} />
             <p className="text-sm">Belum ada materi yang diunggah.</p>
             <p className="text-xs">
               Klik tombol "Unggah Materi" untuk menambahkan.
@@ -94,7 +95,7 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
                     <div className="flex-1">
                       <div className="flex items-start gap-2">
                         <div className="rounded-lg bg-blue-100 p-1.5">
-                          <FileText className="h-4 w-4 text-blue-600" />
+                          <LibraryBooksIcon className="h-4 w-4 text-blue-600" style={{ fontSize: 16 }} />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-sm font-semibold text-gray-800">
@@ -202,7 +203,7 @@ const MateriList: React.FC<MateriListProps> = ({ items, onEdit, onDelete }) => {
           <DialogHeader className="p-4 sm:p-6 pb-2 sm:pb-4">
             <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold text-gray-900">
               <div className="p-1.5 bg-blue-100 rounded-lg">
-                <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                <LibraryBooksIcon className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" style={{ fontSize: 24 }} />
               </div>
               Detail Materi
             </DialogTitle>
