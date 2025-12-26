@@ -131,10 +131,28 @@ export default function AssignmentGradingDialog({
                 <div className="flex items-center gap-2">
                   <Input
                     value={score}
-                    onChange={(event) => setScore(event.target.value)}
-                    type="number"
-                    min={0}
-                    max={submission.maxScore}
+                    onChange={(event) => {
+                      const newValue = event.target.value;
+                      if (newValue === "") {
+                        setScore("");
+                        return;
+                      }
+                      // Allow only integers/digits
+                      if (!/^\d+$/.test(newValue)) {
+                        return;
+                      }
+                      const numValue = parseInt(newValue, 10);
+                      if (
+                        !Number.isNaN(numValue) &&
+                        numValue >= 0 &&
+                        numValue <= submission.maxScore
+                      ) {
+                        setScore(newValue);
+                      }
+                    }}
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="0-100"
                   />
                   <Badge variant="secondary">/ {submission.maxScore}</Badge>
                 </div>

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { toast } from "sonner";
-import { Card, CardContent } from "@/Components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 import { Button } from "@/Components/ui/button";
-import { Upload, X, Loader2, FileText } from "lucide-react";
+import { Upload, X, Loader2, FileText, Send, Save, CloudUpload } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +34,6 @@ export default function AssignmentSubmissionForm({
     removed_file_ids: [],
   });
 
-  // File yang masih ada (belum dihapus)
   const existingFiles = assignment.files.filter(f => !removedFileIds.includes(f.id));
 
   useEffect(() => {
@@ -52,7 +51,6 @@ export default function AssignmentSubmissionForm({
     const files = Array.from(event.target.files ?? []);
     if (files.length === 0) return;
 
-    // Validasi tipe file
     const allowedExtensions = assignment.allowedFileTypes.map(ext =>
       ext.toLowerCase().replace(/^\./, '')
     );
@@ -100,13 +98,11 @@ export default function AssignmentSubmissionForm({
     form.setData("removed_file_ids", newRemovedIds);
   };
 
-  // Validasi sebelum submit
   const validateSubmission = (): string | null => {
     const hasText = form.data.text_answer.trim().length > 0;
     const hasFiles = form.data.files.length > 0;
     const hasExistingFiles = existingFiles.length > 0;
 
-    // Cek apakah ada jawaban yang diisi
     if (!hasText && !hasFiles && !hasExistingFiles) {
       if (assignment.allowTextAnswer && assignment.allowFileUpload) {
         return "Harap isi jawaban teks atau unggah file sebelum mengumpulkan.";
@@ -183,88 +179,55 @@ export default function AssignmentSubmissionForm({
 
   return (
     <>
-      <Card>
-        <CardContent className="space-y-3 p-4">
+      <Card className="border-none shadow-sm ring-1 ring-gray-200">
+        <CardHeader className="border-b bg-gray-50/50 px-6 py-4">
+          <CardTitle className="text-base font-semibold text-gray-900">
+            Jawaban Anda
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6 p-6">
           {assignment.allowTextAnswer ? (
-            <div className="space-y-1.5">
-              <Label className="text-xs">Jawaban teks</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-900">Jawaban Teks</Label>
               <Textarea
-                rows={5}
-                className="text-xs"
+                rows={8}
+                className="resize-y border-gray-200 text-sm focus:border-blue-500 focus:ring-blue-500"
                 value={form.data.text_answer}
                 onChange={(event) => form.setData("text_answer", event.target.value)}
-                placeholder="Tulis jawaban Anda..."
+                placeholder="Tuliskan jawaban Anda secara rinci di sini..."
               />
               {form.errors.text_answer && (
-                <p className="text-[10px] text-destructive">{form.errors.text_answer}</p>
+                <p className="text-xs text-red-500">{form.errors.text_answer}</p>
               )}
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground">
+            <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-500">
               Jawaban teks tidak diizinkan untuk tugas ini.
-            </p>
+            </div>
           )}
 
           {assignment.allowFileUpload && (
-            <div className="space-y-1.5">
-              <Label className="text-xs">Lampiran jawaban</Label>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium text-gray-900">Lampiran Jawaban</Label>
 
-              {/* File yang sudah ada sebelumnya */}
-              {assignment.files.length > 0 && (
-                <div className="space-y-1.5">
-                  <p className="text-[10px] text-muted-foreground">File yang sudah dilampirkan:</p>
-                  {assignment.files.map((file) => {
-                    const isRemoved = removedFileIds.includes(file.id);
-                    return (
-                      <div
-                        key={file.id}
-                        className={`flex items-center justify-between rounded-lg border p-2 text-xs ${isRemoved
-                          ? "border-red-200 bg-red-50 opacity-60"
-                          : "border-green-200 bg-green-50"
-                          }`}
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <FileText className={`h-3.5 w-3.5 ${isRemoved ? "text-red-600" : "text-green-600"}`} />
-                          <span className={isRemoved ? "text-red-800 line-through" : "text-green-800"}>
-                            {file.name}
-                          </span>
-                          {isRemoved && (
-                            <span className="text-[10px] text-red-600">(akan dihapus)</span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-0.5">
-                          {file.url && !isRemoved && (
-                            <Button asChild size="sm" variant="ghost" className="h-6 px-1.5 text-[10px]">
-                              <a href={file.url} target="_blank" rel="noreferrer">
-                                Lihat
-                              </a>
-                            </Button>
-                          )}
-                          {isRemoved ? (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 px-1.5 text-[10px] text-green-600 hover:text-green-700"
-                              onClick={() => restoreExistingFile(file.id)}
-                            >
-                              Batalkan
-                            </Button>
-                          ) : (
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-6 w-6 text-red-500 hover:text-red-600"
-                              onClick={() => removeExistingFile(file.id)}
-                            >
-                              <X className="h-3.5 w-3.5" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div
+                className={`transition-colors border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 ${form.data.files.length > 0 ? 'border-blue-200 bg-blue-50/10' : 'border-gray-200'}`}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <div className="rounded-full bg-blue-50 p-3 text-blue-600">
+                    <CloudUpload className="h-6 w-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-gray-900">
+                      Klik untuk unggah file
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Format: {assignment.allowedFileTypes.join(", ")}
+                    </p>
+                  </div>
                 </div>
-              )}
+              </div>
 
               <input
                 type="file"
@@ -273,69 +236,116 @@ export default function AssignmentSubmissionForm({
                 className="hidden"
                 onChange={addFiles}
               />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="w-full text-xs"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload className="mr-1.5 h-3.5 w-3.5" />
-                {assignment.files.length > 0 ? "Tambah File Baru" : "Unggah File"}
-              </Button>
-              <p className="text-[10px] text-muted-foreground">
-                Tipe diizinkan: {assignment.allowedFileTypes.join(", ")}
-              </p>
 
-              {/* File baru yang akan diupload */}
-              {form.data.files.length > 0 && (
-                <div className="space-y-1.5">
-                  <p className="text-[10px] text-muted-foreground">File baru yang akan diunggah:</p>
-                  {form.data.files.map((file, index) => (
+              {/* File List Section */}
+              <div className="space-y-2">
+                {/* Existing Files */}
+                {assignment.files.map((file) => {
+                  const isRemoved = removedFileIds.includes(file.id);
+                  return (
                     <div
-                      key={`${file.name}-${index}`}
-                      className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-2 text-xs"
+                      key={file.id}
+                      className={`group flex items-center justify-between rounded-lg border p-3 text-sm transition-all ${isRemoved
+                        ? "border-red-100 bg-red-50 text-red-600"
+                        : "border-gray-200 bg-white hover:border-blue-200 hover:shadow-sm"
+                        }`}
                     >
-                      <span className="text-blue-800">{file.name}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => removeNewFile(index)}
-                      >
-                        <X className="h-3.5 w-3.5" />
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <FileText className={`h-4 w-4 ${isRemoved ? "text-red-400" : "text-gray-400"}`} />
+                        <div className="flex flex-col">
+                          <span className={`font-medium ${isRemoved ? "line-through" : "text-gray-700"}`}>
+                            {file.name}
+                          </span>
+                          {isRemoved && <span className="text-[10px] text-red-500">Akan dihapus</span>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {file.url && !isRemoved && (
+                          <Button asChild size="sm" variant="ghost" className="h-8 w-8 rounded-full p-0 text-gray-400 hover:text-blue-600">
+                            <a href={file.url} target="_blank" rel="noreferrer" title="Lihat File">
+                              <CloudUpload className="h-4 w-4 rotate-180" /> {/* Download icon equivalent */}
+                            </a>
+                          </Button>
+                        )}
+                        {isRemoved ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700"
+                            onClick={() => restoreExistingFile(file.id)}
+                          >
+                            Batalkan
+                          </Button>
+                        ) : (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 rounded-full text-gray-400 hover:bg-red-50 hover:text-red-600"
+                            onClick={() => removeExistingFile(file.id)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  );
+                })}
+
+                {/* New Files */}
+                {form.data.files.map((file, index) => (
+                  <div
+                    key={`new-${index}`}
+                    className="flex items-center justify-between rounded-lg border border-blue-100 bg-blue-50/50 p-3 text-sm"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="rounded bg-blue-100 p-1.5 text-blue-600">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-blue-900">{file.name}</span>
+                        <span className="text-[10px] text-blue-600">File Baru</span>
+                      </div>
+                    </div>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 rounded-full text-blue-400 hover:bg-blue-100 hover:text-blue-600"
+                      onClick={() => removeNewFile(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
-          <div className="flex justify-end gap-1.5">
+          <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
             <Button
-              variant="outline"
-              size="sm"
+              variant="secondary"
               type="button"
-              className="text-xs"
               disabled={form.processing}
               onClick={handleSaveDraft}
+              className="gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700"
             >
               {form.processing ? (
-                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-              ) : null}
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
               Simpan Draft
             </Button>
             <Button
-              size="sm"
               type="button"
-              className="text-xs"
               disabled={form.processing}
               onClick={handleSubmitClick}
+              className="gap-2 min-w-[140px] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 transition-all hover:-translate-y-0.5 hover:shadow-blue-500/40"
             >
               {form.processing ? (
-                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-              ) : null}
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
               Kumpulkan
             </Button>
           </div>
@@ -347,12 +357,12 @@ export default function AssignmentSubmissionForm({
           <AlertDialogHeader>
             <AlertDialogTitle>Kumpulkan Tugas?</AlertDialogTitle>
             <AlertDialogDescription>
-              Pastikan jawaban Anda sudah benar. Setelah dikumpulkan, Anda mungkin tidak dapat mengubah jawaban lagi.
+              Pastikan jawaban Anda sudah benar. Setelah dikumpulkan, Anda mungkin tidak dapat mengubah jawaban lagi tergantung pengaturan tugas.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmSubmit}>
+            <AlertDialogCancel>Periksa Lagi</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSubmit} className="bg-blue-600 hover:bg-blue-700">
               Ya, Kumpulkan
             </AlertDialogAction>
           </AlertDialogFooter>
