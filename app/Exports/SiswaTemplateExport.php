@@ -2,10 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\Siswa;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
@@ -16,46 +14,15 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class SiswaExport implements FromCollection, WithHeadings, WithEvents, WithStyles, WithTitle
+/**
+ * Template Export for Siswa - Contains only headers, no data
+ */
+class SiswaTemplateExport implements FromArray, WithHeadings, WithEvents, WithStyles, WithTitle
 {
-    public function collection(): Collection
+    public function array(): array
     {
-        return Siswa::with(['user', 'kelas'])
-            ->get()
-            ->map(function ($siswa) {
-                $kelas = $siswa->kelas;
-
-                $kelasName = $kelas
-                    ? trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? ''))
-                    : null;
-
-                if ($kelasName === '' && $kelas) {
-                    $kelasName = $kelas->kelas ?? null;
-                }
-
-                $formattedBirthDate = '-';
-                if (!empty($siswa->tanggal_lahir)) {
-                    try {
-                        $formattedBirthDate = Carbon::parse($siswa->tanggal_lahir)->format('Y-m-d');
-                    } catch (\Throwable $e) {
-                        $formattedBirthDate = (string) $siswa->tanggal_lahir;
-                    }
-                }
-
-                return [
-                    'Nama'           => $siswa->user->name ?? '-',
-                    'Jenis Kelamin'  => $siswa->user->jenis_kelamin
-                        ? ucfirst($siswa->user->jenis_kelamin)
-                        : '-',
-                    'Email'          => $siswa->user->email ?? '-',
-                    'NISN'           => $siswa->nis ?? '-',
-                    'Tempat Lahir'   => $siswa->tempat_lahir ?? '-',
-                    'Tanggal Lahir'  => $formattedBirthDate,
-                    'Kelas'          => $kelasName ?? '-',
-                    'Tahun Ajaran'   => optional($kelas)->tahun_ajaran ?? '-',
-                    'No. Telepon'    => $siswa->no_telp ?? '-',
-                ];
-            });
+        // Return empty array - template only needs headers, no data
+        return [];
     }
 
     public function headings(): array
@@ -75,7 +42,7 @@ class SiswaExport implements FromCollection, WithHeadings, WithEvents, WithStyle
 
     public function title(): string
     {
-        return 'Data Siswa';
+        return 'Template Siswa';
     }
 
     public function styles(Worksheet $sheet)
@@ -127,9 +94,9 @@ class SiswaExport implements FromCollection, WithHeadings, WithEvents, WithStyle
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $highestColumn = $sheet->getHighestColumn();
+                $highestColumn = 'I'; // 9 columns (A to I)
                 
-                // Insert header rows at the top
+                // Insert header rows at the top (5 rows - same as export for consistency)
                 $sheet->insertNewRowBefore(1, 5);
                 
                 // Row 1: Title
@@ -144,32 +111,13 @@ class SiswaExport implements FromCollection, WithHeadings, WithEvents, WithStyle
                 $sheet->setCellValue('A3', 'Kec. Merapi Barat, Kab. Lahat, Prov. Sumatera Selatan');
                 $sheet->mergeCells('A3:' . $highestColumn . '3');
                 
-                // Row 4: Download timestamp (WIB)
-                $timestamp = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
-                $sheet->setCellValue('A4', 'Tanggal Unduh: ' . $timestamp . ' WIB');
-                $sheet->mergeCells('A4:' . $highestColumn . '4');
-                
-                // Row 5 is empty (separator)
+                // Row 4: Empty (no timestamp for template)
+                // Row 5: Empty (separator)
                 
                 // Auto-size columns
                 foreach (range('A', $highestColumn) as $col) {
                     $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
-                
-                // Apply borders to data rows
-                $lastRow = $sheet->getHighestRow();
-                if ($lastRow > 6) {
-                    $sheet->getStyle('A7:' . $highestColumn . $lastRow)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                            ],
-                        ],
-                    ]);
-                }
-                
-                // Center align all data cells
-                $sheet->getStyle('A7:' . $highestColumn . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             },
         ];
     }

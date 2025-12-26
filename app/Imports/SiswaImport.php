@@ -26,6 +26,15 @@ class SiswaImport implements
 {
     use SkipsFailures;
 
+    /**
+     * Specify which row contains the headings
+     * Row 6 because rows 1-5 contain school information headers
+     */
+    public function headingRow(): int
+    {
+        return 6;
+    }
+
     protected array $existingEmails = [];
     protected array $existingNis = [];
     protected array $kelasCache = [];

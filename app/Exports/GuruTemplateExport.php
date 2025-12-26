@@ -2,12 +2,9 @@
 
 namespace App\Exports;
 
-use App\Models\Kelas;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -17,53 +14,32 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class KelasExport implements FromCollection, WithHeadings, WithMapping, WithEvents, WithStyles, WithTitle
+/**
+ * Template Export for Guru - Contains only headers, no data
+ */
+class GuruTemplateExport implements FromArray, WithHeadings, WithEvents, WithStyles, WithTitle
 {
-    private int $index = 0;
-
-    public function collection(): Collection
+    public function array(): array
     {
-        return Kelas::withCount(['siswa', 'guru'])
-            ->orderBy('tingkat')
-            ->orderBy('kelas')
-            ->orderBy('tahun_ajaran')
-            ->get();
+        return [];
     }
 
     public function headings(): array
     {
         return [
-            'No',
-            'Tingkat',
-            'Nama Kelas',
-            'Tahun Ajaran',
-            'Jumlah Siswa',
-            'Jumlah Pengajar',
-            'Deskripsi',
-        ];
-    }
-
-    /**
-     * @param \App\Models\Kelas $kelas
-     */
-    public function map($kelas): array
-    {
-        $this->index++;
-
-        return [
-            $this->index,
-            $kelas->tingkat ?? '-',
-            $kelas->kelas ?? '-',
-            $kelas->tahun_ajaran ?? '-',
-            $kelas->siswa_count ?? 0,
-            $kelas->guru_count ?? 0,
-            $kelas->deskripsi ?? '-',
+            'Nama',
+            'Jenis Kelamin',
+            'Email',
+            'NIP',
+            'Mapel yang Diajar',
+            'Kelas yang Diajar',
+            'No. Telepon',
         ];
     }
 
     public function title(): string
     {
-        return 'Data Kelas';
+        return 'Template Guru';
     }
 
     public function styles(Worksheet $sheet)
@@ -98,11 +74,11 @@ class KelasExport implements FromCollection, WithHeadings, WithMapping, WithEven
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $highestColumn = $sheet->getHighestColumn();
+                $highestColumn = 'G'; // 7 columns (A to G)
                 
                 $sheet->insertNewRowBefore(1, 5);
                 
-                $sheet->setCellValue('A1', 'Daftar Kelas');
+                $sheet->setCellValue('A1', 'Daftar Tenaga Pendidik');
                 $sheet->mergeCells('A1:' . $highestColumn . '1');
                 
                 $sheet->setCellValue('A2', 'SMPN 2 MERAPI BARAT');
@@ -111,22 +87,10 @@ class KelasExport implements FromCollection, WithHeadings, WithMapping, WithEven
                 $sheet->setCellValue('A3', 'Kec. Merapi Barat, Kab. Lahat, Prov. Sumatera Selatan');
                 $sheet->mergeCells('A3:' . $highestColumn . '3');
                 
-                $timestamp = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
-                $sheet->setCellValue('A4', 'Tanggal Unduh: ' . $timestamp . ' WIB');
-                $sheet->mergeCells('A4:' . $highestColumn . '4');
+                // Row 4 & 5: Empty (no timestamp for template)
                 
                 foreach (range('A', $highestColumn) as $col) {
                     $sheet->getColumnDimension($col)->setAutoSize(true);
-                }
-                
-                $lastRow = $sheet->getHighestRow();
-                if ($lastRow > 6) {
-                    $sheet->getStyle('A7:' . $highestColumn . $lastRow)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => ['borderStyle' => Border::BORDER_THIN],
-                        ],
-                    ]);
-                    $sheet->getStyle('A7:' . $highestColumn . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 }
             },
         ];

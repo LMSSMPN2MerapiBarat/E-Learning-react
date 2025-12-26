@@ -16,6 +16,15 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 
 class GuruImport implements ToCollection, WithHeadingRow, WithValidation, WithChunkReading
 {
+    /**
+     * Specify which row contains the headings
+     * Row 6 because rows 1-5 contain school information headers
+     */
+    public function headingRow(): int
+    {
+        return 6;
+    }
+
     protected array $existingEmails = [];
     protected array $existingNips = [];
     protected array $mapelCache = [];

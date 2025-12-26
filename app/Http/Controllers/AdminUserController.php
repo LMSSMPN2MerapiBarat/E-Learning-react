@@ -16,6 +16,8 @@ use App\Imports\GuruImport;
 use App\Imports\SiswaImport;
 use App\Exports\GuruExport;
 use App\Exports\SiswaExport;
+use App\Exports\SiswaTemplateExport;
+use App\Exports\GuruTemplateExport;
 use Inertia\Inertia;
 
 class AdminUserController extends Controller
@@ -440,36 +442,18 @@ class AdminUserController extends Controller
      */
     public function downloadTemplate($role)
     {
-        $headers = match ($role) {
-            'guru'  => ['Nama', 'Email', 'NIP', 'Jenis Kelamin', 'Mapel', 'Kelas', 'No Telepon'],
-            'siswa' => ['Nama', 'Email', 'NIS', 'Jenis Kelamin', 'Kelas', 'No Telepon', 'Tempat Lahir', 'Tanggal Lahir'],
-            default => null,
-        };
-
-        if ($headers === null) {
-            return back()->with('error', 'Role tidak valid!');
+        if ($role === 'siswa') {
+            // Use SiswaTemplateExport - headers only, no data
+            $filename = 'Template_Import_Siswa.xlsx';
+            return Excel::download(new SiswaTemplateExport, $filename);
         }
 
-        $filename = 'Template_Import_' . ucfirst($role) . '.xlsx';
+        if ($role === 'guru') {
+            // Use GuruTemplateExport - headers only, no data
+            $filename = 'Template_Import_Guru.xlsx';
+            return Excel::download(new GuruTemplateExport, $filename);
+        }
 
-        return Excel::download(new class($headers) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithHeadings {
-            private array $headers;
-
-            public function __construct(array $headers)
-            {
-                $this->headers = $headers;
-            }
-
-            public function array(): array
-            {
-                // Return empty array - template only needs headers
-                return [];
-            }
-
-            public function headings(): array
-            {
-                return $this->headers;
-            }
-        }, $filename);
+        return back()->with('error', 'Role tidak valid!');
     }
 }
