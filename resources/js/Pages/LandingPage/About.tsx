@@ -29,7 +29,7 @@ const Counter: React.FC<CounterProps> = ({ end, duration = 2000 }) => {
 
     const currentRef = countRef.current;
     if (currentRef) observer.observe(currentRef);
-    
+
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
@@ -40,7 +40,7 @@ const Counter: React.FC<CounterProps> = ({ end, duration = 2000 }) => {
 
     const stringEnd = end ? end.toString() : "0";
     const endValue = parseInt(stringEnd.replace(/\D/g, "")) || 0;
-    
+
     if (endValue === 0) return;
 
     let startTime: number | null = null;
@@ -49,7 +49,7 @@ const Counter: React.FC<CounterProps> = ({ end, duration = 2000 }) => {
     const animate = (currentTime: number) => {
       if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / duration, 1);
-      
+
       setCount(Math.floor(progress * endValue));
 
       if (progress < 1) {
@@ -64,36 +64,6 @@ const Counter: React.FC<CounterProps> = ({ end, duration = 2000 }) => {
   }, [isVisible, end, duration]);
 
   return (
-<<<<<<< HEAD
-    <section id="about" className="py-20 bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4 md:px-6">
-        {/* Header Section - Centered */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
-            Tentang Sekolah Kami
-          </h2>
-          <div
-            className="w-20 h-1 bg-blue-600 mx-auto rounded-full"
-          ></div>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-10 items-start">
-
-          {/* Kolom Kiri: Deskripsi Sekolah */}
-          <div className="space-y-6">
-            {/* Description Card */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-              <p className="text-gray-700 leading-relaxed mb-5">
-                SMP Negeri 2 Merapi Barat berdedikasi untuk menyediakan pendidikan berkualitas tinggi yang memberdayakan siswa untuk mencapai potensi penuh mereka.
-              </p>
-              <p className="text-gray-700 leading-relaxed mb-5">
-                Didirikan dengan komitmen terhadap keunggulan akademik dan pembangunan karakter, sekolah kami menciptakan lingkungan di mana siswa dapat berkembang secara intelektual, sosial, dan emosional.
-              </p>
-              <p className="text-gray-700 leading-relaxed mb-0">
-                Kami percaya dalam membina komunitas pembelajar yang penuh rasa ingin tahu, hormat, dan menjadi warga negara yang bertanggung jawab siap berkontribusi kepada masyarakat.
-              </p>
-=======
     <span ref={countRef}>
       {count}{end?.toString().includes('+') ? '+' : ''}
     </span>
@@ -111,10 +81,10 @@ export const About: React.FC = () => {
   return (
     <section id="about" className="py-24 bg-white">
       <div className="container mx-auto px-4 md:px-6">
-        
+
         {/* Grid Utama: lg:grid-cols-2 & gap-10 agar sinkron dengan referensi Anda */}
         <div className="grid lg:grid-cols-2 gap-10 items-stretch">
-          
+
           {/* KOLOM KIRI: Deskripsi & Stats */}
           <div className="flex flex-col justify-between space-y-8">
             <div className="space-y-6">
@@ -122,7 +92,7 @@ export const About: React.FC = () => {
                 <div className="w-12 h-[3px] bg-blue-600"></div>
                 <span className="text-blue-600 font-black text-sm uppercase tracking-[0.2em]">Profil Sekolah</span>
               </div>
-              
+
               <h2 className="text-4xl md:text-5xl font-black text-blue-950 uppercase leading-none tracking-tighter">
                 SMP Negeri <span className="text-blue-600">2</span> <br />
                 Merapi Barat
@@ -136,7 +106,6 @@ export const About: React.FC = () => {
                   Kami membangun lingkungan di mana siswa berkembang secara intelektual, sosial, dan emosional melalui komitmen pada keunggulan akademik.
                 </p>
               </div>
->>>>>>> 5dfa3ea843f4243b3a1ba7df2a70a2f3eae67869
             </div>
 
             {/* Stats Cards - Semi-White Aesthetic dengan Animasi Perhitungan */}
@@ -158,15 +127,9 @@ export const About: React.FC = () => {
             </div>
           </div>
 
-<<<<<<< HEAD
-          {/* Kolom Kanan: Visi dan Misi */}
-          <div className="space-y-6">
-
-=======
           {/* KOLOM KANAN: Visi & Misi - Unified & Balanced Height */}
           <div className="flex flex-col gap-6">
-            
->>>>>>> 5dfa3ea843f4243b3a1ba7df2a70a2f3eae67869
+
             {/* Kartu Visi Kami */}
             <div className="flex-1 bg-slate-50/80 p-8 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-blue-600 hover:shadow-xl hover:bg-white transition-all duration-300 group flex flex-col justify-center">
               <div className="flex items-start gap-5">
@@ -212,17 +175,13 @@ export const About: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
           </div>
 
         </div>
       </div>
     </section>
   );
-<<<<<<< HEAD
-};
-=======
 };
 
 export default About;
->>>>>>> 5dfa3ea843f4243b3a1ba7df2a70a2f3eae67869
