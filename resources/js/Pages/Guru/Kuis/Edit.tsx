@@ -1,10 +1,10 @@
 import { useForm, router } from "@inertiajs/react";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Button } from "@/Components/ui/button";
 import ClassSelector from "@/Pages/Guru/components/kuis/ClassSelector";
 import QuizMetadataFields from "@/Pages/Guru/components/kuis/QuizMetadataFields";
 import QuizQuestionsEditor from "@/Pages/Guru/components/kuis/QuizQuestionsEditor";
+import FloatingFormButtons from "@/Pages/Guru/components/kuis/FloatingFormButtons";
 import type {
   Option,
   QuizBaseForm,
@@ -307,14 +307,12 @@ export default function EditQuiz({
         error={questionsError as string | undefined}
       />
 
-      <div className="flex justify-end gap-1.5 pt-3">
-        <Button type="button" variant="destructive" size="sm" onClick={onCancel}>
-          Batal
-        </Button>
-        <Button type="submit" size="sm" disabled={processing}>
-          {processing ? "Menyimpan..." : "Simpan Perubahan"}
-        </Button>
-      </div>
+      <FloatingFormButtons
+        onCancel={onCancel}
+        submitLabel="Simpan Perubahan"
+        cancelLabel="Batal"
+        processing={processing}
+      />
     </form>
   );
 }

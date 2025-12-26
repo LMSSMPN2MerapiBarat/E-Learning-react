@@ -1,11 +1,11 @@
 import { useForm, router } from "@inertiajs/react";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Button } from "@/Components/ui/button";
 import ClassSelector from "@/Pages/Guru/components/kuis/ClassSelector";
 import QuizMetadataFields from "@/Pages/Guru/components/kuis/QuizMetadataFields";
 import QuizQuestionsEditor from "@/Pages/Guru/components/kuis/QuizQuestionsEditor";
 import QuizAIGenerator from "@/Pages/Guru/components/kuis/QuizAIGenerator";
+import FloatingFormButtons from "@/Pages/Guru/components/kuis/FloatingFormButtons";
 import type {
   Option,
   QuizBaseForm,
@@ -232,16 +232,12 @@ export default function CreateQuiz({
         error={questionsError as string | undefined}
       />
 
-      <div className="flex flex-col-reverse gap-2 pt-3 sm:flex-row sm:justify-end sm:gap-1.5">
-        {onCancel && (
-          <Button type="button" variant="destructive" size="default" className="w-full sm:w-auto" onClick={onCancel}>
-            Batal
-          </Button>
-        )}
-        <Button type="submit" size="default" className="w-full sm:w-auto" disabled={processing}>
-          {processing ? "Menyimpan..." : "Simpan Kuis"}
-        </Button>
-      </div>
+      <FloatingFormButtons
+        onCancel={onCancel}
+        submitLabel="Simpan Kuis"
+        cancelLabel="Batal"
+        processing={processing}
+      />
     </form>
   );
 }

@@ -194,6 +194,9 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
                     value={String(optionIndex)}
                     id={`correct-${question.id}-${optionIndex}`}
                   />
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-700">
+                    {String.fromCharCode(65 + optionIndex)}
+                  </span>
                   <Input
                     value={option}
                     onChange={(event) => {
@@ -204,12 +207,59 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
                     placeholder={`Pilihan ${String.fromCharCode(
                       65 + optionIndex,
                     )}`}
+                    className="flex-1"
                   />
+                  {/* Remove option button - only show if more than 2 options */}
+                  {question.options.length > 2 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => {
+                        const nextOptions = question.options.filter((_, i) => i !== optionIndex);
+                        // Adjust correct_answer if needed
+                        let newCorrectAnswer = question.correct_answer;
+                        if (question.correct_answer === optionIndex) {
+                          newCorrectAnswer = 0; // Reset to first option
+                        } else if (question.correct_answer > optionIndex) {
+                          newCorrectAnswer = question.correct_answer - 1;
+                        }
+                        onUpdate(question.id, {
+                          options: nextOptions,
+                          correct_answer: newCorrectAnswer
+                        });
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               ))}
             </RadioGroup>
+
+            {/* Add option button - only show if less than 6 options */}
+            {question.options.length < 6 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() => {
+                  const nextOptions = [...question.options, ""];
+                  onUpdate(question.id, { options: nextOptions });
+                }}
+              >
+                <Plus className="mr-1 h-3 w-3" />
+                Tambah Pilihan {String.fromCharCode(65 + question.options.length)}
+              </Button>
+            )}
+
             <p className="text-xs text-red-500">
               Tandai jawaban benar dengan memilih radio button di samping.
+            </p>
+            <p className="text-xs text-gray-400">
+              Min. 2 pilihan, Maks. 6 pilihan (A-F)
             </p>
           </div>
         </div>
