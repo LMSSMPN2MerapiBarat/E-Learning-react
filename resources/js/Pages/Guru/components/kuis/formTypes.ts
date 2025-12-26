@@ -6,6 +6,8 @@ export interface Option {
 export type QuizQuestionForm = {
   id: string;
   question: string;
+  image?: string | null; // URL for existing image
+  imageFile?: File | null; // File object for new uploads
   options: string[];
   correct_answer: number;
 };

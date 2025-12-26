@@ -8,6 +8,7 @@ use App\Models\QuizAttempt;
 use App\Models\QuizAttemptAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
@@ -96,6 +97,7 @@ class QuizAttemptController extends Controller
                     return [
                         'id' => $question->id,
                         'prompt' => $question->pertanyaan,
+                        'image' => $question->image ? Storage::url($question->image) : null,
                         'options' => $sortedOptions
                             ->map(fn($option) => [
                                 'id' => $option->id,
@@ -182,6 +184,7 @@ class QuizAttemptController extends Controller
                     return [
                         'id' => $question->id,
                         'prompt' => $question->pertanyaan,
+                        'image' => $question->image ? Storage::url($question->image) : null,
                         'options' => $sortedOptions
                             ->map(fn($option) => [
                                 'id' => $option->id,
@@ -398,6 +401,7 @@ class QuizAttemptController extends Controller
                     return [
                         'id' => $question->id,
                         'prompt' => $question->pertanyaan,
+                        'image' => $question->image ? Storage::url($question->image) : null,
                         'options' => $sortedOptions
                             ->map(fn($option) => [
                                 'id' => $option->id,

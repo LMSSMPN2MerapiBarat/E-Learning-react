@@ -1,4 +1,4 @@
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
@@ -165,7 +165,27 @@ export default function CreateQuiz({
       return;
     }
 
-    form.post("/guru/kuis", {
+    // Transform questions to include imageFile for upload
+    const transformedQuestions = data.questions.map((q) => ({
+      question: q.question,
+      options: q.options,
+      correct_answer: q.correct_answer,
+      image: q.imageFile || null, // Send the File object for upload
+    }));
+
+    router.post("/guru/kuis", {
+      title: data.title,
+      description: data.description,
+      mata_pelajaran_id: data.mata_pelajaran_id,
+      duration: data.duration,
+      max_attempts: data.max_attempts,
+      status: data.status,
+      available_from: data.available_from,
+      available_until: data.available_until,
+      kelas_ids: data.kelas_ids,
+      questions: transformedQuestions,
+    }, {
+      forceFormData: true,
       onSuccess: () => {
         form.reset();
         onSuccess();

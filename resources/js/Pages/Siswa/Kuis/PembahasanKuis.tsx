@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Head, router, usePage } from "@inertiajs/react";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -51,8 +51,15 @@ export default function QuizReview() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [imageError, setImageError] = useState(false);
 
   const questions = quiz.questions ?? [];
+  const currentQuestion = questions[currentIndex];
+
+  // Reset image error state when question changes
+  useEffect(() => {
+    setImageError(false);
+  }, [currentIndex]);
 
   const answerLookup = useMemo(() => {
     const lookup: Record<number, number | null | undefined> = {};
@@ -64,7 +71,6 @@ export default function QuizReview() {
     return lookup;
   }, [attempt]);
 
-  const currentQuestion = questions[currentIndex];
   const userAnswer = currentQuestion ? answerLookup[currentQuestion.id] : undefined;
   const isAnswered = userAnswer !== undefined && userAnswer !== null;
   const isCorrect =
@@ -243,6 +249,17 @@ export default function QuizReview() {
                         </div>
                         <div className="flex-1">
                           <p className="text-base">{currentQuestion?.prompt}</p>
+                          {currentQuestion?.image && !imageError && (
+                            <div className="mt-3">
+                              <img
+                                src={currentQuestion.image}
+                                alt={`Gambar soal ${currentIndex + 1}`}
+                                className="max-w-full rounded-lg border border-gray-200 object-contain shadow-sm"
+                                style={{ maxHeight: 300 }}
+                                onError={() => setImageError(true)}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
 

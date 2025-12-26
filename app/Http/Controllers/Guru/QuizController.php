@@ -12,6 +12,7 @@ use App\Services\GroqAIService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class QuizController extends Controller
@@ -58,6 +59,7 @@ class QuizController extends Controller
                         return [
                             'id'            => $question->id,
                             'question'      => $question->pertanyaan,
+                            'image'         => $question->image ? Storage::url($question->image) : null,
                             'options'       => $question->options
                                 ->sortBy('urutan')
                                 ->map(fn($opt) => $opt->teks)
@@ -176,16 +178,24 @@ class QuizController extends Controller
             'kelas_ids.*'        => 'exists:kelas,id',
             'questions'          => 'required|array|min:1',
             'questions.*.question'        => 'required|string',
+            'questions.*.image'           => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
             'questions.*.options'         => 'required|array|min:2|max:6',
             'questions.*.options.*'       => 'required|string',
             'questions.*.correct_answer'  => 'required|integer|min:0',
         ]);
 
-        foreach ($validated['kelas_ids'] as $kelasId) {
-            if (!in_array($kelasId, $allowedKelas, true)) {
+        // Convert to integers for proper comparison (form data sends strings)
+        $kelasIdsInt = array_map('intval', $validated['kelas_ids']);
+        $allowedKelasInt = array_map('intval', $allowedKelas);
+
+        foreach ($kelasIdsInt as $kelasId) {
+            if (!in_array($kelasId, $allowedKelasInt, true)) {
                 abort(403, 'Anda tidak memiliki akses ke salah satu kelas yang dipilih.');
             }
         }
+
+        // Use integer array for further processing
+        $validated['kelas_ids'] = $kelasIdsInt;
 
         $maxAttemptsInput = $validated['max_attempts'];
         $maxAttempts = $maxAttemptsInput === 'unlimited' ? null : (int) $maxAttemptsInput;
@@ -210,9 +220,16 @@ class QuizController extends Controller
             $quiz->kelas()->sync($validated['kelas_ids']);
 
             foreach ($validated['questions'] as $index => $questionData) {
+                // Handle image upload
+                $imagePath = null;
+                if (isset($questionData['image']) && $questionData['image'] instanceof \Illuminate\Http\UploadedFile) {
+                    $imagePath = $questionData['image']->store('quiz-questions', 'public');
+                }
+
                 $question = QuizQuestion::create([
                     'quiz_id'    => $quiz->id,
                     'pertanyaan' => $questionData['question'],
+                    'image'      => $imagePath,
                     'urutan'     => $index,
                 ]);
 
@@ -252,16 +269,25 @@ class QuizController extends Controller
             'kelas_ids.*'        => 'exists:kelas,id',
             'questions'          => 'required|array|min:1',
             'questions.*.question'        => 'required|string',
+            'questions.*.image'           => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'questions.*.existing_image'  => 'nullable|string',
             'questions.*.options'         => 'required|array|min:2|max:6',
             'questions.*.options.*'       => 'required|string',
             'questions.*.correct_answer'  => 'required|integer|min:0',
         ]);
 
-        foreach ($validated['kelas_ids'] as $kelasId) {
-            if (!in_array($kelasId, $allowedKelas, true)) {
+        // Convert to integers for proper comparison (form data sends strings)
+        $kelasIdsInt = array_map('intval', $validated['kelas_ids']);
+        $allowedKelasInt = array_map('intval', $allowedKelas);
+
+        foreach ($kelasIdsInt as $kelasId) {
+            if (!in_array($kelasId, $allowedKelasInt, true)) {
                 abort(403, 'Anda tidak memiliki akses ke salah satu kelas yang dipilih.');
             }
         }
+
+        // Use integer array for further processing
+        $validated['kelas_ids'] = $kelasIdsInt;
 
         $maxAttemptsInput = $validated['max_attempts'];
         $maxAttempts = $maxAttemptsInput === 'unlimited' ? null : (int) $maxAttemptsInput;
@@ -284,15 +310,29 @@ class QuizController extends Controller
 
             $quiz->kelas()->sync($validated['kelas_ids']);
 
+            // Delete old questions and their images
             $quiz->questions()->each(function ($question) {
+                if ($question->image) {
+                    Storage::disk('public')->delete($question->image);
+                }
                 $question->options()->delete();
                 $question->delete();
             });
 
             foreach ($validated['questions'] as $index => $questionData) {
+                // Handle image upload
+                $imagePath = null;
+                if (isset($questionData['image']) && $questionData['image'] instanceof \Illuminate\Http\UploadedFile) {
+                    $imagePath = $questionData['image']->store('quiz-questions', 'public');
+                } elseif (isset($questionData['existing_image']) && !empty($questionData['existing_image'])) {
+                    // Keep existing image path (strip /storage/ prefix if present)
+                    $imagePath = str_replace('/storage/', '', $questionData['existing_image']);
+                }
+
                 $question = QuizQuestion::create([
                     'quiz_id'    => $quiz->id,
                     'pertanyaan' => $questionData['question'],
+                    'image'      => $imagePath,
                     'urutan'     => $index,
                 ]);
 

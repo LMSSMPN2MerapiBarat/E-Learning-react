@@ -1,4 +1,4 @@
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { Button } from "@/Components/ui/button";
@@ -67,6 +67,8 @@ const normalizeQuestions = (
   (questions ?? []).map((question, index) => ({
     id: String(question.id ?? index),
     question: question.question ?? "",
+    image: question.image ?? null,
+    imageFile: null,
     options: Array.isArray(question.options) ? question.options : ["", "", "", ""],
     correct_answer:
       typeof question.correct_answer === "number"
@@ -244,7 +246,29 @@ export default function EditQuiz({
       return;
     }
 
-    post(`/guru/kuis/${quiz.id}`, {
+    // Transform questions to include imageFile for upload
+    const transformedQuestions = data.questions.map((q) => ({
+      question: q.question,
+      options: q.options,
+      correct_answer: q.correct_answer,
+      image: q.imageFile || null, // Send the File object for upload
+      existing_image: !q.imageFile && q.image ? q.image : null, // Keep existing image
+    }));
+
+    router.post(`/guru/kuis/${quiz.id}`, {
+      _method: "PUT",
+      title: data.title,
+      description: data.description,
+      mata_pelajaran_id: data.mata_pelajaran_id,
+      duration: data.duration,
+      max_attempts: data.max_attempts,
+      status: data.status,
+      available_from: data.available_from,
+      available_until: data.available_until,
+      kelas_ids: data.kelas_ids,
+      questions: transformedQuestions,
+    }, {
+      forceFormData: true,
       preserveScroll: true,
       onSuccess: () => {
         onSuccess();

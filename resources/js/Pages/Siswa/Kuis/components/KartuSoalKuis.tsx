@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Card, CardContent } from "@/Components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
@@ -17,6 +18,13 @@ export default function KartuSoalKuis({
     selectedAnswer,
     onAnswer,
 }: KartuSoalKuisProps) {
+    const [imageError, setImageError] = useState(false);
+
+    // Reset image error state when question changes
+    useEffect(() => {
+        setImageError(false);
+    }, [question.id]);
+
     return (
         <Card className="border-2 border-blue-100 shadow-md">
             <CardContent className="p-5">
@@ -24,9 +32,24 @@ export default function KartuSoalKuis({
                     <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 text-base font-semibold text-white shadow-md">
                         {questionIndex + 1}
                     </div>
-                    <p className="flex-1 pt-1 text-sm text-gray-800">
-                        {question.prompt}
-                    </p>
+                    <div className="flex-1">
+                        <p className="pt-1 text-sm text-gray-800">
+                            {question.prompt}
+                        </p>
+                        {question.image && !imageError && (
+                            <div className="mt-3">
+                                <img
+                                    src={question.image}
+                                    alt={`Gambar soal ${questionIndex + 1}`}
+                                    className="max-w-full rounded-lg border border-gray-200 object-contain shadow-sm"
+                                    style={{
+                                        maxHeight: 300,
+                                    }}
+                                    onError={() => setImageError(true)}
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <RadioGroup

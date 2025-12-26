@@ -89,6 +89,7 @@ export interface MaterialItem {
   scheduleSlots?: ScheduleSlot[];
 }
 
+
 export interface QuizQuestionOption {
   id: number;
   text: string;
@@ -98,6 +99,7 @@ export interface QuizQuestionOption {
 export interface QuizQuestion {
   id: number;
   prompt: string;
+  image?: string | null;
   options: QuizQuestionOption[];
   correctAnswer: number;
 }
