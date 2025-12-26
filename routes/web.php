@@ -23,11 +23,16 @@ use App\Http\Controllers\Siswa\MateriController as SiswaMateriController;
 use App\Http\Controllers\Siswa\QuizAttemptController as SiswaQuizAttemptController;
 
 Route::get('/', function () {
+    $totalSiswa = \App\Models\User::where('role', 'siswa')->count();
+    $totalGuru = \App\Models\User::where('role', 'guru')->count();
+
     return Inertia::render('Welcome', [
         'canLogin'       => Route::has('login'),
         'canRegister'    => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion'     => PHP_VERSION,
+        'totalSiswa'     => $totalSiswa,
+        'totalGuru'      => $totalGuru,
     ]);
 });
 

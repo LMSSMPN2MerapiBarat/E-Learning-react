@@ -13,6 +13,11 @@ interface StatItem {
   icon: React.ReactNode;
 }
 
+interface AboutProps {
+  totalSiswa: number;
+  totalGuru: number;
+}
+
 // --- 2. KOMPONEN ANIMASI PERHITUNGAN ANGKA ---
 const Counter: React.FC<CounterProps> = ({ end, duration = 2000 }) => {
   const [count, setCount] = useState<number>(0);
@@ -71,10 +76,10 @@ const Counter: React.FC<CounterProps> = ({ end, duration = 2000 }) => {
 };
 
 // --- 3. KOMPONEN UTAMA ABOUT ---
-export const About: React.FC = () => {
+export const About: React.FC<AboutProps> = ({ totalSiswa = 0, totalGuru = 0 }) => {
   const stats: StatItem[] = [
-    { label: "Siswa Aktif", val: "500+", icon: <Users size={20} /> },
-    { label: "Guru Ahli", val: "50+", icon: <Award size={20} /> },
+    { label: "Siswa Aktif", val: `${totalSiswa}+`, icon: <Users size={20} /> },
+    { label: "Guru Ahli", val: `${totalGuru}+`, icon: <Award size={20} /> },
     { label: "Akreditasi", val: "A", icon: <ShieldCheck size={20} /> }
   ];
 
