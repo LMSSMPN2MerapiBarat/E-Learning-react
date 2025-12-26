@@ -3,21 +3,21 @@ import { Target, BookOpen } from 'lucide-react';
 
 export const About = () => {
   return (
-<section id="about" className="py-20 bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4 md:px-6">
-        {/* Header Section - Centered */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
-            Tentang Sekolah Kami
-          </h2>
-          <div 
-                className="w-20 h-1 bg-blue-600 mx-auto rounded-full"
-            ></div>
-        </div>
+    <section id="about" className="py-20 bg-gradient-to-b from-white to-gray-50">
+      <div className="container mx-auto px-4 md:px-6">
+        {/* Header Section - Centered */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
+            Tentang Sekolah Kami
+          </h2>
+          <div
+            className="w-20 h-1 bg-blue-600 mx-auto rounded-full"
+          ></div>
+        </div>
 
         {/* Main Content Grid */}
         <div className="grid lg:grid-cols-2 gap-10 items-start">
-          
+
           {/* Kolom Kiri: Deskripsi Sekolah */}
           <div className="space-y-6">
             {/* Description Card */}
@@ -57,7 +57,7 @@ export const About = () => {
 
           {/* Kolom Kanan: Visi dan Misi */}
           <div className="space-y-6">
-            
+
             {/* Kartu Visi Kami */}
             <div className="bg-white p-8 rounded-2xl shadow-lg border-l-4 border-blue-600 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <div className="flex items-start gap-5">
@@ -110,5 +110,5 @@ export const About = () => {
         </div>
       </div>
     </section>
-  );
+  );
 };

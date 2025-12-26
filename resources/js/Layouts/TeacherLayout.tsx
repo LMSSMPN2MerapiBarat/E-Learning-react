@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useEffect, useState } from "react";
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { Menu } from "lucide-react";
 import TeacherSidebar from "@/Components/TeacherSidebar";
-import { Toaster } from "@/Components/ui/toaster";
+import { Toaster } from "@/Components/ui/sonner";
 import { cn } from "@/Components/ui/utils";
 import type { PageProps } from "@/types";
 
@@ -53,48 +53,51 @@ export default function TeacherLayout({
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <TeacherSidebar sidebarOpen={sidebarOpen} onToggle={toggleSidebar} />
+    <>
+      <Head title={title || "Dashboard Guru"} />
+      <div className="flex min-h-screen bg-gray-50">
+        <TeacherSidebar sidebarOpen={sidebarOpen} onToggle={toggleSidebar} />
 
-      <div
-        className={cn(
-          "flex flex-1 flex-col transition-all duration-300",
-          sidebarOpen ? "lg:ml-56" : "lg:ml-0",
-        )}
-      >
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-4 py-3 shadow-sm">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleSidebar}
-              className="rounded-md p-1.5 text-gray-600 transition hover:bg-gray-100 hover:text-gray-800"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-base font-semibold text-gray-800">
-                {title || "Dashboard Guru"}
-              </h1>
-              <p className="text-xs text-gray-600">
-                Kelola materi, kuis, dan aktivitas pembelajaran
-              </p>
+        <div
+          className={cn(
+            "flex flex-1 flex-col transition-all duration-300",
+            sidebarOpen ? "lg:ml-56" : "lg:ml-0",
+          )}
+        >
+          <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-4 py-3 shadow-sm">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleSidebar}
+                className="rounded-md p-1.5 text-gray-600 transition hover:bg-gray-100 hover:text-gray-800"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              <div>
+                <h1 className="text-base font-semibold text-gray-800">
+                  {title || "Dashboard Guru"}
+                </h1>
+                <p className="text-xs text-gray-600">
+                  Kelola materi, kuis, dan aktivitas pembelajaran
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="hidden text-right sm:block">
-              <p className="text-[10px] text-gray-500">Guru Aktif</p>
-              <p className="text-xs font-semibold text-gray-800">
-                {displayName}
-              </p>
+            <div className="flex items-center gap-2">
+              <div className="hidden text-right sm:block">
+                <p className="text-[10px] text-gray-500">Guru Aktif</p>
+                <p className="text-xs font-semibold text-gray-800">
+                  {displayName}
+                </p>
+              </div>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
+                {initials}
+              </div>
             </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-700">
-              {initials}
-            </div>
-          </div>
-        </header>
+          </header>
 
-        <main className="flex-1 overflow-y-auto p-4">{children}</main>
-        <Toaster />
+          <main className="flex-1 overflow-y-auto p-4">{children}</main>
+          <Toaster position="top-right" richColors closeButton />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

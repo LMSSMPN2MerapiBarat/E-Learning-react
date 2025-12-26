@@ -85,7 +85,7 @@ export default function AssignmentBasicSection({
       </div>
 
       <div className="space-y-2">
-        <Label>
+        <Label className="text-lg font-bold">
           Kelas Tujuan <span className="text-destructive">*</span>
         </Label>
         <div className="flex flex-wrap gap-2">
@@ -102,10 +102,10 @@ export default function AssignmentBasicSection({
                   event.key === "Enter" && toggleClass(kelas.id)
                 }
                 className={cn(
-                  "cursor-pointer border",
+                  "cursor-pointer border px-3 py-1",
                   active
                     ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-background text-foreground",
+                    : "bg-background text-foreground hover:bg-gray-100",
                 )}
               >
                 {kelas.nama}
@@ -113,6 +113,12 @@ export default function AssignmentBasicSection({
             );
           })}
         </div>
+        {data.kelas_ids.length === 0 && (
+          <div className="flex items-center gap-2 p-3 text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-md animate-in fade-in duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg>
+            <span>Harap pilih minimal satu kelas tujuan.</span>
+          </div>
+        )}
         {fieldError(errors, "kelas_ids")}
       </div>
     </div>

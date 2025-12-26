@@ -46,3 +46,39 @@ export interface QuizItem {
   available_from?: string | null;
   available_until?: string | null;
 }
+
+export interface AIGeneratedQuestion {
+  no: number;
+  pertanyaan: string;
+  pilihan: {
+    A: string;
+    B: string;
+    C: string;
+    D: string;
+  };
+  jawaban_benar: string;
+}
+
+export interface AIGeneratedQuiz {
+  bahasa: 'id' | 'en';
+  jumlah_soal: number;
+  kuis: AIGeneratedQuestion[];
+}
+
+export interface AIQuota {
+  used: number;
+  limit: number;
+  remaining: number;
+  resets_at: string;
+}
+
+export interface AIQuizResponse {
+  success: boolean;
+  data?: {
+    language: 'id' | 'en';
+    questions: QuizQuestionForm[];
+    message: string;
+  };
+  quota?: AIQuota;
+  message?: string;
+}

@@ -37,7 +37,7 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
 
     {questions.map((question, index) => (
       <div key={question.id} className="space-y-4 rounded-lg border p-4">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center justify-between gap-2">
           <Label className="text-sm font-medium">
             Pertanyaan {index + 1}
           </Label>
@@ -46,6 +46,7 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => onRemove(question.id)}
+            className="h-8 w-8 p-0"
           >
             <Trash2 className="h-4 w-4 text-red-500" />
           </Button>
@@ -98,7 +99,7 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
     ))}
 
     <div className="flex justify-end">
-      <Button type="button" variant="outline" onClick={onAdd}>
+      <Button type="button" variant="outline" onClick={onAdd} className="w-full sm:w-auto">
         <Plus className="mr-2 h-4 w-4" />
         Tambah Soal
       </Button>

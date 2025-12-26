@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Models\AIGenerationLog;
 use App\Models\Quiz;
 use App\Models\QuizOption;
 use App\Models\QuizQuestion;
+use App\Services\DocumentProcessorService;
+use App\Services\GroqAIService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,11 +96,22 @@ class QuizController extends Controller
             $kelasMapelOptions[$kelasId][] = $km->mata_pelajaran_id;
         }
 
+        // Get AI quota information
+        $userId = $user->id;
+        $dailyLimit = config('services.ai_limits.daily_limit', 5);
+        $remaining = AIGenerationLog::getRemainingQuota($userId, $dailyLimit);
+
         return Inertia::render('Guru/Kuis/KuisPage', [
             'quizzes'      => $quizzes,
             'kelasOptions' => $kelasOptions,
             'mapelOptions' => $mapelOptions,
             'kelasMapelOptions' => $kelasMapelOptions,
+            'aiQuota' => [
+                'used' => $dailyLimit - $remaining,
+                'limit' => $dailyLimit,
+                'remaining' => $remaining,
+                'resets_at' => Carbon::tomorrow()->format('Y-m-d H:i:s'),
+            ],
         ]);
     }
 
@@ -307,4 +321,111 @@ class QuizController extends Controller
 
         return back()->with('success', 'Kuis berhasil dihapus.');
     }
+
+    /**
+     * Generate quiz questions from uploaded document using AI
+     */
+    public function generateQuizFromDocument(Request $request)
+    {
+        $validated = $request->validate([
+            'document' => 'required|file|mimes:doc,docx,pdf|max:10240', // Max 10MB
+            'number_of_questions' => 'required|integer|min:1|max:50',
+        ]);
+
+        $userId = auth()->id();
+        $dailyLimit = config('services.ai_limits.daily_limit', 50);
+        
+        // Check daily limit BEFORE processing
+        if (AIGenerationLog::hasReachedLimit($userId, $dailyLimit)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Batas harian AI generation tercapai. Coba lagi besok.',
+                'quota' => [
+                    'used' => $dailyLimit,
+                    'limit' => $dailyLimit,
+                    'remaining' => 0,
+                    'resets_at' => Carbon::tomorrow()->format('Y-m-d H:i:s')
+                ]
+            ], 429);
+        }
+
+        try {
+            $file = $request->file('document');
+            $numberOfQuestions = (int) $validated['number_of_questions'];
+
+            // Extract text from document
+            $documentProcessor = new DocumentProcessorService();
+            $extracted = $documentProcessor->extractText($file);
+            
+            $materialText = $extracted['text'];
+            $detectedLanguage = $extracted['language'];
+
+            // Generate quiz using AI
+            $groqService = new GroqAIService();
+            $quizData = $groqService->generateQuiz($materialText, $detectedLanguage, $numberOfQuestions);
+
+            // Convert AI format to frontend format
+            $questions = [];
+            foreach ($quizData['kuis'] as $item) {
+                // Map A,B,C,D to indices 0,1,2,3
+                $correctAnswerMap = ['A' => 0, 'B' => 1, 'C' => 2, 'D' => 3];
+                
+                $questions[] = [
+                    'id' => uniqid('ai_'), // Temporary ID for frontend
+                    'question' => $item['pertanyaan'],
+                    'options' => [
+                        $item['pilihan']['A'],
+                        $item['pilihan']['B'],
+                        $item['pilihan']['C'],
+                        $item['pilihan']['D'],
+                    ],
+                    'correct_answer' => $correctAnswerMap[$item['jawaban_benar']] ?? 0,
+                ];
+            }
+
+            // Log successful generation
+            AIGenerationLog::create([
+                'user_id' => $userId,
+                'type' => 'quiz_generation',
+                'questions_count' => $numberOfQuestions,
+                'model_used' => config('services.groq.model'),
+                'success' => true,
+            ]);
+
+            // Get updated quota
+            $remaining = AIGenerationLog::getRemainingQuota($userId, $dailyLimit);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'language' => $quizData['bahasa'],
+                    'questions' => $questions,
+                    'message' => 'Quiz successfully generated from document'
+                ],
+                'quota' => [
+                    'used' => $dailyLimit - $remaining,
+                    'limit' => $dailyLimit,
+                    'remaining' => $remaining,
+                    'resets_at' => Carbon::tomorrow()->format('Y-m-d H:i:s')
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            // Log failed attempt
+            AIGenerationLog::create([
+                'user_id' => $userId,
+                'type' => 'quiz_generation',
+                'questions_count' => $validated['number_of_questions'],
+                'model_used' => config('services.groq.model'),
+                'success' => false,
+                'error_message' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        }
+    }
 }
+

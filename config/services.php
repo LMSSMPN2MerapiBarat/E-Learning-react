@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'groq' => [
+        'api_key' => env('GROQ_API_KEY'),
+        'model' => env('GROQ_MODEL', 'llama-3.1-8b-instant'),
+        'fallback_model' => env('GROQ_FALLBACK_MODEL', 'llama-3.3-70b-versatile'),
+    ],
+
+    'ai_limits' => [
+        'daily_limit' => env('AI_DAILY_LIMIT', 5), // 5 generations per user per day (safe for 20 teachers)
+    ],
+
 ];
