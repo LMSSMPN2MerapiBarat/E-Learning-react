@@ -172,6 +172,10 @@ export interface GradeItem {
   date: string;
   status: "graded" | "late";
   feedback?: string | null;
+  link?: string | null;
+  quizId?: number | null;
+  attemptId?: number | null;
+  assignmentId?: number | null;
 }
 
 export interface GradeSummary {

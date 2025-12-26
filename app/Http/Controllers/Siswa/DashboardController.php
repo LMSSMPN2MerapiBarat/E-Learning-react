@@ -427,6 +427,12 @@ class DashboardController extends Controller
                     'date' => optional($attempt->submitted_at ?? $attempt->created_at)->toDateString(),
                     'status' => 'graded',
                     'feedback' => null,
+                    'quizId' => $attempt->quiz_id,
+                    'attemptId' => $attempt->id,
+                    'link' => $attempt->quiz_id ? route('siswa.quizzes.attempts.show', [
+                        'quiz' => $attempt->quiz_id,
+                        'attempt' => $attempt->id,
+                    ]) : null,
                 ];
             })
             ->values()
@@ -449,6 +455,8 @@ class DashboardController extends Controller
                     'date' => optional($submission->graded_at ?? $submission->submitted_at ?? $submission->created_at)->toDateString(),
                     'status' => 'graded',
                     'feedback' => $submission->feedback,
+                    'assignmentId' => $assignment->id,
+                    'link' => route('siswa.tugas.index') . '?highlight=' . $assignment->id,
                 ];
             })
             ->filter()
