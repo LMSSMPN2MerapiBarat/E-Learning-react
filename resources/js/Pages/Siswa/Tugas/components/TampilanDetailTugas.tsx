@@ -82,7 +82,7 @@ export default function AssignmentDetailView({
   return (
     <>
       <div className="space-y-6">
-        <Button variant="ghost" size="sm" onClick={onBack} className="flex gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <Button variant="outline" size="sm" onClick={onBack} className="flex gap-2 text-sm text-foreground hover:bg-muted">
           <ArrowLeft className="h-4 w-4" />
           Kembali ke daftar tugas
         </Button>

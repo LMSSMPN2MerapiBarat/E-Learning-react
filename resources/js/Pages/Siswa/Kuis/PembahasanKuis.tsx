@@ -465,7 +465,7 @@ export default function QuizReview() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 mb-6">
+                <div className="mb-3 grid grid-cols-8 gap-1">
                   {questions.map((question, index) => {
                     const status = getQuestionStatus(question.id);
                     const isActive = index === currentIndex;
@@ -476,13 +476,13 @@ export default function QuizReview() {
                         onClick={() => jumpToQuestion(index)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`aspect-square rounded-lg border-2 transition-all flex items-center justify-center text-sm ${isActive
-                          ? "border-purple-600 bg-purple-600 text-white shadow-lg scale-110"
+                        className={`flex h-7 w-7 items-center justify-center rounded text-[11px] font-medium transition-all ${isActive
+                          ? "border border-purple-600 bg-purple-600 text-white shadow-sm"
                           : status === "correct"
-                            ? "border-green-500 bg-green-50 text-green-700 hover:bg-green-100"
+                            ? "border border-green-500 bg-green-50 text-green-700 hover:bg-green-100"
                             : status === "wrong"
-                              ? "border-red-500 bg-red-50 text-red-700 hover:bg-red-100"
-                              : "border-gray-300 bg-gray-50 text-gray-600 hover:bg-gray-100"
+                              ? "border border-red-500 bg-red-50 text-red-700 hover:bg-red-100"
+                              : "border border-gray-300 bg-gray-50 text-gray-600 hover:bg-gray-100"
                           }`}
                       >
                         {index + 1}
@@ -491,22 +491,22 @@ export default function QuizReview() {
                   })}
                 </div>
 
-                <div className="space-y-2 text-sm">
+                <div className="space-y-2 text-[10px]">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg border-2 border-purple-600 bg-purple-600" />
+                    <div className="w-4 h-4 rounded border border-purple-600 bg-purple-600" />
                     <span className="text-gray-600">Soal aktif</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg border-2 border-green-500 bg-green-50" />
+                    <div className="w-4 h-4 rounded border border-green-500 bg-green-50" />
                     <span className="text-gray-600">Jawaban benar</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg border-2 border-red-500 bg-red-50" />
+                    <div className="w-4 h-4 rounded border border-red-500 bg-red-50" />
                     <span className="text-gray-600">Jawaban salah</span>
                   </div>
                   {unansweredCount > 0 && (
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg border-2 border-gray-300 bg-gray-50" />
+                      <div className="w-4 h-4 rounded border border-gray-300 bg-gray-50" />
                       <span className="text-gray-600">Tidak dijawab</span>
                     </div>
                   )}

@@ -57,8 +57,8 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Button variant="ghost" size="sm" onClick={onBack} className="mb-1.5">
-          <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+        <Button variant="outline" size="sm" onClick={onBack} className="mb-1.5 gap-2 border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+          <ArrowLeft className="h-3.5 w-3.5" />
           Kembali ke daftar mata pelajaran
         </Button>
       </motion.div>
@@ -68,33 +68,29 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="overflow-hidden">
-          <div className={`h-2 ${subjectDecoration(subject.id).background}`} />
+        <Card className="overflow-hidden border-none shadow-sm ring-1 ring-gray-200/50">
+          <div className={`h-1.5 ${subjectDecoration(subject.id).background}`} />
           <CardContent className="p-6">
-            <div className="flex flex-col gap-4 md:flex-row">
-              <div className="flex items-center justify-center rounded-xl bg-gradient-to-br from-white/5 to-white/30 p-4 shadow-inner backdrop-blur-md md:w-36">
-                <Book size={48} color={subjectDecoration(subject.id).iconColor} strokeWidth={2.5} className="drop-shadow-sm" />
+            <div className="flex flex-col gap-6 md:flex-row">
+              <div className="flex items-center justify-center rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 p-6 shadow-inner ring-1 ring-gray-200/50 md:w-40 md:h-40 shrink-0">
+                <Book size={64} color={subjectDecoration(subject.id).iconColor} strokeWidth={1.5} className="drop-shadow-sm" />
               </div>
-              <div className="flex-1">
-                <div className="mb-3">
-                  <h2 className="text-xl font-semibold text-gray-900">
+              <div className="flex-1 space-y-6">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight text-gray-900">
                     {subject.name}
                   </h2>
-                  <p className="text-xs text-gray-600">
+                  <p className="mt-2 text-sm text-gray-600 leading-relaxed max-w-3xl">
                     {subject.description ??
                       "Materi dan kuis terbaru dari guru pengampu mata pelajaran ini."}
                   </p>
                 </div>
-                <div className="grid gap-3 md:grid-cols-2">
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <InfoRow
                     icon={User}
                     label="Guru Pengampu"
                     value={subject.teacher ?? "-"}
-                  />
-                  <InfoRow
-                    icon={Mail}
-                    label="Kontak Guru"
-                    value={subject.teacherEmail ?? "Belum tersedia"}
                   />
                   <InfoRow
                     icon={Calendar}
@@ -106,47 +102,36 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
                     label="Jadwal"
                     value={subject.schedule ?? "Belum dijadwalkan"}
                   />
+                  <InfoRow
+                    icon={Mail}
+                    label="Kontak Guru"
+                    value={subject.teacherEmail ?? "Belum tersedia"}
+                  />
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Badge className="bg-blue-100 text-blue-700 border border-blue-200 text-[10px]">
-                    <FileText className="mr-0.5 h-2.5 w-2.5" />
-                    {subject.materialCount} Materi
-                  </Badge>
-                  <Badge className="bg-green-100 text-green-700 border border-green-200 text-[10px]">
-                    <FileQuestion className="mr-0.5 h-2.5 w-2.5" />
-                    {subject.quizCount} Kuis
-                  </Badge>
-                </div>
+
                 {hasScheduleSlots && (
-                  <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/60 p-3">
-                    <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-indigo-600">
-                      <Calendar className="h-2.5 w-2.5" />
+                  <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+                    <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 mb-3">
+                      <Calendar className="h-3.5 w-3.5" />
                       Jadwal Pelajaran
                     </p>
-                    <div className="mt-2 grid gap-2 md:grid-cols-2">
+                    <div className="flex flex-wrap gap-2">
                       {scheduleSlots.map((slot) => (
                         <div
                           key={`${slot.id}-${slot.day}-${slot.startTime}`}
-                          className="rounded-lg bg-white/70 p-2 text-[10px] text-indigo-900 shadow-sm"
+                          className="flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-medium text-indigo-900 shadow-sm ring-1 ring-indigo-100"
                         >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold">{slot.day}</span>
-                            {slot.room && (
-                              <span className="flex items-center gap-0.5 text-[10px] text-indigo-600">
-                                <MapPin className="h-2.5 w-2.5" />
+                          <span className="font-bold text-indigo-700">{slot.day}</span>
+                          <span className="text-gray-400">|</span>
+                          <span>{slot.startTime} - {slot.endTime}</span>
+                          {slot.room && (
+                            <>
+                              <span className="text-gray-400">|</span>
+                              <span className="flex items-center gap-1 text-gray-600">
+                                <MapPin className="h-3 w-3" />
                                 {slot.room}
                               </span>
-                            )}
-                          </div>
-                          <div className="mt-0.5 flex items-center gap-1.5">
-                            <Clock className="h-2.5 w-2.5" />
-                            {slot.startTime} - {slot.endTime}
-                          </div>
-                          {slot.teacherName && (
-                            <div className="mt-0.5 flex items-center gap-1.5">
-                              <User className="h-2.5 w-2.5" />
-                              {slot.teacherName}
-                            </div>
+                            </>
                           )}
                         </div>
                       ))}
@@ -163,18 +148,29 @@ export default function SubjectDetail({ subject, onBack }: SubjectDetailProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        className="mt-6"
       >
-        <Tabs defaultValue="materials">
-          <TabsList className="w-full justify-start bg-white">
-            <TabsTrigger value="materials" className="flex items-center gap-1.5 text-xs">
-              <FileText className="h-3.5 w-3.5" />
+        <Tabs defaultValue="materials" className="w-full">
+          <TabsList className="w-full justify-start rounded-xl bg-gray-100/80 p-1 h-auto sm:w-auto sm:inline-flex">
+            <TabsTrigger
+              value="materials"
+              className="group flex flex-1 items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm sm:flex-none"
+            >
+              <FileText className="h-4 w-4 text-gray-500 group-data-[state=active]:text-blue-600" />
               Materi
-              <Badge variant="secondary" className="text-[10px]">{formattedMaterials.length}</Badge>
+              <span className="ml-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gray-200 px-1.5 text-[10px] font-bold text-gray-600 group-data-[state=active]:bg-blue-100 group-data-[state=active]:text-blue-700">
+                {formattedMaterials.length}
+              </span>
             </TabsTrigger>
-            <TabsTrigger value="quizzes" className="flex items-center gap-1.5 text-xs">
-              <FileQuestion className="h-3.5 w-3.5" />
+            <TabsTrigger
+              value="quizzes"
+              className="group flex flex-1 items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-indigo-700 data-[state=active]:shadow-sm sm:flex-none"
+            >
+              <FileQuestion className="h-4 w-4 text-gray-500 group-data-[state=active]:text-indigo-600" />
               Kuis
-              <Badge variant="secondary" className="text-[10px]">{formattedQuizzes.length}</Badge>
+              <span className="ml-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gray-200 px-1.5 text-[10px] font-bold text-gray-600 group-data-[state=active]:bg-indigo-100 group-data-[state=active]:text-indigo-700">
+                {formattedQuizzes.length}
+              </span>
             </TabsTrigger>
           </TabsList>
 
