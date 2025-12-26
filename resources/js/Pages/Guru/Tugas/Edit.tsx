@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
-import { useToast } from "@/Components/ui/use-toast";
+import { toast } from "sonner";
 import AssignmentBasicSection from "@/Pages/Guru/components/tugas/form/AssignmentBasicSection";
 import AssignmentScheduleSection from "@/Pages/Guru/components/tugas/form/AssignmentScheduleSection";
 import AssignmentGradingSection from "@/Pages/Guru/components/tugas/form/AssignmentGradingSection";
@@ -35,7 +35,6 @@ export default function EditAssignment({
   onSuccess,
   onCancel,
 }: EditAssignmentProps) {
-  const { toast } = useToast();
   const [existingAttachments, setExistingAttachments] = useState<AssignmentAttachment[]>(
     assignment.attachments,
   );
@@ -136,8 +135,7 @@ export default function EditAssignment({
       forceFormData: true,
       preserveScroll: true,
       onSuccess: () => {
-        toast({
-          title: "Perubahan tersimpan",
+        toast.success("Perubahan tersimpan", {
           description: "Tugas berhasil diperbarui.",
         });
         onSuccess();
@@ -145,10 +143,8 @@ export default function EditAssignment({
       onError: (formErrors) => {
         const firstError = Object.values(formErrors)[0];
         if (firstError) {
-          toast({
-            title: "Gagal memperbarui tugas",
+          toast.error("Gagal memperbarui tugas", {
             description: firstError,
-            variant: "destructive",
           });
         }
       },

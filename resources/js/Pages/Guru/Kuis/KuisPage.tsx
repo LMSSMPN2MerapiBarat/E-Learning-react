@@ -6,15 +6,7 @@ import { Card, CardContent, CardHeader } from "@/Components/ui/card";
 import QuizListHeader from "@/Pages/Guru/components/kuis/QuizListHeader";
 import QuizList from "@/Pages/Guru/components/kuis/QuizList";
 import QuizManagementDialogs from "@/Pages/Guru/components/kuis/QuizManagementDialogs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/Components/ui/alert-dialog";
+
 import { toast } from "sonner";
 import type {
   Option,
@@ -40,10 +32,7 @@ export default function KuisPage() {
   const [editItem, setEditItem] = useState<QuizItem | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [feedback, setFeedback] = useState<{
-    title: string;
-    description: string;
-  } | null>(null);
+
 
   const filteredQuizzes = useMemo(() => {
     if (!searchTerm) return quizzes;
@@ -65,8 +54,7 @@ export default function KuisPage() {
     if (!deleteId) return;
     router.delete(`/guru/kuis/${deleteId}`, {
       onSuccess: () => {
-        setFeedback({
-          title: "Kuis berhasil dihapus",
+        toast.success("Kuis berhasil dihapus", {
           description:
             "Kuis dan seluruh pertanyaannya telah dihapus dari daftar.",
         });
@@ -78,21 +66,19 @@ export default function KuisPage() {
 
   const handleCreateSuccess = () => {
     setIsCreateOpen(false);
-    setFeedback({
-      title: "Kuis baru siap digunakan",
+    toast.success("Kuis baru siap digunakan", {
       description: "Silahkan beritahu kelas Anda untuk mengikuti kuis.",
     });
   };
 
   const handleEditSuccess = () => {
     setEditItem(null);
-    setFeedback({
-      title: "Perubahan kuis disimpan",
+    toast.success("Perubahan kuis disimpan", {
       description: "Semua pengaturan kuis telah diperbarui dengan sukses.",
     });
   };
 
-  const closeFeedback = () => setFeedback(null);
+
 
   return (
     <TeacherLayout title="Kelola Kuis">
@@ -132,21 +118,7 @@ export default function KuisPage() {
         aiQuota={aiQuota}
       />
 
-      <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>
-        <AlertDialogContent className="max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{feedback?.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {feedback?.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={closeFeedback}>
-              Tutup
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+
     </TeacherLayout>
   );
 }

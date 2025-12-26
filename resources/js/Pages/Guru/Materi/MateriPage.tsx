@@ -6,15 +6,7 @@ import { Card, CardContent, CardHeader } from "@/Components/ui/card";
 import MateriListHeader from "@/Pages/Guru/components/MateriListHeader";
 import MateriList from "@/Pages/Guru/components/MateriList";
 import MateriManagementDialogs from "@/Pages/Guru/components/MateriManagementDialogs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/Components/ui/alert-dialog";
+
 import { toast } from "sonner";
 import type { Option } from "@/Pages/Guru/components/kuis/formTypes";
 import type { MateriItem } from "@/Pages/Guru/components/materiTypes";
@@ -36,10 +28,7 @@ export default function MateriPage() {
   const [editItem, setEditItem] = useState<MateriItem | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [feedback, setFeedback] = useState<{
-    title: string;
-    description: string;
-  } | null>(null);
+
 
   const filteredMateri = useMemo(() => {
     if (!searchTerm) return materis;
@@ -60,8 +49,7 @@ export default function MateriPage() {
 
     router.delete(`/guru/materi/${deleteId}`, {
       onSuccess: () => {
-        setFeedback({
-          title: "Materi berhasil dihapus",
+        toast.success("Materi berhasil dihapus", {
           description:
             "Materi dan seluruh lampiran terkait telah dihapus dari daftar.",
         });
@@ -73,21 +61,19 @@ export default function MateriPage() {
 
   const handleCreateSuccess = () => {
     setIsCreateOpen(false);
-    setFeedback({
-      title: "Materi baru tersimpan",
+    toast.success("Materi baru tersimpan", {
       description: "Materi siap dibagikan ke kelas yang Anda pilih.",
     });
   };
 
   const handleEditSuccess = () => {
     setEditItem(null);
-    setFeedback({
-      title: "Materi diperbarui",
+    toast.success("Materi diperbarui", {
       description: "Perubahan materi berhasil disimpan dan langsung berlaku.",
     });
   };
 
-  const closeFeedback = () => setFeedback(null);
+
 
   return (
     <TeacherLayout title="Kelola Materi Pembelajaran">
@@ -125,21 +111,7 @@ export default function MateriPage() {
         kelasMapelOptions={kelasMapelOptions}
       />
 
-      <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>
-        <AlertDialogContent className="max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle>{feedback?.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {feedback?.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={closeFeedback}>
-              Tutup
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+
     </TeacherLayout>
   );
 }

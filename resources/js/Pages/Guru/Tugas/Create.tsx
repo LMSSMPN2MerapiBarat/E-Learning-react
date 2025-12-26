@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from "react";
 import { useForm } from "@inertiajs/react";
 import { Button } from "@/Components/ui/button";
-import { useToast } from "@/Components/ui/use-toast";
+import { toast } from "sonner";
 import AssignmentBasicSection from "@/Pages/Guru/components/tugas/form/AssignmentBasicSection";
 import AssignmentScheduleSection from "@/Pages/Guru/components/tugas/form/AssignmentScheduleSection";
 import AssignmentGradingSection from "@/Pages/Guru/components/tugas/form/AssignmentGradingSection";
@@ -32,7 +32,6 @@ export default function CreateAssignment({
   onSuccess,
   onCancel,
 }: CreateAssignmentProps) {
-  const { toast } = useToast();
   const initialData = useMemo<AssignmentFormState>(
     () => ({
       title: "",
@@ -123,8 +122,7 @@ export default function CreateAssignment({
       forceFormData: true,
       preserveScroll: true,
       onSuccess: () => {
-        toast({
-          title: "Tugas berhasil dibuat",
+        toast.success("Tugas berhasil dibuat", {
           description: "Data tugas baru telah tersimpan.",
         });
         form.reset();
@@ -133,10 +131,8 @@ export default function CreateAssignment({
       onError: (formErrors) => {
         const firstError = Object.values(formErrors)[0];
         if (firstError) {
-          toast({
-            title: "Gagal membuat tugas",
+          toast.error("Gagal membuat tugas", {
             description: firstError,
-            variant: "destructive",
           });
         }
       },

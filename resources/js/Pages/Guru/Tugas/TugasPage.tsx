@@ -17,7 +17,7 @@ import {
 } from "@/Components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/Components/ui/dialog";
 import { ScrollArea } from "@/Components/ui/scroll-area";
-import { useToast } from "@/Components/ui/use-toast";
+import { toast } from "sonner";
 import AssignmentToolbar from "@/Pages/Guru/components/tugas/AssignmentToolbar";
 import AssignmentTable from "@/Pages/Guru/components/tugas/AssignmentTable";
 import CreateAssignment from "@/Pages/Guru/Tugas/Create";
@@ -43,7 +43,6 @@ export default function TugasPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editAssignment, setEditAssignment] = useState<AssignmentItem | null>(null);
   const [deleteAssignment, setDeleteAssignment] = useState<AssignmentItem | null>(null);
-  const { toast } = useToast();
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,17 +79,14 @@ export default function TugasPage() {
     router.delete(`/guru/tugas/${deleteAssignment.id}`, {
       preserveScroll: true,
       onSuccess: () => {
-        toast({
-          title: "Tugas dihapus",
+        toast.success("Tugas dihapus", {
           description: "Data tugas berhasil dihapus.",
         });
         setDeleteAssignment(null);
       },
       onError: () =>
-        toast({
-          title: "Gagal menghapus tugas",
+        toast.error("Gagal menghapus tugas", {
           description: "Silakan coba lagi.",
-          variant: "destructive",
         }),
     });
   };
