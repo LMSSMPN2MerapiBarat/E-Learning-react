@@ -3,11 +3,13 @@ import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
 import { Input } from "@/Components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Badge } from "@/Components/ui/badge";
 import {
   RadioGroup,
   RadioGroupItem,
 } from "@/Components/ui/radio-group";
-import { Plus, Trash2, ImagePlus, X } from "lucide-react";
+import { Plus, Trash2, ImagePlus, X, FileQuestion, HelpCircle, CheckCircle2 } from "lucide-react";
 import type { QuizQuestionForm } from "./formTypes";
 
 interface QuizQuestionsEditorProps {
@@ -77,203 +79,243 @@ const QuizQuestionsEditor: React.FC<QuizQuestionsEditorProps> = ({
   }, []);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <Label className="text-sm font-medium">Daftar Soal</Label>
-        <p className="text-xs text-gray-500">
-          Tambahkan pertanyaan beserta pilihan jawaban. Anda dapat menambahkan gambar pada setiap soal.
-        </p>
-      </div>
+    <Card className="border-gray-200 shadow-sm">
+      <CardHeader className="bg-gray-50/50 pb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <FileQuestion className="h-5 w-5 text-blue-600" />
+              <CardTitle className="text-lg text-gray-800">Daftar Soal</CardTitle>
+            </div>
+            <CardDescription>
+              Kelola pertanyaan dan kunci jawaban kuis Anda
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className="bg-white px-3 py-1 text-sm font-medium shadow-sm self-start sm:self-auto">
+            Total: {questions.length} Soal
+          </Badge>
+        </div>
+      </CardHeader>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      <CardContent className="space-y-6 pt-6">
+        {error && (
+          <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+            {error}
+          </div>
+        )}
 
-      {questions.map((question, index) => (
-        <div key={question.id} className="space-y-4 rounded-lg border p-4">
-          <div className="flex items-center justify-between gap-2">
-            <Label className="text-sm font-medium">
-              Pertanyaan {index + 1}
-            </Label>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => onRemove(question.id)}
-              className="h-8 w-8 p-0"
-            >
-              <Trash2 className="h-4 w-4 text-red-500" />
+        {questions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50/50 py-12 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 shadow-sm">
+              <HelpCircle className="h-8 w-8 text-blue-600" />
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-900">Belum Ada Soal</h3>
+            <p className="mb-6 max-w-sm text-sm text-gray-500">
+              Mulai buat kuis dengan menambahkan soal secara manual atau gunakan fitur AI Generator di atas.
+            </p>
+            <Button onClick={onAdd} className="bg-blue-600 hover:bg-blue-700 shadow-sm">
+              <Plus className="mr-2 h-4 w-4" />
+              Tambah Soal Pertama
             </Button>
           </div>
-
-          <Textarea
-            value={question.question}
-            onChange={(event) =>
-              onUpdate(question.id, { question: event.target.value })
-            }
-            placeholder="Tulis pertanyaan..."
-          />
-
-          {/* Image Upload Section */}
-          <div className="space-y-2">
-            <Label className="text-sm text-gray-600">
-              Gambar Soal <span className="text-gray-400">(opsional)</span>
-            </Label>
-
-            {/* Hidden file input */}
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              ref={(el) => (fileInputRefs.current[question.id] = el)}
-              onChange={(e) => handleImageUpload(question.id, e)}
-            />
-
-            {question.image ? (
-              /* Image Preview with fixed size */
-              <div className="relative inline-block">
-                <div
-                  className="overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
-                  style={{
-                    width: IMAGE_WIDTH,
-                    height: IMAGE_HEIGHT,
-                  }}
-                >
-                  <img
-                    src={question.image}
-                    alt={`Gambar soal ${index + 1}`}
-                    className="h-full w-full object-cover"
-                    style={{
-                      width: IMAGE_WIDTH,
-                      height: IMAGE_HEIGHT,
-                    }}
-                  />
-                </div>
-                {/* Remove image button */}
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="absolute -right-2 -top-2 h-6 w-6 rounded-full p-0"
-                  onClick={() => handleRemoveImage(question.id)}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            ) : (
-              /* Upload button */
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-                onClick={() => triggerFileInput(question.id)}
+        ) : (
+          <div className="space-y-6">
+            {questions.map((question, index) => (
+              <div
+                key={question.id}
+                className="group relative rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-blue-300 hover:shadow-md"
               >
-                <ImagePlus className="h-4 w-4" />
-                Tambah Gambar
-              </Button>
-            )}
+                <div className="mb-4 flex items-center justify-between">
+                  <Badge className="bg-blue-600 hover:bg-blue-700">
+                    No. {index + 1}
+                  </Badge>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onRemove(question.id)}
+                    className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
 
-            <p className="text-xs text-gray-400">
-              Format: JPG, PNG, GIF. Maks: 2MB. Ukuran tampilan: {IMAGE_WIDTH}x{IMAGE_HEIGHT}px
-            </p>
-          </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Pertanyaan</Label>
+                    <Textarea
+                      value={question.question}
+                      onChange={(event) =>
+                        onUpdate(question.id, { question: event.target.value })
+                      }
+                      placeholder="Tulis pertanyaan Anda di sini..."
+                      className="min-h-[80px] text-base resize-y"
+                    />
+                  </div>
 
-          <div className="space-y-2">
-            <Label>Pilihan Jawaban</Label>
-            <RadioGroup
-              value={String(question.correct_answer)}
-              onValueChange={(value) =>
-                onUpdate(question.id, { correct_answer: Number(value) })
-              }
-            >
-              {question.options.map((option, optionIndex) => (
-                <div
-                  key={`${question.id}-${optionIndex}`}
-                  className="flex items-center gap-2"
-                >
-                  <RadioGroupItem
-                    value={String(optionIndex)}
-                    id={`correct-${question.id}-${optionIndex}`}
-                  />
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-700">
-                    {String.fromCharCode(65 + optionIndex)}
-                  </span>
-                  <Input
-                    value={option}
-                    onChange={(event) => {
-                      const nextOptions = [...question.options];
-                      nextOptions[optionIndex] = event.target.value;
-                      onUpdate(question.id, { options: nextOptions });
-                    }}
-                    placeholder={`Pilihan ${String.fromCharCode(
-                      65 + optionIndex,
-                    )}`}
-                    className="flex-1"
-                  />
-                  {/* Remove option button - only show if more than 2 options */}
-                  {question.options.length > 2 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-                      onClick={() => {
-                        const nextOptions = question.options.filter((_, i) => i !== optionIndex);
-                        // Adjust correct_answer if needed
-                        let newCorrectAnswer = question.correct_answer;
-                        if (question.correct_answer === optionIndex) {
-                          newCorrectAnswer = 0; // Reset to first option
-                        } else if (question.correct_answer > optionIndex) {
-                          newCorrectAnswer = question.correct_answer - 1;
-                        }
-                        onUpdate(question.id, {
-                          options: nextOptions,
-                          correct_answer: newCorrectAnswer
-                        });
-                      }}
+                  {/* Image Upload Section */}
+                  <div className="space-y-2">
+                    <Label className="text-sm text-gray-600 flex items-center justify-between">
+                      <span>Gambar Pendukung</span>
+                      <span className="text-xs text-gray-400 font-normal">Opsional • Max 2MB</span>
+                    </Label>
+
+                    {/* Hidden file input */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      ref={(el) => (fileInputRefs.current[question.id] = el)}
+                      onChange={(e) => handleImageUpload(question.id, e)}
+                    />
+
+                    {question.image ? (
+                      <div className="relative inline-block group/image">
+                        <div
+                          className="overflow-hidden rounded-md border border-gray-200 shadow-sm"
+                          style={{
+                            width: IMAGE_WIDTH,
+                            height: IMAGE_HEIGHT,
+                          }}
+                        >
+                          <img
+                            src={question.image}
+                            alt={`Gambar soal ${index + 1}`}
+                            className="h-full w-full object-contain bg-gray-50"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute -right-2 -top-2 h-7 w-7 rounded-full p-0 shadow-md opacity-0 group-hover/image:opacity-100 transition-all scale-90 hover:scale-100"
+                          onClick={() => handleRemoveImage(question.id)}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="text-xs border-dashed text-gray-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50"
+                        onClick={() => triggerFileInput(question.id)}
+                      >
+                        <ImagePlus className="mr-2 h-3.5 w-3.5" />
+                        Upload Gambar
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="space-y-3 rounded-lg bg-gray-50/50 p-4 border border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <Label className="text-sm font-medium text-gray-700">Pilihan Jawaban</Label>
+                      <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-medium">
+                        Pilih satu jawaban benar
+                      </span>
+                    </div>
+
+                    <RadioGroup
+                      value={String(question.correct_answer)}
+                      onValueChange={(value) =>
+                        onUpdate(question.id, { correct_answer: Number(value) })
+                      }
+                      className="space-y-3"
                     >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
+                      {question.options.map((option, optionIndex) => (
+                        <div
+                          key={`${question.id}-${optionIndex}`}
+                          className={`flex items-center gap-3 p-2 rounded-md transition-colors ${question.correct_answer === optionIndex ? "bg-green-50 border border-green-200" : "hover:bg-white"}`}
+                        >
+                          <RadioGroupItem
+                            value={String(optionIndex)}
+                            id={`correct-${question.id}-${optionIndex}`}
+                            className={question.correct_answer === optionIndex ? "text-green-600 border-green-600" : ""}
+                          />
+                          <Label
+                            htmlFor={`correct-${question.id}-${optionIndex}`}
+                            className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sm font-bold shadow-sm transition-all ${question.correct_answer === optionIndex
+                              ? "bg-green-600 text-white shadow-green-200"
+                              : "bg-white border border-gray-200 text-gray-600"
+                              }`}
+                          >
+                            {String.fromCharCode(65 + optionIndex)}
+                          </Label>
+                          <Input
+                            value={option}
+                            onChange={(event) => {
+                              const nextOptions = [...question.options];
+                              nextOptions[optionIndex] = event.target.value;
+                              onUpdate(question.id, { options: nextOptions });
+                            }}
+                            placeholder={`Tulis pilihan jawaban ${String.fromCharCode(65 + optionIndex)}...`}
+                            className={`flex-1 ${question.correct_answer === optionIndex ? "border-green-200 focus-visible:ring-green-500" : ""}`}
+                          />
+                          {question.options.length > 2 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                              onClick={() => {
+                                const nextOptions = question.options.filter((_, i) => i !== optionIndex);
+                                let newCorrectAnswer = question.correct_answer;
+                                if (question.correct_answer === optionIndex) {
+                                  newCorrectAnswer = 0;
+                                } else if (question.correct_answer > optionIndex) {
+                                  newCorrectAnswer = question.correct_answer - 1;
+                                }
+                                onUpdate(question.id, {
+                                  options: nextOptions,
+                                  correct_answer: newCorrectAnswer
+                                });
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </RadioGroup>
+
+                    {question.options.length < 6 && (
+                      <div className="pl-12 pt-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          onClick={() => {
+                            const nextOptions = [...question.options, ""];
+                            onUpdate(question.id, { options: nextOptions });
+                          }}
+                        >
+                          <Plus className="mr-1 h-3 w-3" />
+                          Tambah Pilihan Jawaban ({String.fromCharCode(65 + question.options.length)})
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </RadioGroup>
+              </div>
+            ))}
 
-            {/* Add option button - only show if less than 6 options */}
-            {question.options.length < 6 && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-2"
-                onClick={() => {
-                  const nextOptions = [...question.options, ""];
-                  onUpdate(question.id, { options: nextOptions });
-                }}
-              >
-                <Plus className="mr-1 h-3 w-3" />
-                Tambah Pilihan {String.fromCharCode(65 + question.options.length)}
-              </Button>
-            )}
-
-            <p className="text-xs text-red-500">
-              Tandai jawaban benar dengan memilih radio button di samping.
-            </p>
-            <p className="text-xs text-gray-400">
-              Min. 2 pilihan, Maks. 6 pilihan (A-F)
-            </p>
+            <Button
+              type="button"
+              onClick={onAdd}
+              className="w-full bg-white border-2 border-dashed border-gray-200 text-gray-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 h-14"
+            >
+              <Plus className="mr-2 h-5 w-5" />
+              Tambah Soal Baru (No. {questions.length + 1})
+            </Button>
           </div>
-        </div>
-      ))}
-
-      <div className="flex justify-end">
-        <Button type="button" variant="outline" onClick={onAdd} className="w-full sm:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
-          Tambah Soal
-        </Button>
-      </div>
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
 export default QuizQuestionsEditor;
+
 

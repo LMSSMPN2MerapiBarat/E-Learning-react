@@ -40,13 +40,13 @@ export default function KartuSoalKuis({
                     <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-base font-semibold text-white shadow-md ${isMarked ? 'bg-gradient-to-br from-orange-500 to-orange-600' : 'bg-gradient-to-br from-blue-600 to-blue-700'}`}>
                         {questionIndex + 1}
                     </div>
-                    <div className="flex-1">
-                        <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-2">
                             <p className="pt-1 text-sm text-gray-800 flex-1">
                                 {question.prompt}
                             </p>
                             {isMarked && (
-                                <span className="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                <span className="text-[10px] text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded flex items-center gap-1 whitespace-nowrap flex-shrink-0">
                                     <Flag className="h-3 w-3" />
                                     Ditandai
                                 </span>
@@ -124,12 +124,12 @@ export default function KartuSoalKuis({
                 </RadioGroup>
 
                 {/* Action buttons */}
-                <div className="mt-4 flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                <div className="mt-4 flex flex-col sm:flex-row gap-2 pt-3 border-t border-gray-100">
                     <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        className={`text-xs ${isMarked ? 'border-orange-400 bg-orange-50 text-orange-600 hover:bg-orange-100' : 'text-gray-600 hover:text-orange-600'}`}
+                        className={`text-xs w-full sm:w-auto ${isMarked ? 'border-orange-400 bg-orange-50 text-orange-600 hover:bg-orange-100' : 'text-gray-600 hover:text-orange-600'}`}
                         onClick={() => onToggleMark?.(question.id)}
                     >
                         <Flag className="mr-1.5 h-3 w-3" />
@@ -140,7 +140,7 @@ export default function KartuSoalKuis({
                             type="button"
                             variant="outline"
                             size="sm"
-                            className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 w-full sm:w-auto"
                             onClick={() => onClearAnswer?.(question.id)}
                         >
                             <X className="mr-1.5 h-3 w-3" />

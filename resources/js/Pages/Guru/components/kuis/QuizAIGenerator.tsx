@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import axios from "axios";
-import { Upload, Sparkles, FileText, Loader2, Info } from "lucide-react";
+import { Upload, Sparkles, FileText, Loader2, Info, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -18,6 +18,7 @@ interface QuizAIGeneratorProps {
 }
 
 export default function QuizAIGenerator({ onQuestionsGenerated, initialQuota }: QuizAIGeneratorProps) {
+    const [isExpanded, setIsExpanded] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [numberOfQuestions, setNumberOfQuestions] = useState<number | string>(5);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -98,6 +99,7 @@ export default function QuizAIGenerator({ onQuestionsGenerated, initialQuota }: 
                 // Reset form
                 setFile(null);
                 setNumberOfQuestions(5);
+                setIsExpanded(false);
 
                 // Reset file input
                 const fileInput = document.getElementById("document-upload") as HTMLInputElement;
@@ -120,12 +122,64 @@ export default function QuizAIGenerator({ onQuestionsGenerated, initialQuota }: 
         }
     };
 
+    // Collapsed state - show button only
+    if (!isExpanded) {
+        return (
+            <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-white">
+                <CardContent className="p-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 flex-shrink-0">
+                                <Sparkles className="h-5 w-5 text-purple-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-semibold text-gray-900">Buat Kuis dengan AI</h3>
+                                <p className="text-xs text-gray-500">Upload dokumen materi untuk membuat soal otomatis</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <Badge
+                                variant={quota.remaining > 10 ? "default" : quota.remaining > 0 ? "secondary" : "destructive"}
+                                className={cn(
+                                    "font-semibold whitespace-nowrap text-xs flex-shrink-0",
+                                    quota.remaining <= 10 && quota.remaining > 0 && "bg-yellow-500 hover:bg-yellow-600 text-white border-transparent"
+                                )}
+                            >
+                                {quota.remaining}/{quota.limit}
+                            </Badge>
+                            <Button
+                                onClick={() => setIsExpanded(true)}
+                                className="bg-purple-600 hover:bg-purple-700 flex-1 sm:flex-initial"
+                                size="sm"
+                            >
+                                <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+                                <span className="hidden sm:inline">Buat Soal dengan AI</span>
+                                <span className="sm:hidden">Gunakan AI</span>
+                            </Button>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    // Expanded state - show full interface
     return (
         <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-white">
-            <CardHeader>
-                <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-purple-600" />
-                    <CardTitle className="text-lg">Buat Kuis dengan AI</CardTitle>
+            <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-purple-600" />
+                        <CardTitle className="text-lg">Buat Kuis dengan AI</CardTitle>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsExpanded(false)}
+                        className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
                 </div>
                 <CardDescription>
                     Upload dokumen materi pembelajaran (Word/PDF) untuk membuat kuis otomatis menggunakan AI
@@ -253,23 +307,33 @@ export default function QuizAIGenerator({ onQuestionsGenerated, initialQuota }: 
                     </div>
                 </div>
 
-                <Button
-                    onClick={handleGenerate}
-                    disabled={!file || isGenerating}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                >
-                    {isGenerating ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Sedang membuat kuis...
-                        </>
-                    ) : (
-                        <>
-                            <Upload className="mr-2 h-4 w-4" />
-                            Generate Kuis dengan AI
-                        </>
-                    )}
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsExpanded(false)}
+                        disabled={isGenerating}
+                        className="flex-1 sm:flex-none"
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        onClick={handleGenerate}
+                        disabled={!file || isGenerating}
+                        className="flex-1 bg-purple-600 hover:bg-purple-700"
+                    >
+                        {isGenerating ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Sedang membuat kuis...
+                            </>
+                        ) : (
+                            <>
+                                <Sparkles className="mr-2 h-4 w-4" />
+                                Generate Kuis dengan AI
+                            </>
+                        )}
+                    </Button>
+                </div>
 
                 <p className="text-xs text-center text-muted-foreground">
                     AI akan menganalisis materi dan membuat soal sesuai bahasa dokumen
@@ -278,3 +342,4 @@ export default function QuizAIGenerator({ onQuestionsGenerated, initialQuota }: 
         </Card>
     );
 }
+
