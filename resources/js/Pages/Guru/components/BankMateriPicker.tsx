@@ -83,7 +83,7 @@ export default function BankMateriPicker({
             <DialogContent className="max-w-xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden">
                 {/* Header */}
                 <DialogHeader className="p-4 pb-3 border-b bg-white shrink-0">
-                    <DialogTitle className="flex items-center gap-2 text-base">
+                    <DialogTitle className="flex items-center gap-2 text-base font-normal">
                         <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                             <Archive className="w-4 h-4 text-blue-600" />
                         </div>
