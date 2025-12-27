@@ -48,7 +48,12 @@ COPY . .
 COPY --from=vendor /app/vendor /app/vendor
 COPY --from=frontend /app/public/build /app/public/build
 
-RUN mkdir -p storage bootstrap/cache \
+# 🔥 INI BAGIAN KRUSIAL
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    bootstrap/cache \
  && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 8080
