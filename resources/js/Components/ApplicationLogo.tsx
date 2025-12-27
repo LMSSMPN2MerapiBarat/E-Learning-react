@@ -4,7 +4,7 @@ export default function ApplicationLogo(props: React.ImgHTMLAttributes<HTMLImage
     return (
         <img
             {...props}
-            src="/img/LogoSekolah.png"
+            src="/img/LogoSekolah.webp"
             alt="Logo SMPN 2 Merapi Barat"
         />
     );

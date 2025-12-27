@@ -219,7 +219,7 @@ export default function StudentLayout({
       <header className="sticky top-0 z-20 bg-white shadow-sm">
         <div className="flex w-full items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <img src="/img/LogoSekolah.png" alt="Logo SMPN 2 Merapi Barat" className="h-8 w-8 object-contain" />
+            <img src="/img/LogoSekolah.webp" alt="Logo SMPN 2 Merapi Barat" className="h-8 w-8 object-contain" />
             <div>
               <h1 className="text-base font-semibold text-gray-900">
                 {title ?? "Dashboard Siswa"}

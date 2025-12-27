@@ -54,7 +54,7 @@ export default function LoginPage() {
     <>
       <Head title="Login" />
       <div className="min-h-screen flex bg-white font-sans overflow-hidden">
-        
+
         {/* NAVIGASI KEMBALI */}
         <div className="absolute top-8 left-8 z-30">
           <Link
@@ -69,7 +69,7 @@ export default function LoginPage() {
         {/* SISI KIRI: FORM LOGIN */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 md:px-16 border-r border-slate-100 bg-white relative z-10">
           <div className="w-full max-w-[320px]">
-            
+
             <div className="mb-10 text-center lg:text-left">
               <h2 className="text-3xl font-bold text-slate-800 mb-2 tracking-tight">Selamat Datang</h2>
               <p className="text-slate-500 text-[12px] leading-relaxed">
@@ -142,22 +142,22 @@ export default function LoginPage() {
 
         {/* SISI KANAN: BRANDING (ROYAL SATIN BLUE) */}
         <div className="hidden lg:flex w-1/2 bg-blue-700 items-center justify-center relative overflow-hidden">
-          
+
           {/* Gradient Dasar: Menengah (Tidak Terlalu Gelap/Terang) */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800"></div>
-          
-          
+
+
           {/* Subtle Glow Orb */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-500/20 blur-[120px] rounded-full"></div>
 
           <div className="relative z-10 w-full max-w-md text-center px-10">
-            
+
             {/* Logo Frame: Polished Glass */}
             <div className="mb-10 inline-block relative">
               <div className="absolute inset-0 bg-white/20 blur-[50px] rounded-full"></div>
               <div className="relative p-8 bg-white/10 backdrop-blur-xl rounded-[3rem] border border-white/20 shadow-2xl transition-all duration-500 hover:bg-white/15">
                 <img
-                  src="/img/LogoSekolah.png"
+                  src="/img/LogoSekolah.webp"
                   alt="Logo Sekolah"
                   className="h-32 w-32 object-contain brightness-110 drop-shadow-[0_10px_20px_rgba(0,0,0,0.2)]"
                 />
@@ -169,16 +169,16 @@ export default function LoginPage() {
               SMPN 2 <br />
               <span className="text-blue-200">Merapi Barat</span>
             </h1>
-            
+
             <div className="w-16 h-1 bg-blue-300/40 mx-auto rounded-full mb-8"></div>
-            
+
             <div className="space-y-2">
               <p className="text-blue-100 text-[12px] font-bold uppercase tracking-[0.5em] opacity-90">
                 Portal Akademik Resmi
               </p>
-            <div className="inline-block px-4 py-1 bg-black/10 backdrop-blur-md rounded-full border border-white/5">
+              <div className="inline-block px-4 py-1 bg-black/10 backdrop-blur-md rounded-full border border-white/5">
                 <p className="text-blue-200/60 text-[10px] font-bold uppercase tracking-[0.3em]">
-                   Maju • Mandiri • Berprestasi
+                  Maju • Mandiri • Berprestasi
                 </p>
               </div>
             </div>
@@ -189,39 +189,39 @@ export default function LoginPage() {
           <div className="absolute bottom-12 left-12 w-20 h-20 border-b-2 border-l-2 border-white/10 rounded-bl-2xl"></div>
         </div>
 
-{/* DIALOG ERROR FORMAL */}
-<AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
-  <AlertDialogContent className="max-w-[400px] rounded-[2rem] border border-slate-100 bg-white p-0 overflow-hidden shadow-2xl">
-  
-    
-    <div className="p-8">
-      <AlertDialogHeader className="flex flex-col items-center text-center">
-        {/* Container Ikon dengan Ring Animation halus */}
-        <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 ring-8 ring-red-50/50">
-          <AlertCircle className="text-red-600" size={32} />
-        </div>
-        
-        <div className="space-y-2">
-          <AlertDialogTitle className="text-slate-900 text-xl font-bold tracking-tight">
-            Kesalahan Otentikasi
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-slate-500 text-sm leading-relaxed">
-            {errorMessage || "Sistem tidak dapat memverifikasi kredensial Anda. Silakan periksa kembali email dan kata sandi yang dimasukkan."}
-          </AlertDialogDescription>
-        </div>
-      </AlertDialogHeader>
+        {/* DIALOG ERROR FORMAL */}
+        <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+          <AlertDialogContent className="max-w-[400px] rounded-[2rem] border border-slate-100 bg-white p-0 overflow-hidden shadow-2xl">
 
-      <AlertDialogFooter className="mt-8 flex flex-col sm:flex-col gap-3">
-        <AlertDialogAction 
-          onClick={() => setErrorDialogOpen(false)} 
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 rounded-xl transition-all text-[11px] uppercase tracking-[0.2em] shadow-lg shadow-blue-100 border-none"
-        >
-          Coba Kembali
-        </AlertDialogAction>
-      </AlertDialogFooter>
-    </div>
-  </AlertDialogContent>
-</AlertDialog>
+
+            <div className="p-8">
+              <AlertDialogHeader className="flex flex-col items-center text-center">
+                {/* Container Ikon dengan Ring Animation halus */}
+                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 ring-8 ring-red-50/50">
+                  <AlertCircle className="text-red-600" size={32} />
+                </div>
+
+                <div className="space-y-2">
+                  <AlertDialogTitle className="text-slate-900 text-xl font-bold tracking-tight">
+                    Kesalahan Otentikasi
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-slate-500 text-sm leading-relaxed">
+                    {errorMessage || "Sistem tidak dapat memverifikasi kredensial Anda. Silakan periksa kembali email dan kata sandi yang dimasukkan."}
+                  </AlertDialogDescription>
+                </div>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter className="mt-8 flex flex-col sm:flex-col gap-3">
+                <AlertDialogAction
+                  onClick={() => setErrorDialogOpen(false)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 rounded-xl transition-all text-[11px] uppercase tracking-[0.2em] shadow-lg shadow-blue-100 border-none"
+                >
+                  Coba Kembali
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );

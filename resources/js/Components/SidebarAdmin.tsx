@@ -53,7 +53,7 @@ export default function SidebarAdmin({ sidebarOpen, onClose }: SidebarProps) {
           <div className="flex items-center gap-2">
             {/* Logo Sekolah */}
             <img
-              src="/img/LogoSekolah.png"
+              src="/img/LogoSekolah.webp"
               alt="Logo SMPN 2 Merapi Barat"
               className="w-8 h-8 object-contain"
             />

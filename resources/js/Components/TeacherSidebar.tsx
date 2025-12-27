@@ -55,7 +55,7 @@ export default function TeacherSidebar({ sidebarOpen, onToggle }: TeacherSidebar
         <div className="flex items-center justify-between border-b px-3 py-3">
           <div className="flex items-center gap-2">
             <img
-              src="/img/LogoSekolah.png"
+              src="/img/LogoSekolah.webp"
               alt="Logo SMPN 2 Merapi Barat"
               className="w-7 h-7 object-contain"
             />

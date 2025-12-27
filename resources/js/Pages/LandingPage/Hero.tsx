@@ -24,9 +24,9 @@ const SlickCustomCSS = () => (
 );
 
 const slides = [
-  { image: "/img/Sekolah/image1.jpeg" },
-  { image: "/img/Sekolah/image2.jpeg" },
-  { image: "/img/Sekolah/image4.jpeg" }
+  { image: "/img/Sekolah/image1.webp" },
+  { image: "/img/Sekolah/image2.webp" },
+  { image: "/img/Sekolah/image4.webp" }
 ];
 
 export const Hero = () => {

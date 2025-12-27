@@ -55,7 +55,7 @@ export const Navbar = () => {
             className="flex items-center space-x-3 group cursor-pointer"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <img src="/img/LogoSekolah.png" alt="Logo" className="h-10 w-10 object-contain group-hover:scale-110 transition-transform" />
+            <img src="/img/LogoSekolah.webp" alt="Logo" className="h-10 w-10 object-contain group-hover:scale-110 transition-transform" />
             <div className="flex flex-col justify-center leading-none">
               <div className={`font-black text-lg md:text-xl transition-colors ${scrolled ? 'text-blue-950' : 'text-white'}`}>
                 SMPN <span className={scrolled ? 'text-blue-600' : 'text-blue-400'}>2</span>
