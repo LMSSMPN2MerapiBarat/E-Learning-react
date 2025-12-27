@@ -14,6 +14,7 @@ import {
     Trash2,
     Calendar,
     HardDrive,
+    Eye,
 } from "lucide-react";
 
 interface BankMateriItem {
@@ -116,6 +117,18 @@ export default function BankMateriCard({
                                 {item.file_url && (
                                     <DropdownMenuItem asChild>
                                         <a
+                                            href={item.file_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-2 cursor-pointer"
+                                        >
+                                            <Eye className="w-4 h-4" /> Lihat File
+                                        </a>
+                                    </DropdownMenuItem>
+                                )}
+                                {item.file_url && (
+                                    <DropdownMenuItem asChild>
+                                        <a
                                             href={`/guru/bank-materi/${item.id}/download`}
                                             className="flex items-center gap-2 cursor-pointer"
                                         >
@@ -164,6 +177,19 @@ export default function BankMateriCard({
                         <span>{formatFileSize(item.file_size)}</span>
                     </div>
                 </div>
+
+                {/* Tombol Lihat File */}
+                {item.file_url && (
+                    <a
+                        href={item.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-md text-xs font-medium transition-colors"
+                    >
+                        <Eye className="w-3.5 h-3.5" />
+                        Lihat File
+                    </a>
+                )}
             </div>
         </div>
     );
