@@ -77,9 +77,10 @@ export default function UploadMateriDialog({
             return;
         }
 
-        if (file.size > 20 * 1024 * 1024) {
+        // Max 5MB untuk dokumen
+        if (file.size > 5 * 1024 * 1024) {
             toast.error("Ukuran file terlalu besar", {
-                description: "Maksimal ukuran file adalah 20MB.",
+                description: "Maksimal ukuran file adalah 5MB.",
             });
             return;
         }
@@ -185,7 +186,7 @@ export default function UploadMateriDialog({
                                 </Button>
                             </div>
                         ) : (
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                                 <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2">
                                     <Upload className="w-5 h-5" />
                                 </div>
@@ -195,9 +196,14 @@ export default function UploadMateriDialog({
                                     </span>{" "}
                                     atau drag & drop
                                 </p>
-                                <p className="text-[10px] text-gray-500">
-                                    PDF, Word, atau PowerPoint (Maks. 20MB)
-                                </p>
+                                <div className="text-[10px] text-gray-500 space-y-0.5">
+                                    <p>Format: PDF, Word, PowerPoint</p>
+                                    <div className="flex items-center justify-center pt-1">
+                                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded font-medium">
+                                            📄 Maksimal: 5MB
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>

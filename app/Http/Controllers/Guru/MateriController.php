@@ -120,8 +120,8 @@ class MateriController extends Controller
             'deskripsi'         => 'nullable|string',
             'kelas_id'          => 'nullable|exists:kelas,id',
             'mata_pelajaran_id' => 'nullable|exists:mata_pelajarans,id',
-            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,pps,ppsx,txt,zip,rar|max:20480',
-            'video'             => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm|max:204800',
+            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
+            'video'             => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm|max:10240',
             'youtube_url'       => 'nullable|url|max:500',
             'remove_video'      => 'sometimes|boolean',
             'bank_materi_id'    => 'nullable|exists:bank_materis,id',
@@ -219,8 +219,8 @@ class MateriController extends Controller
             'deskripsi'         => 'nullable|string',
             'kelas_id'          => 'nullable|exists:kelas,id',
             'mata_pelajaran_id' => 'nullable|exists:mata_pelajarans,id',
-            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,pps,ppsx,txt,zip,rar|max:20480',
-            'video'             => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm|max:204800',
+            'file'              => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
+            'video'             => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm|max:10240',
             'youtube_url'       => 'nullable|url|max:500',
         ]);
 

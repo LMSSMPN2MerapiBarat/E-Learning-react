@@ -97,15 +97,33 @@ export default function EditMateri({
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    if (file) {
+      // Max 5MB untuk dokumen
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Ukuran file terlalu besar", {
+          description: "Maksimal ukuran file dokumen adalah 5MB.",
+        });
+        event.target.value = "";
+        return;
+      }
+    }
     setData("file", file ?? null);
   };
 
   const handleVideoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    setData("video", file ?? null);
     if (file) {
+      // Max 10MB untuk video
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Ukuran file terlalu besar", {
+          description: "Maksimal ukuran file video adalah 10MB.",
+        });
+        event.target.value = "";
+        return;
+      }
       setData("remove_video", false);
     }
+    setData("video", file ?? null);
   };
 
   const toggleRemoveCurrentVideo = () => {
@@ -239,11 +257,11 @@ export default function EditMateri({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="file_edit">File Materi <span className="text-red-500">(opsional)</span></Label>
+        <Label htmlFor="file_edit">File Materi <span className="text-gray-400 text-xs font-normal">(opsional, maks. 5MB)</span></Label>
         <Input
           id="file_edit"
           type="file"
-          accept=".pdf,.doc,.docx,.ppt,.pptx,.pps,.ppsx,.txt,.zip,.rar,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+          accept=".pdf,.doc,.docx,.ppt,.pptx"
           onChange={handleFileChange}
         />
         {materi.file_name && (
@@ -257,7 +275,7 @@ export default function EditMateri({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="video_edit">File Video <span className="text-red-500">(opsional)</span></Label>
+        <Label htmlFor="video_edit">File Video <span className="text-gray-400 text-xs font-normal">(opsional, maks. 10MB)</span></Label>
         <Input
           id="video_edit"
           type="file"

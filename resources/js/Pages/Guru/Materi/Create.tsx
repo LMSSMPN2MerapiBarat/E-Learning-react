@@ -112,6 +112,16 @@ export default function CreateMateri({
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    if (file) {
+      // Max 5MB untuk dokumen
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Ukuran file terlalu besar", {
+          description: "Maksimal ukuran file dokumen adalah 5MB.",
+        });
+        event.target.value = "";
+        return;
+      }
+    }
     setData("file", file ?? null);
   };
 
@@ -130,12 +140,30 @@ export default function CreateMateri({
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setData("file", e.dataTransfer.files[0]);
+      const file = e.dataTransfer.files[0];
+      // Max 5MB untuk dokumen
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Ukuran file terlalu besar", {
+          description: "Maksimal ukuran file dokumen adalah 5MB.",
+        });
+        return;
+      }
+      setData("file", file);
     }
   };
 
   const handleVideoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    if (file) {
+      // Max 10MB untuk video
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("Ukuran file terlalu besar", {
+          description: "Maksimal ukuran file video adalah 10MB.",
+        });
+        event.target.value = "";
+        return;
+      }
+    }
     setData("video", file ?? null);
   };
 
@@ -356,7 +384,7 @@ export default function CreateMateri({
                   <p className="text-xs text-gray-600">
                     <span className="text-blue-600 font-medium">Klik</span> atau drag & drop
                   </p>
-                  <p className="text-[10px] text-gray-400">PDF, Word, PowerPoint</p>
+                  <p className="text-[10px] text-gray-400">PDF, Word, PowerPoint (Maks. 5MB)</p>
                 </div>
               )}
             </div>
@@ -400,6 +428,7 @@ export default function CreateMateri({
                 <Label htmlFor="video" className="text-xs flex items-center gap-1.5">
                   <Video className="w-3.5 h-3.5 text-purple-500" />
                   File Video
+                  <span className="text-[10px] text-gray-400 font-normal">(Maks. 10MB)</span>
                 </Label>
                 <Input
                   id="video"

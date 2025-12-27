@@ -46,7 +46,7 @@ class BankMateriController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'status' => 'required|in:published,draft',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,pps,ppsx|max:20480',
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
         ]);
 
         $file = $request->file('file');
@@ -77,7 +77,7 @@ class BankMateriController extends Controller
             'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'status' => 'required|in:published,draft',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,pps,ppsx|max:20480',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:5120',
         ]);
 
         $fileData = [];
