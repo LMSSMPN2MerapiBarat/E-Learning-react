@@ -21,7 +21,6 @@ RUN apt-get update && apt-get install -y \
  && docker-php-ext-install gd zip \
  && rm -rf /var/lib/apt/lists/*
 
-# Composer binary
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY composer.json composer.lock ./
@@ -29,6 +28,7 @@ RUN composer install \
   --no-dev \
   --prefer-dist \
   --no-interaction \
+  --no-scripts \
   --optimize-autoloader
 
 # ======================
@@ -51,6 +51,7 @@ COPY --from=frontend /app/public/build /app/public/build
 RUN mkdir -p storage bootstrap/cache \
  && chmod -R 775 storage bootstrap/cache
 
+# Laravel cache (aman karena artisan SUDAH ADA)
 RUN php artisan config:cache || true \
  && php artisan route:cache || true \
  && php artisan view:cache  || true
