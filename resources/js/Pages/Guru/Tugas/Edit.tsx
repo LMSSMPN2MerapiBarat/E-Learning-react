@@ -60,43 +60,24 @@ export default function EditAssignment({
 
   const { data, setData, processing, errors } = form;
 
-  // Filter mapel options based on selected class
-  const filteredMapelOptions = useMemo(() => {
-    if (data.kelas_ids.length === 0) return mapelOptions;
+  // In edit mode, show all mata pelajaran (no filtering by class)
+  const filteredMapelOptions = useMemo(() => mapelOptions, [mapelOptions]);
 
-    // Get all mapel IDs allowed for the selected classes
-    const allowedMapelIds = new Set<number>();
-    data.kelas_ids.forEach((kelasId) => {
-      const mapelIds = kelasMapelOptions?.[kelasId] || [];
-      mapelIds.forEach((id) => allowedMapelIds.add(id));
-    });
+  // NOTE: Keep selected mata pelajaran even if it is not in the filtered options for the chosen class.
+  // No automatic reset is performed here.
+  // useEffect(() => {
+  //   if (data.mata_pelajaran_id && filteredMapelOptions.length > 0) {
+  //     const isValid = filteredMapelOptions.some(
+  //       (option) => option.id === data.mata_pelajaran_id,
+  //     );
+  //     if (!isValid) {
+  //       setData("mata_pelajaran_id", null);
+  //     }
+  //   }
+  // }, [filteredMapelOptions, data.mata_pelajaran_id]);
 
-    return mapelOptions.filter((option) =>
-      allowedMapelIds.has(option.id),
-    );
-  }, [data.kelas_ids, mapelOptions, kelasMapelOptions]);
-
-  // Reset selected mapel if it's no longer valid for the selected class
-  useEffect(() => {
-    if (data.mata_pelajaran_id && filteredMapelOptions.length > 0) {
-      const isValid = filteredMapelOptions.some(
-        (option) => option.id === data.mata_pelajaran_id,
-      );
-      if (!isValid) {
-        setData("mata_pelajaran_id", null);
-      }
-    }
-  }, [filteredMapelOptions, data.mata_pelajaran_id]);
-
-  // Filter kelas options based on selected mapel
-  const filteredKelasOptions = useMemo(() => {
-    if (!data.mata_pelajaran_id) return kelasOptions;
-
-    return kelasOptions.filter((kelas) => {
-      const mapelIds = kelasMapelOptions?.[kelas.id] || [];
-      return mapelIds.includes(data.mata_pelajaran_id!);
-    });
-  }, [data.mata_pelajaran_id, kelasOptions, kelasMapelOptions]);
+  // Show all kelas options when editing (no filtering based on mapel)
+  const filteredKelasOptions = useMemo(() => kelasOptions, [kelasOptions]);
 
   // Reset selected kelas if they are no longer valid for the selected mapel
   useEffect(() => {

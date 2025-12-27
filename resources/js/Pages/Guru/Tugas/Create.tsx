@@ -56,7 +56,7 @@ export default function CreateAssignment({
   const form = useForm<AssignmentFormState>(initialData);
   const { data, setData, processing, errors } = form;
 
-  // Filter mapel options based on selected class
+  // Filter mapel options based on selected class (keep selected subject visible even if not allowed for the chosen class)
   const filteredMapelOptions = useMemo(() => {
     if (data.kelas_ids.length === 0) return mapelOptions;
 
@@ -67,31 +67,56 @@ export default function CreateAssignment({
       mapelIds.forEach((id) => allowedMapelIds.add(id));
     });
 
-    return mapelOptions.filter((option) =>
-      allowedMapelIds.has(option.id),
-    );
-  }, [data.kelas_ids, mapelOptions, kelasMapelOptions]);
+    // Base filtered options
+    let result = mapelOptions.filter((option) => allowedMapelIds.has(option.id));
 
-  // Reset selected mapel if it's no longer valid for the selected class
-  useEffect(() => {
-    if (data.mata_pelajaran_id && filteredMapelOptions.length > 0) {
-      const isValid = filteredMapelOptions.some(
-        (option) => option.id === data.mata_pelajaran_id,
-      );
-      if (!isValid) {
-        setData("mata_pelajaran_id", null);
+    // Ensure the currently selected mata_pelajaran_id remains in the list so UI doesn't disappear
+    if (data.mata_pelajaran_id) {
+      const selected = mapelOptions.find((opt) => opt.id === data.mata_pelajaran_id);
+      if (selected && !result.some((opt) => opt.id === selected.id)) {
+        result = [...result, selected];
       }
     }
-  }, [filteredMapelOptions, data.mata_pelajaran_id]);
+    return result;
+  }, [data.kelas_ids, data.mata_pelajaran_id, mapelOptions, kelasMapelOptions]);
 
-  // Filter kelas options based on selected mapel
+  // NOTE: Keep selected mata pelajaran even if it is not in the filtered options for the chosen class.
+  // This prevents the UI from clearing the selection when the class changes.
+  // No automatic reset is performed here.
+  // useEffect(() => {
+  //   if (data.mata_pelajaran_id && filteredMapelOptions.length > 0) {
+  //     const isValid = filteredMapelOptions.some(
+  //       (option) => option.id === data.mata_pelajaran_id,
+  //     );
+  //     if (!isValid) {
+  //       setData("mata_pelajaran_id", null);
+  //     }
+  //   }
+  // }, [filteredMapelOptions, data.mata_pelajaran_id]);
+
+  // Filter kelas options based on selected mapel (support both class‑>mapel and mapel‑>class mappings)
   const filteredKelasOptions = useMemo(() => {
     if (!data.mata_pelajaran_id) return kelasOptions;
 
-    return kelasOptions.filter((kelas) => {
-      const mapelIds = kelasMapelOptions?.[kelas.id] || [];
-      return mapelIds.includes(data.mata_pelajaran_id!);
-    });
+    const allowedClassIds = new Set<number>();
+    if (kelasMapelOptions) {
+      // Direct mapping: classId => [mapelIds]
+      Object.entries(kelasMapelOptions).forEach(([classIdStr, mapelIds]) => {
+        if (Array.isArray(mapelIds) && mapelIds.includes(data.mata_pelajaran_id!)) {
+          allowedClassIds.add(parseInt(classIdStr, 10));
+        }
+      });
+      // Reverse mapping: mapelId => [classIds]
+      const reverse = (kelasMapelOptions as any)[data.mata_pelajaran_id];
+      if (Array.isArray(reverse)) {
+        reverse.forEach((cid: number) => allowedClassIds.add(cid));
+      }
+    }
+    // If no mapping found, fallback to all classes to avoid empty list
+    if (allowedClassIds.size === 0) {
+      return kelasOptions;
+    }
+    return kelasOptions.filter((kelas) => allowedClassIds.has(kelas.id));
   }, [data.mata_pelajaran_id, kelasOptions, kelasMapelOptions]);
 
   // Reset selected kelas if they are no longer valid for the selected mapel
