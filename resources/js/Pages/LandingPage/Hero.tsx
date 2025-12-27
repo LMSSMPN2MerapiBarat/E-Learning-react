@@ -24,9 +24,9 @@ const SlickCustomCSS = () => (
 );
 
 const slides = [
-  { image: "/img/Sekolah/image1.webp" },
-  { image: "/img/Sekolah/image2.webp" },
-  { image: "/img/Sekolah/image4.webp" }
+  { image: "/img/Sekolah/image1.jpeg" },
+  { image: "/img/Sekolah/image2.jpeg" },
+  { image: "/img/Sekolah/image4.jpeg" }
 ];
 
 export const Hero = () => {
@@ -34,7 +34,7 @@ export const Hero = () => {
 
   useEffect(() => {
     const tl = gsap.timeline();
-    tl.fromTo(".hero-element", 
+    tl.fromTo(".hero-element",
       { y: 30, opacity: 0 },
       { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: "power3.out", delay: 0.5 }
     );
@@ -56,7 +56,7 @@ export const Hero = () => {
   return (
     <section className="relative h-screen w-full bg-slate-900 overflow-hidden flex items-center justify-center">
       <SlickCustomCSS />
-      
+
       {/* Background Slider - Pencahayaan Tipis */}
       <div className="absolute inset-0 z-0">
         <Slider {...settings} className="h-full w-full">
@@ -66,7 +66,7 @@ export const Hero = () => {
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url(${slide.image})` }}
               />
-              <div className="absolute inset-0 bg-slate-900/50" /> 
+              <div className="absolute inset-0 bg-slate-900/50" />
               <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-transparent to-slate-950/60" />
             </div>
           ))}
@@ -76,7 +76,7 @@ export const Hero = () => {
       {/* Konten Utama */}
       <div className="container mx-auto px-6 z-10 relative">
         <div ref={contentRef} className="max-w-5xl mx-auto text-center">
-          
+
           {/* --- BAGIAN YANG DIUBAH: BADGE WARNA BIRU SESUAI KODE ACTIVITIES --- */}
           <div className="hero-element inline-flex items-center gap-3 mb-8 px-5 py-2 bg-blue-500/30 backdrop-blur-md rounded-full border border-blue-300/40">
             <span className="text-white text-[10px] font-bold uppercase tracking-[0.5em]">
@@ -84,7 +84,7 @@ export const Hero = () => {
             </span>
           </div>
           {/* ----------------------------------------------------------------- */}
-          
+
           <h1 className="hero-element text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-8 tracking-tight drop-shadow-lg">
             Integritas Pendidikan dalam <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-white to-blue-300">
@@ -95,7 +95,7 @@ export const Hero = () => {
           <div className="hero-element w-24 h-[4px] mx-auto mb-10 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
 
           <p className="hero-element text-base md:text-lg lg:text-xl text-white max-w-2xl mx-auto leading-relaxed font-normal drop-shadow-md">
-            Membangun masa depan melalui inovasi teknologi yang inklusif, <br className="hidden md:block" /> 
+            Membangun masa depan melalui inovasi teknologi yang inklusif, <br className="hidden md:block" />
             cerdas, dan tetap menjunjung tinggi nilai-nilai karakter.
           </p>
 
