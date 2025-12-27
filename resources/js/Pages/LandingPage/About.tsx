@@ -146,7 +146,7 @@ export const About: React.FC<AboutProps> = ({ totalSiswa = 0, totalGuru = 0 }) =
                     Visi Kami
                   </h3>
                   <p className="text-slate-700 leading-relaxed font-bold italic text-lg">
-                    "Menjadi lembaga pendidikan terkemuka yang menghasilkan lulusan yang beriman, cerdas, dan kompetitif dengan karakter moral yang kuat."
+                    "Mewujudkan peserta didik yang Bertaqwa, Kreatif, Bergotong-royong dan Berwawasan Lingkungan."
                   </p>
                 </div>
               </div>
@@ -164,10 +164,12 @@ export const About: React.FC<AboutProps> = ({ totalSiswa = 0, totalGuru = 0 }) =
                   </h3>
                   <ul className="space-y-3">
                     {[
-                      "Menumbuhkan nilai-nilai religius dan karakter mulia.",
-                      "Menerapkan pembelajaran yang aktif dan efektif.",
-                      "Mengembangkan potensi sains dan teknologi.",
-                      "Membudayakan lingkungan bersih dan sehat."
+                      "Mewujudkan siswa yang sadar dalam melaksanakan ibadah sesuai dengan keyakinannya.",
+                      "Menumbuhkan rasa hormat terhadap orang tua, guru dan sesama siswa serta menghindari perundungan.",
+                      "Mengembangkan pembelajaran yang aktif, kreatif & inovatif dengan memanfaatkan lingkungan sekitar sehingga mampu meningkatkan potensi secara optimal.",
+                      "Menumbuhkan kesadaran dan rasa cinta memiliki sekolah sebagai bagian dari kehidupan.",
+                      "Membangun kehidupan sekolah yang bersih dan rindang.",
+                      "Membangun kesadaran warga sekolah akan kebersihan lingkungan belajar."
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-slate-700 group/item">
                         <span className="flex-shrink-0 w-1.5 h-1.5 bg-blue-600 rounded-full group-hover/item:scale-150 transition-transform"></span>
