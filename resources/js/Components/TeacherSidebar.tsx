@@ -1,5 +1,6 @@
 import { Link, router, usePage } from "@inertiajs/react";
 import {
+  Archive,
   BookOpen,
   ClipboardList,
   LayoutDashboard,
@@ -19,6 +20,7 @@ interface TeacherSidebarProps {
 
 const menuItems = [
   { label: "Dashboard", href: "/guru/dashboard", icon: LayoutDashboard },
+  { label: "Bank Materi", href: "/guru/bank-materi", icon: Archive },
   {
     label: "Kelola Materi Pembelajaran",
     href: "/guru/materi",

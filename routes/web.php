@@ -17,6 +17,7 @@ use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
 use App\Http\Controllers\Guru\MateriController as GuruMateriController;
 use App\Http\Controllers\Guru\QuizController as GuruQuizController;
 use App\Http\Controllers\Guru\KelasController as GuruKelasController;
+use App\Http\Controllers\Guru\BankMateriController as GuruBankMateriController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Siswa\AssignmentController as SiswaAssignmentController;
 use App\Http\Controllers\Siswa\MateriController as SiswaMateriController;
@@ -190,6 +191,13 @@ Route::middleware(['auth', 'role:guru'])
         Route::put('/materi/{materi}', [GuruMateriController::class, 'update'])->name('materi.update');
         Route::delete('/materi/{materi}', [GuruMateriController::class, 'destroy'])->name('materi.destroy');
         Route::get('/materi/{materi}/download', [GuruMateriController::class, 'download'])->name('materi.download');
+
+        // Bank Materi
+        Route::get('/bank-materi', [GuruBankMateriController::class, 'index'])->name('bank-materi.index');
+        Route::post('/bank-materi', [GuruBankMateriController::class, 'store'])->name('bank-materi.store');
+        Route::put('/bank-materi/{bankMateri}', [GuruBankMateriController::class, 'update'])->name('bank-materi.update');
+        Route::delete('/bank-materi/{bankMateri}', [GuruBankMateriController::class, 'destroy'])->name('bank-materi.destroy');
+        Route::get('/bank-materi/{bankMateri}/download', [GuruBankMateriController::class, 'download'])->name('bank-materi.download');
 
         Route::get('/kelas', [GuruKelasController::class, 'index'])->name('kelas.index');
 

@@ -11,17 +11,29 @@ import { toast } from "sonner";
 import type { Option } from "@/Pages/Guru/components/kuis/formTypes";
 import type { MateriItem } from "@/Pages/Guru/components/materiTypes";
 
+interface BankMateriItem {
+  id: number;
+  nama: string;
+  deskripsi: string | null;
+  file_name: string | null;
+  file_url: string | null;
+  file_mime: string | null;
+  file_size: number | null;
+  created_at: string;
+}
+
 interface MateriPageData {
   materis: MateriItem[];
   kelasOptions: Option[];
   mapelOptions: Option[];
   kelasMapelOptions?: Record<number, number[]>;
+  bankMateris?: BankMateriItem[];
 }
 
 type MateriPageInertiaProps = InertiaPageProps & MateriPageData;
 
 export default function MateriPage() {
-  const { materis, kelasOptions, mapelOptions, kelasMapelOptions } =
+  const { materis, kelasOptions, mapelOptions, kelasMapelOptions, bankMateris } =
     usePage<MateriPageInertiaProps>().props;
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -109,6 +121,7 @@ export default function MateriPage() {
         kelasOptions={kelasOptions}
         mapelOptions={mapelOptions}
         kelasMapelOptions={kelasMapelOptions}
+        bankMateris={bankMateris}
       />
 
 

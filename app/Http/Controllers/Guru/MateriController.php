@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Models\BankMateri;
 use App\Models\Materi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -78,11 +79,29 @@ class MateriController extends Controller
             $kelasMapelOptions[$kelasId][] = $km->mata_pelajaran_id;
         }
 
+        // Get bank materis for the picker
+        $bankMateris = BankMateri::where('guru_id', $guru->id)
+            ->latest()
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'nama' => $item->nama,
+                    'deskripsi' => $item->deskripsi,
+                    'file_name' => $item->file_name,
+                    'file_url' => $item->file_path ? Storage::url($item->file_path) : null,
+                    'file_mime' => $item->file_mime,
+                    'file_size' => $item->file_size,
+                    'created_at' => $item->created_at?->toIso8601String(),
+                ];
+            });
+
         return Inertia::render('Guru/Materi/MateriPage', [
             'materis'       => $materiList,
             'kelasOptions'  => $kelasOptions,
             'mapelOptions'  => $mapelOptions,
             'kelasMapelOptions' => $kelasMapelOptions,
+            'bankMateris'   => $bankMateris,
         ]);
     }
 
@@ -105,6 +124,7 @@ class MateriController extends Controller
             'video'             => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm|max:204800',
             'youtube_url'       => 'nullable|url|max:500',
             'remove_video'      => 'sometimes|boolean',
+            'bank_materi_id'    => 'nullable|exists:bank_materis,id',
         ]);
 
         $kelasId = $validated['kelas_id'] !== null ? (int) $validated['kelas_id'] : null;
@@ -130,6 +150,20 @@ class MateriController extends Controller
                 'file_mime' => $file->getClientMimeType(),
                 'file_size' => $file->getSize(),
             ];
+        } elseif (!empty($validated['bank_materi_id'])) {
+            // Get file from bank materi
+            $bankMateri = BankMateri::where('id', $validated['bank_materi_id'])
+                ->where('guru_id', $guru->id)
+                ->first();
+                
+            if ($bankMateri && $bankMateri->file_path) {
+                $fileData = [
+                    'file_path' => $bankMateri->file_path,
+                    'file_name' => $bankMateri->file_name,
+                    'file_mime' => $bankMateri->file_mime,
+                    'file_size' => $bankMateri->file_size,
+                ];
+            }
         }
 
         $videoData = [

@@ -20,6 +20,17 @@ import EditMateri from "@/Pages/Guru/Materi/Edit";
 import type { Option } from "@/Pages/Guru/components/kuis/formTypes";
 import type { MateriItem } from "@/Pages/Guru/components/materiTypes";
 
+interface BankMateriItem {
+  id: number;
+  nama: string;
+  deskripsi: string | null;
+  file_name: string | null;
+  file_url: string | null;
+  file_mime: string | null;
+  file_size: number | null;
+  created_at: string;
+}
+
 interface MateriManagementDialogsProps {
   isCreateOpen: boolean;
   onCreateClose: () => void;
@@ -33,6 +44,7 @@ interface MateriManagementDialogsProps {
   kelasOptions: Option[];
   mapelOptions: Option[];
   kelasMapelOptions?: Record<number, number[]>;
+  bankMateris?: BankMateriItem[];
 }
 
 const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
@@ -48,6 +60,7 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
   kelasOptions,
   mapelOptions,
   kelasMapelOptions,
+  bankMateris = [],
 }) => (
   <>
     <Dialog open={isCreateOpen} onOpenChange={onCreateClose}>
@@ -63,6 +76,7 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
             kelasOptions={kelasOptions}
             mapelOptions={mapelOptions}
             kelasMapelOptions={kelasMapelOptions}
+            bankMateris={bankMateris}
             onSuccess={onCreateSuccess}
             onCancel={onCreateClose}
           />
