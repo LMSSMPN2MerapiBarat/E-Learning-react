@@ -51,11 +51,6 @@ COPY --from=frontend /app/public/build /app/public/build
 RUN mkdir -p storage bootstrap/cache \
  && chmod -R 775 storage bootstrap/cache
 
-# Laravel cache (aman karena artisan SUDAH ADA)
-RUN php artisan config:cache || true \
- && php artisan route:cache || true \
- && php artisan view:cache  || true
-
 EXPOSE 8080
 
 CMD php artisan storage:link || true \
