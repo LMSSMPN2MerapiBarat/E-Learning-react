@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import type {
   Option,
   QuizItem,
+  AIQuota,
 } from "@/Pages/Guru/components/kuis/formTypes";
 
 interface QuizPageData {
@@ -26,12 +27,13 @@ interface QuizPageData {
   kelasOptions: Option[];
   mapelOptions: Option[];
   kelasMapelOptions?: Record<number, number[]>;
+  aiQuota: AIQuota;
 }
 
 type QuizPageInertiaProps = InertiaPageProps & QuizPageData;
 
 export default function KuisPage() {
-  const { quizzes, kelasOptions, mapelOptions, kelasMapelOptions } =
+  const { quizzes, kelasOptions, mapelOptions, kelasMapelOptions, aiQuota } =
     usePage<QuizPageInertiaProps>().props;
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -127,6 +129,7 @@ export default function KuisPage() {
         kelasOptions={kelasOptions}
         mapelOptions={mapelOptions}
         kelasMapelOptions={kelasMapelOptions}
+        aiQuota={aiQuota}
       />
 
       <AlertDialog open={feedback !== null} onOpenChange={closeFeedback}>

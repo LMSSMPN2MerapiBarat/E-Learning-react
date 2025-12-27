@@ -141,11 +141,7 @@ export default function Quizzes() {
   return (
     <StudentLayout
       title="Kuis"
-      subtitle={
-        student.className
-          ? `Kelas ${student.className} - Kerjakan kuis yang dibagikan guru`
-          : "Silakan hubungi admin atau guru untuk penempatan kelas."
-      }
+      subtitle="Kerjakan kuis yang dibagikan guru"
     >
       <Head title="Kuis" />
 

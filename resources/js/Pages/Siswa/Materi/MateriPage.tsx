@@ -12,11 +12,7 @@ export default function Materials() {
   return (
     <StudentLayout
       title="Materi Pembelajaran"
-      subtitle={
-        student.className
-          ? `Kelas ${student.className} - Semua materi dari guru Anda`
-          : "Silakan hubungi admin atau guru untuk penempatan kelas."
-      }
+      subtitle="Semua materi dari guru Anda"
     >
       <Head title="Materi Pembelajaran" />
 

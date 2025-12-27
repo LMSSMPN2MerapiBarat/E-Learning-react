@@ -82,11 +82,7 @@ export default function Grades() {
   return (
     <StudentLayout
       title="Nilai Saya"
-      subtitle={
-        student.className
-          ? `Kelas ${student.className} - Riwayat nilai kuis dan tugas`
-          : "Silakan hubungi admin atau guru untuk penempatan kelas."
-      }
+      subtitle="Riwayat nilai kuis dan tugas"
     >
       <Head title="Nilai Saya" />
 

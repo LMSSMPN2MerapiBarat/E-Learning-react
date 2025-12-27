@@ -149,6 +149,7 @@ export default function CreateMateri({
             type="text"
             value={data.kelas_id ?? ""}
             required
+            readOnly
             className="sr-only"
             tabIndex={-1}
           />
@@ -190,6 +191,7 @@ export default function CreateMateri({
             type="text"
             value={data.mata_pelajaran_id ?? ""}
             required
+            readOnly
             className="sr-only"
             tabIndex={-1}
           />
@@ -216,7 +218,7 @@ export default function CreateMateri({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="video">File Video (opsional)</Label>
+        <Label htmlFor="video">File Video <span className="text-red-500">(opsional)</span></Label>
         <Input
           id="video"
           type="file"
@@ -229,7 +231,7 @@ export default function CreateMateri({
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="youtube_url">Tautan YouTube (opsional)</Label>
+        <Label htmlFor="youtube_url">Tautan YouTube <span className="text-red-500">(opsional)</span></Label>
         <Input
           id="youtube_url"
           type="url"

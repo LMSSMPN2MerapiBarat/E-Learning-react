@@ -5,10 +5,12 @@ import { Button } from "@/Components/ui/button";
 import ClassSelector from "@/Pages/Guru/components/kuis/ClassSelector";
 import QuizMetadataFields from "@/Pages/Guru/components/kuis/QuizMetadataFields";
 import QuizQuestionsEditor from "@/Pages/Guru/components/kuis/QuizQuestionsEditor";
+import QuizAIGenerator from "@/Pages/Guru/components/kuis/QuizAIGenerator";
 import type {
   Option,
   QuizBaseForm,
   QuizQuestionForm,
+  AIQuota,
 } from "@/Pages/Guru/components/kuis/formTypes";
 
 interface CreateQuizProps {
@@ -17,6 +19,7 @@ interface CreateQuizProps {
   kelasMapelOptions?: Record<number, number[]>;
   onSuccess: () => void;
   onCancel?: () => void;
+  aiQuota: AIQuota;
 }
 
 export default function CreateQuiz({
@@ -25,6 +28,7 @@ export default function CreateQuiz({
   kelasMapelOptions,
   onSuccess,
   onCancel,
+  aiQuota,
 }: CreateQuizProps) {
   const form = useForm<QuizBaseForm>({
     title: "",
@@ -175,6 +179,12 @@ export default function CreateQuiz({
     });
   };
 
+  const handleAIQuestionsGenerated = (aiQuestions: QuizQuestionForm[]) => {
+    // Replace existing questions with AI-generated ones
+    setData("questions", aiQuestions);
+    toast.success(`${aiQuestions.length} pertanyaan telah ditambahkan. Silakan tinjau dan edit sesuai kebutuhan.`);
+  };
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <QuizMetadataFields
@@ -192,6 +202,8 @@ export default function CreateQuiz({
         error={errors.kelas_ids as string | undefined}
       />
 
+      <QuizAIGenerator onQuestionsGenerated={handleAIQuestionsGenerated} initialQuota={aiQuota} />
+
       <QuizQuestionsEditor
         questions={data.questions}
         onAdd={addQuestion}
@@ -200,13 +212,13 @@ export default function CreateQuiz({
         error={questionsError as string | undefined}
       />
 
-      <div className="flex justify-end gap-1.5 pt-3">
+      <div className="flex flex-col-reverse gap-2 pt-3 sm:flex-row sm:justify-end sm:gap-1.5">
         {onCancel && (
-          <Button type="button" variant="destructive" size="sm" onClick={onCancel}>
+          <Button type="button" variant="destructive" size="default" className="w-full sm:w-auto" onClick={onCancel}>
             Batal
           </Button>
         )}
-        <Button type="submit" size="sm" disabled={processing}>
+        <Button type="submit" size="default" className="w-full sm:w-auto" disabled={processing}>
           {processing ? "Menyimpan..." : "Simpan Kuis"}
         </Button>
       </div>

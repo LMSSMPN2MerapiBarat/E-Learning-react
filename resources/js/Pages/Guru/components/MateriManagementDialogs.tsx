@@ -52,40 +52,44 @@ const MateriManagementDialogs: React.FC<MateriManagementDialogsProps> = ({
   <>
     <Dialog open={isCreateOpen} onOpenChange={onCreateClose}>
       <DialogContent
-        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+        className="w-[95vw] max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden mx-auto"
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle>Unggah Materi Baru</DialogTitle>
+        <DialogHeader className="p-6 pb-4 border-b bg-white shrink-0">
+          <DialogTitle className="text-base">Unggah Materi Baru</DialogTitle>
         </DialogHeader>
-        <CreateMateri
-          kelasOptions={kelasOptions}
-          mapelOptions={mapelOptions}
-          kelasMapelOptions={kelasMapelOptions}
-          onSuccess={onCreateSuccess}
-          onCancel={onCreateClose}
-        />
+        <div className="flex-1 overflow-y-auto p-6">
+          <CreateMateri
+            kelasOptions={kelasOptions}
+            mapelOptions={mapelOptions}
+            kelasMapelOptions={kelasMapelOptions}
+            onSuccess={onCreateSuccess}
+            onCancel={onCreateClose}
+          />
+        </div>
       </DialogContent>
     </Dialog>
 
     <Dialog open={!!editItem} onOpenChange={onEditClose}>
       <DialogContent
-        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+        className="w-[95vw] max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0 overflow-hidden mx-auto"
         onInteractOutside={(event) => event.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle>Edit Materi</DialogTitle>
+        <DialogHeader className="p-6 pb-4 border-b bg-white shrink-0">
+          <DialogTitle className="text-base">Edit Materi</DialogTitle>
         </DialogHeader>
-        {editItem && (
-          <EditMateri
-            materi={editItem}
-            kelasOptions={kelasOptions}
-            mapelOptions={mapelOptions}
-            kelasMapelOptions={kelasMapelOptions}
-            onSuccess={onEditSuccess}
-            onCancel={onEditClose}
-          />
-        )}
+        <div className="flex-1 overflow-y-auto p-6">
+          {editItem && (
+            <EditMateri
+              materi={editItem}
+              kelasOptions={kelasOptions}
+              mapelOptions={mapelOptions}
+              kelasMapelOptions={kelasMapelOptions}
+              onSuccess={onEditSuccess}
+              onCancel={onEditClose}
+            />
+          )}
+        </div>
       </DialogContent>
     </Dialog>
 

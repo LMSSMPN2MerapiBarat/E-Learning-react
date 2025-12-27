@@ -71,7 +71,7 @@ const QuizList: React.FC<QuizListProps> = ({ quizzes, onView, onEdit, onDelete }
               <Card key={quiz.id}>
                 <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-start md:justify-between">
                   <div className="flex flex-1 gap-4">
-                    <div className="rounded-lg bg-green-100 p-2">
+                    <div className="rounded-lg bg-gray-100 p-2">
                       <ClipboardList className="h-5 w-5 text-green-600" />
                     </div>
                     <div className="flex-1 space-y-2">
@@ -150,31 +150,33 @@ const QuizList: React.FC<QuizListProps> = ({ quizzes, onView, onEdit, onDelete }
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t pt-4">
-              <p className="text-sm text-gray-500">
+            <div className="flex flex-col gap-2 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-gray-500 text-center sm:text-left">
                 Menampilkan {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, quizzes.length)} dari {quizzes.length} kuis
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 text-xs"
                   onClick={() => setCurrentPage((p) => p - 1)}
                   disabled={currentPage === 1}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-3.5 w-3.5" />
                   Prev
                 </Button>
-                <span className="text-sm font-medium px-2">
+                <span className="text-xs font-medium px-2 min-w-[50px] text-center">
                   {currentPage} / {totalPages}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-7 text-xs"
                   onClick={() => setCurrentPage((p) => p + 1)}
                   disabled={currentPage === totalPages}
                 >
                   Next
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>

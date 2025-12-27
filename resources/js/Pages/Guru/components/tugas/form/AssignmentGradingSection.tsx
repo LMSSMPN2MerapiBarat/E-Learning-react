@@ -28,10 +28,27 @@ export default function AssignmentGradingSection({
       <div className="space-y-2">
         <Label>Skor maksimal *</Label>
         <Input
-          type="number"
-          min={1}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={data.max_score}
-          onChange={(event) => setFieldValue("max_score", event.target.value)}
+          placeholder="100"
+          onChange={(event) => {
+            const val = event.target.value;
+            if (val === "") {
+              setFieldValue("max_score", "" as any);
+              return;
+            }
+            if (!/^\d+$/.test(val)) return;
+            let num = parseInt(val);
+            if (num > 100) num = 100;
+            setFieldValue("max_score", num);
+          }}
+          onBlur={() => {
+            if (!data.max_score || (typeof data.max_score === 'number' && data.max_score < 1)) {
+              setFieldValue("max_score", 100);
+            }
+          }}
         />
         {errors.max_score && (
           <p className="text-xs text-destructive">{errors.max_score}</p>
@@ -40,12 +57,22 @@ export default function AssignmentGradingSection({
       <div className="space-y-2">
         <Label>Passing grade</Label>
         <Input
-          type="number"
-          min={0}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={data.passing_grade ?? ""}
-          onChange={(event) =>
-            setFieldValue("passing_grade", event.target.value || null)
-          }
+          placeholder="Contoh: 75"
+          onChange={(event) => {
+            const val = event.target.value;
+            if (val === "") {
+              setFieldValue("passing_grade", null);
+              return;
+            }
+            if (!/^\d+$/.test(val)) return;
+            let num = parseInt(val);
+            if (num > 100) num = 100;
+            setFieldValue("passing_grade", num);
+          }}
         />
         {errors.passing_grade && (
           <p className="text-xs text-destructive">{errors.passing_grade}</p>

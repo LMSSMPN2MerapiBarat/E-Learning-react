@@ -1,69 +1,43 @@
-
 import React, { useEffect, useRef } from 'react';
 import Slider from 'react-slick';
 import { gsap } from 'gsap';
+import { Sparkles } from 'lucide-react';
 
-// Minimal Slick CSS to avoid import errors with fonts/images
-const SlickCSS = () => (
+const SlickCustomCSS = () => (
   <style>{`
-    .slick-slider { position: relative; display: block; box-sizing: border-box; user-select: none; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+    .slick-slider { position: relative; display: block; box-sizing: border-box; user-select: none; }
     .slick-list { position: relative; display: block; overflow: hidden; margin: 0; padding: 0; }
-    .slick-list:focus { outline: none; }
-    .slick-list.dragging { cursor: pointer; cursor: hand; }
-    .slick-slider .slick-track, .slick-slider .slick-list { transform: translate3d(0, 0, 0); }
-    .slick-track { position: relative; top: 0; left: 0; display: block; margin-left: auto; margin-right: auto; }
-    .slick-track:before, .slick-track:after { display: table; content: ''; }
-    .slick-track:after { clear: both; }
-    .slick-loading .slick-track { visibility: hidden; }
     .slick-slide { display: none; float: left; height: 100%; min-height: 1px; }
-    .slick-slide img { display: block; }
-    .slick-slide.slick-loading img { display: none; }
-    .slick-slide.dragging img { pointer-events: none; }
     .slick-initialized .slick-slide { display: block; }
-    .slick-vertical .slick-slide { display: block; height: auto; border: 1px solid transparent; }
-    .slick-arrow.slick-hidden { display: none; }
     
-    /* Custom Dots */
-    .slick-dots { position: absolute; bottom: 25px; display: block; width: 100%; padding: 0; margin: 0; list-style: none; text-align: center; z-index: 20; }
-    .slick-dots li { position: relative; display: inline-block; width: 12px; height: 12px; margin: 0 5px; padding: 0; cursor: pointer; }
-    .slick-dots li button { font-size: 0; line-height: 0; display: block; width: 12px; height: 12px; padding: 5px; cursor: pointer; color: transparent; border: 0; outline: none; background: rgba(255,255,255,0.4); border-radius: 50%; transition: all 0.3s ease; }
-    .slick-dots li.slick-active button { background: white; transform: scale(1.2); }
+    .slick-dots { position: absolute; bottom: 40px; display: block; width: 100%; padding: 0; list-style: none; text-align: center; z-index: 20; }
+    .slick-dots li { position: relative; display: inline-block; width: 10px; height: 10px; margin: 0 6px; cursor: pointer; }
+    .slick-dots li button { font-size: 0; display: block; width: 10px; height: 10px; cursor: pointer; border: 0; outline: none; background: rgba(255,255,255,0.3); border-radius: 50%; transition: all 0.4s ease; }
+    .slick-dots li.slick-active button { width: 32px; border-radius: 5px; background: white; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    .animate-glow-float { animation: float 6s ease-in-out infinite; }
   `}</style>
 );
 
 const slides = [
-  {
-    image: "https://images.unsplash.com/photo-1764943630631-b63aadf86e19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBzY2hvb2wlMjBidWlsZGluZyUyMGV4dGVyaW9yfGVufDF8fHx8MTc2NTY1MjM0OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    title: "Selamat Datang di SMP Negeri 2 Merapi Barat",
-    subtitle: "Membentuk Masa Depan dengan Ilmu dan Integritas"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMGluJTIwY2xhc3Nyb29tJTIwbGVhcm5pbmd8ZW58MXx8fHwxNzY1NjUyMzQ4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    title: "Keunggulan dalam Pendidikan",
-    subtitle: "Menciptakan Lingkungan Belajar yang Mendukung"
-  },
-  {
-    image: "https://images.unsplash.com/flagged/photo-1574305679704-747181205b5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50JTIwZXh0cmFjdXJyaWN1bGFyJTIwYWN0aXZpdGllc3xlbnwxfHx8fDE3NjU2NTIzNDh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    title: "Pengembangan Holistik",
-    subtitle: "Mengembangkan Bakat di Luar Kelas"
-  }
+  { image: "/img/Sekolah/image1.jpeg" },
+  { image: "/img/Sekolah/image2.jpeg" },
+  { image: "/img/Sekolah/image4.jpeg" }
 ];
 
 export const Hero = () => {
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     const tl = gsap.timeline();
-    tl.fromTo(titleRef.current,
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.5 }
-    )
-      .fromTo(subtitleRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: "power3.out" },
-        "-=0.5"
-      );
+    tl.fromTo(".hero-element", 
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: "power3.out", delay: 0.5 }
+    );
   }, []);
 
   const settings = {
@@ -80,36 +54,56 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative w-full h-screen overflow-hidden">
-      <SlickCSS />
-      <Slider {...settings} className="w-full h-full">
-        {slides.map((slide, index) => (
-          <div key={index} className="w-full h-screen relative">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${slide.image})` }}
-            />
-            {/* Blue Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-blue-600/40" />
-          </div>
-        ))}
-      </Slider>
-
-      <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 z-10 pointer-events-none">
-        <h1
-          ref={titleRef}
-          className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 drop-shadow-lg"
-        >
-          SMP Negeri 2 Merapi Barat
-        </h1>
-        <p
-          ref={subtitleRef}
-          className="text-xl md:text-2xl text-gray-100 font-light max-w-2xl drop-shadow-md"
-        >
-          Membangun karakter, membina kecerdasan, dan mempersiapkan siswa untuk masa depan yang cerah.
-        </p>
+    <section className="relative h-screen w-full bg-slate-900 overflow-hidden flex items-center justify-center">
+      <SlickCustomCSS />
+      
+      {/* Background Slider - Pencahayaan Tipis */}
+      <div className="absolute inset-0 z-0">
+        <Slider {...settings} className="h-full w-full">
+          {slides.map((slide, index) => (
+            <div key={index} className="relative h-screen w-full">
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${slide.image})` }}
+              />
+              <div className="absolute inset-0 bg-slate-900/50" /> 
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-transparent to-slate-950/60" />
+            </div>
+          ))}
+        </Slider>
       </div>
 
+      {/* Konten Utama */}
+      <div className="container mx-auto px-6 z-10 relative">
+        <div ref={contentRef} className="max-w-5xl mx-auto text-center">
+          
+          {/* --- BAGIAN YANG DIUBAH: BADGE WARNA BIRU SESUAI KODE ACTIVITIES --- */}
+          <div className="hero-element inline-flex items-center gap-3 mb-8 px-5 py-2 bg-blue-500/30 backdrop-blur-md rounded-full border border-blue-300/40">
+            <span className="text-white text-[10px] font-bold uppercase tracking-[0.5em]">
+              E-Learning Platform
+            </span>
+          </div>
+          {/* ----------------------------------------------------------------- */}
+          
+          <h1 className="hero-element text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-8 tracking-tight drop-shadow-lg">
+            Integritas Pendidikan dalam <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-white to-blue-300">
+              Ekosistem Digital.
+            </span>
+          </h1>
+
+          <div className="hero-element w-24 h-[4px] mx-auto mb-10 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+
+          <p className="hero-element text-base md:text-lg lg:text-xl text-white max-w-2xl mx-auto leading-relaxed font-normal drop-shadow-md">
+            Membangun masa depan melalui inovasi teknologi yang inklusif, <br className="hidden md:block" /> 
+            cerdas, dan tetap menjunjung tinggi nilai-nilai karakter.
+          </p>
+
+        </div>
+      </div>
+
+      {/* Bagian Bawah Datar */}
+      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-slate-900/80 to-transparent z-10" />
 
     </section>
   );

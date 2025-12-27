@@ -353,72 +353,111 @@ export default function KelasPage() {
                   Tidak ada siswa yang cocok dengan pencarian.
                 </p>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200 text-xs">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
-                          Nama
-                        </th>
-                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
-                          NIS
-                        </th>
-                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
-                          Email
-                        </th>
-                        <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
-                          No. Telepon
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 bg-white">
-                      {paginatedStudents.map((student, index) => (
-                        <tr key={student.id} className="hover:bg-gray-50">
-                          <td className="px-3 py-1.5 font-medium text-gray-900">
-                            {student.nama ?? "-"}
-                          </td>
-                          <td className="px-3 py-1.5 text-gray-600">
-                            {student.nis ?? "-"}
-                          </td>
-                          <td className="px-3 py-1.5 text-gray-600">
-                            {student.email ?? "-"}
-                          </td>
-                          <td className="px-3 py-1.5 text-gray-600">
-                            {student.no_telp ?? "-"}
-                          </td>
+                <div>
+                  {/* Mobile Card View */}
+                  <div className="space-y-2 md:hidden">
+                    {paginatedStudents.map((student) => (
+                      <div
+                        key={student.id}
+                        className="rounded-lg border bg-white p-3 space-y-2"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">
+                              {student.nama ?? "-"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              NIS: {student.nis ?? "-"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[11px] text-gray-600">
+                          {student.email && (
+                            <span className="flex items-center gap-1">
+                              {student.email}
+                            </span>
+                          )}
+                          {student.no_telp && (
+                            <span className="flex items-center gap-1">
+                              {student.no_telp}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 text-xs">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
+                            Nama
+                          </th>
+                          <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
+                            NIS
+                          </th>
+                          <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
+                            Email
+                          </th>
+                          <th className="px-3 py-1.5 text-left font-semibold text-gray-600">
+                            No. Telepon
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 bg-white">
+                        {paginatedStudents.map((student) => (
+                          <tr key={student.id} className="hover:bg-gray-50">
+                            <td className="px-3 py-1.5 font-medium text-gray-900">
+                              {student.nama ?? "-"}
+                            </td>
+                            <td className="px-3 py-1.5 text-gray-600">
+                              {student.nis ?? "-"}
+                            </td>
+                            <td className="px-3 py-1.5 text-gray-600">
+                              {student.email ?? "-"}
+                            </td>
+                            <td className="px-3 py-1.5 text-gray-600">
+                              {student.no_telp ?? "-"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
                   {/* Pagination Controls */}
                   {filteredStudents.length > itemsPerPage && (
-                    <div className="mt-3 flex flex-col sm:flex-row items-center justify-between gap-2 border-t pt-3">
-                      <button
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
-                        disabled={currentPage === 1}
-                        className="w-full sm:w-auto px-3 py-1.5 text-xs font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                      >
-                        ← Sebelumnya
-                      </button>
-                      <p className="text-xs text-gray-600">
-                        Halaman {currentPage} dari {totalPages} | Menampilkan{" "}
-                        {paginatedStudents.length} dari {filteredStudents.length}{" "}
-                        siswa
+                    <div className="mt-3 flex flex-col gap-2 border-t pt-3 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-xs text-gray-600 text-center sm:text-left order-2 sm:order-1">
+                        Halaman {currentPage} dari {totalPages} | {paginatedStudents.length} dari {filteredStudents.length} siswa
                       </p>
-                      <button
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(prev + 1, totalPages),
-                          )
-                        }
-                        disabled={currentPage === totalPages}
-                        className="w-full sm:w-auto px-3 py-1.5 text-xs font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                      >
-                        Berikutnya →
-                      </button>
+                      <div className="flex gap-2 order-1 sm:order-2">
+                        <button
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
+                          }
+                          disabled={currentPage === 1}
+                          className="flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        >
+                          ← Prev
+                        </button>
+                        <span className="flex items-center justify-center text-xs font-medium px-2 min-w-[50px]">
+                          {currentPage} / {totalPages}
+                        </span>
+                        <button
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(prev + 1, totalPages),
+                            )
+                          }
+                          disabled={currentPage === totalPages}
+                          className="flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-md border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        >
+                          Next →
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
