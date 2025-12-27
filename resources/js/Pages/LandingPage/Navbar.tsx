@@ -44,8 +44,8 @@ export const Navbar = () => {
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled
-        ? 'bg-white/90 backdrop-blur-md shadow-sm py-3'
-        : 'bg-transparent py-5'
+      ? 'bg-white/90 backdrop-blur-md shadow-sm py-3'
+      : 'bg-transparent py-5'
       }`}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex justify-between items-center">
@@ -110,6 +110,17 @@ export const Navbar = () => {
                 {link.name}
               </a>
             ))}
+
+            {/* Login Button for Mobile */}
+            <div className="pt-2 mt-2 border-t border-slate-100">
+              <Link
+                href={auth.user ? "/dashboard" : "/login"}
+                className="block w-full text-center bg-blue-600 text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                {auth.user ? "Dashboard" : "Masuk"}
+              </Link>
+            </div>
           </div>
         )}
       </div>
