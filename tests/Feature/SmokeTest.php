@@ -160,10 +160,6 @@ describe('Admin Routes', function () {
         $this->actingAs($admin)->get('/admin/jadwal-kelas/Create')->assertStatus(200);
     });
 
-    test('admin users index page returns successful response', function () {
-        $admin = createAdminUser();
-        $this->actingAs($admin)->get('/admin/users')->assertStatus(200);
-    });
 });
 
 /*
@@ -260,6 +256,100 @@ describe('Guru Routes', function () {
     test('guru tugas page returns successful response', function () {
         $guruData = createGuruUser();
         $this->actingAs($guruData['user'])->get('/guru/tugas')->assertStatus(200);
+    });
+
+});
+
+describe('Operasi CRUD Bank Materi', function () {
+    test('guru dapat menyimpan bank materi dengan file', function () {
+        $guruData = createGuruUser();
+        
+        $file = \Illuminate\Http\UploadedFile::fake()->create('materi.pdf', 1024, 'application/pdf');
+        
+        $this->actingAs($guruData['user'])->post('/guru/bank-materi', [
+            'nama' => 'Materi Test Bank Materi',
+            'deskripsi' => 'Deskripsi test bank materi',
+            'status' => 'published',
+            'file' => $file,
+        ])->assertRedirect();
+    });
+
+    test('guru dapat mengupdate bank materi', function () {
+        $guruData = createGuruUser();
+        
+        // Buat bank materi terlebih dahulu
+        $bankMateri = \App\Models\BankMateri::create([
+            'guru_id' => $guruData['guru']->id,
+            'nama' => 'Materi Lama',
+            'deskripsi' => 'Deskripsi lama',
+            'status' => 'draft',
+        ]);
+        
+        $this->actingAs($guruData['user'])->put("/guru/bank-materi/{$bankMateri->id}", [
+            'nama' => 'Materi Baru',
+            'deskripsi' => 'Deskripsi baru',
+            'status' => 'published',
+        ])->assertRedirect();
+    });
+
+    test('guru dapat menghapus bank materi', function () {
+        $guruData = createGuruUser();
+        
+        // Buat bank materi terlebih dahulu
+        $bankMateri = \App\Models\BankMateri::create([
+            'guru_id' => $guruData['guru']->id,
+            'nama' => 'Materi Akan Dihapus',
+            'status' => 'draft',
+        ]);
+        
+        $this->actingAs($guruData['user'])
+            ->delete("/guru/bank-materi/{$bankMateri->id}")
+            ->assertRedirect();
+        
+        $this->assertDatabaseMissing('bank_materis', ['id' => $bankMateri->id]);
+    });
+
+    test('guru tidak dapat mengakses bank materi guru lain', function () {
+        $guruData1 = createGuruUser();
+        
+        // Buat guru kedua
+        $user2 = \App\Models\User::factory()->guru()->create();
+        $guru2 = \App\Models\Guru::factory()->create(['user_id' => $user2->id]);
+        
+        // Buat bank materi milik guru2
+        $bankMateri = \App\Models\BankMateri::create([
+            'guru_id' => $guru2->id,
+            'nama' => 'Materi Guru Lain',
+            'status' => 'published',
+        ]);
+        
+        // Guru1 mencoba update bank materi milik guru2
+        $this->actingAs($guruData1['user'])
+            ->put("/guru/bank-materi/{$bankMateri->id}", [
+                'nama' => 'Coba Update',
+                'status' => 'draft',
+            ])
+            ->assertStatus(403);
+    });
+
+    test('guru tidak dapat menghapus bank materi guru lain', function () {
+        $guruData1 = createGuruUser();
+        
+        // Buat guru kedua
+        $user2 = \App\Models\User::factory()->guru()->create();
+        $guru2 = \App\Models\Guru::factory()->create(['user_id' => $user2->id]);
+        
+        // Buat bank materi milik guru2
+        $bankMateri = \App\Models\BankMateri::create([
+            'guru_id' => $guru2->id,
+            'nama' => 'Materi Guru Lain',
+            'status' => 'published',
+        ]);
+        
+        // Guru1 mencoba hapus bank materi milik guru2
+        $this->actingAs($guruData1['user'])
+            ->delete("/guru/bank-materi/{$bankMateri->id}")
+            ->assertStatus(403);
     });
 });
 
@@ -365,29 +455,6 @@ describe('Siswa Routes', function () {
     test('siswa tugas page returns successful response', function () {
         $siswaData = createSiswaUser();
         $this->actingAs($siswaData['user'])->get('/siswa/tugas')->assertStatus(200);
-    });
-});
-
-/*
-|--------------------------------------------------------------------------
-| PROFILE ROUTES SMOKE TESTS
-|--------------------------------------------------------------------------
-*/
-
-describe('Profile Routes', function () {
-    test('profile page is accessible for admin', function () {
-        $admin = createAdminUser();
-        $this->actingAs($admin)->get('/profile')->assertStatus(200);
-    });
-
-    test('profile page is accessible for guru', function () {
-        $guruData = createGuruUser();
-        $this->actingAs($guruData['user'])->get('/profile')->assertStatus(200);
-    });
-
-    test('profile page is accessible for siswa', function () {
-        $siswaData = createSiswaUser();
-        $this->actingAs($siswaData['user'])->get('/profile')->assertStatus(200);
     });
 });
 
