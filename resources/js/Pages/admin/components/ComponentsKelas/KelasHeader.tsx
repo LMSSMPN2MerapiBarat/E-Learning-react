@@ -60,7 +60,7 @@ const KelasHeader: React.FC<KelasHeaderProps> = ({
           variant="outline"
           size="sm"
           onClick={onExport}
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto border-blue-400 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
         >
           <Download className="mr-1.5 h-3 w-3" />
           Export Excel

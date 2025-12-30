@@ -214,7 +214,7 @@ export default function GuruPage() {
             <Button
               variant="outline"
               size="sm"
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto border-green-400 bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700"
               onClick={() => setIsImportModalOpen(true)}
             >
               <Upload className="w-3 h-3 mr-1.5" /> Import Excel
@@ -224,7 +224,7 @@ export default function GuruPage() {
               variant="outline"
               size="sm"
               onClick={handleExport}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto border-blue-400 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
             >
               <Download className="w-3 h-3 mr-1.5" /> Export Excel
             </Button>
