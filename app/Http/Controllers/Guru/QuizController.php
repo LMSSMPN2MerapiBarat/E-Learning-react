@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\QuizAttemptsExport;
 
 class QuizController extends Controller
 {
@@ -152,11 +154,79 @@ class QuizController extends Controller
                 'status' => $quiz->status,
                 'mapel' => $quiz->mataPelajaran ? $quiz->mataPelajaran->nama_mapel : '-',
                 'kelas' => $quiz->kelas->map(function ($k) {
-                     return trim(($k->tingkat ?? '') . ' ' . ($k->kelas ?? ''));
-                }),
+                    return [
+                        'id' => $k->id,
+                        'nama' => trim(($k->tingkat ?? '') . ' ' . ($k->kelas ?? '')),
+                    ];
+                })->filter(fn($item) => !empty($item['nama']))->values(),
                 'attempts' => $attempts,
             ]
         ]);
+    }
+
+    public function exportGrades(Request $request, Quiz $quiz)
+    {
+        $user = auth()->user();
+        $guru = $user->guru()->firstOrFail();
+
+        abort_if($quiz->guru_id !== $guru->id, 403);
+
+        $quiz->load('kelas');
+
+        // Get class IDs from query parameter
+        $kelasIds = $request->query('kelas_ids', []);
+        if (is_string($kelasIds)) {
+            $kelasIds = explode(',', $kelasIds);
+        }
+        $kelasIds = array_map('intval', array_filter($kelasIds));
+
+        // If no classes selected, export all
+        if (empty($kelasIds)) {
+            $kelasIds = $quiz->kelas->pluck('id')->all();
+        }
+
+        // Single class: return single Excel
+        if (count($kelasIds) === 1) {
+            $kelas = \App\Models\Kelas::find($kelasIds[0]);
+            $kelasLabel = $kelas ? trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? '')) : '';
+            $filename = 'nilai-kuis-' . $quiz->judul . ($kelasLabel ? '-' . $kelasLabel : '') . '.xlsx';
+
+            return Excel::download(
+                new QuizAttemptsExport($quiz->id, $kelasIds),
+                $filename
+            );
+        }
+
+        // Multiple classes: create ZIP with separate Excel files
+        $zipFileName = 'nilai-kuis-' . $quiz->judul . '.zip';
+        $tempDir = storage_path('app/temp');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+        $zipPath = $tempDir . '/' . uniqid() . '.zip';
+
+        $zip = new \ZipArchive();
+        $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+        foreach ($kelasIds as $kelasId) {
+            $kelas = \App\Models\Kelas::find($kelasId);
+            if (!$kelas) continue;
+
+            $kelasLabel = trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? ''));
+            $excelFileName = 'nilai-kuis-' . $quiz->judul . '-' . $kelasLabel . '.xlsx';
+
+            // Generate Excel content directly and add to ZIP
+            $excelContent = Excel::raw(
+                new QuizAttemptsExport($quiz->id, [$kelasId]),
+                \Maatwebsite\Excel\Excel::XLSX
+            );
+
+            $zip->addFromString($excelFileName, $excelContent);
+        }
+
+        $zip->close();
+
+        return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
     }
 
     public function store(Request $request)

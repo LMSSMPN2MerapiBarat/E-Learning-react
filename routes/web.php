@@ -210,6 +210,9 @@ Route::middleware(['auth', 'role:guru'])
             ->name('kuis.show');
         Route::put('/kuis/{quiz}', [GuruQuizController::class, 'update'])->name('kuis.update');
         Route::delete('/kuis/{quiz}', [GuruQuizController::class, 'destroy'])->name('kuis.destroy');
+        Route::get('/kuis/{quiz}/export', [GuruQuizController::class, 'exportGrades'])
+            ->whereNumber('quiz')
+            ->name('kuis.export');
 
         Route::prefix('tugas')->name('tugas.')->group(function () {
             Route::get('/', [GuruAssignmentController::class, 'index'])->name('index');

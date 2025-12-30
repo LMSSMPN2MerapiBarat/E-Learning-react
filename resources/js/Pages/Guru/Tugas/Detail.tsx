@@ -5,8 +5,10 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Separator } from "@/Components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import TeacherLayout from "@/Layouts/TeacherLayout";
 import AssignmentGradingDialog from "@/Pages/Guru/components/tugas/AssignmentGradingDialog";
+import ExportGradesDialog from "@/Pages/Guru/components/ExportGradesDialog";
 import type {
   AssignmentItem,
   AssignmentSubmission,
@@ -23,18 +25,45 @@ const statusLabel: Record<string, string> = {
 export default function AssignmentDetailPage() {
   const { assignment } = usePage<PageProps<{ assignment: AssignmentItem }>>().props;
   const [gradingSubmission, setGradingSubmission] = useState<AssignmentSubmission | null>(null);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+
+  // Class Tab State
+  const [activeClassTab, setActiveClassTab] = useState("all");
+  const hasMultipleClasses = assignment.kelas.length > 1;
 
   // Pagination & Search State
   const [submissionSearch, setSubmissionSearch] = useState("");
   const [submissionPage, setSubmissionPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
+  // Get submission counts per class
+  const submissionCountsByClass = useMemo(() => {
+    const counts: Record<string, number> = { all: assignment.submissions.length };
+    assignment.kelas.forEach((k) => {
+      counts[String(k.id)] = assignment.submissions.filter(
+        (sub) => sub.studentClass === k.nama
+      ).length;
+    });
+    return counts;
+  }, [assignment.submissions, assignment.kelas]);
+
   const filteredSubmissions = useMemo(() => {
-    return assignment.submissions.filter((sub) =>
+    let submissions = assignment.submissions;
+
+    // Filter by class tab first
+    if (activeClassTab !== "all") {
+      const selectedClass = assignment.kelas.find((k) => String(k.id) === activeClassTab);
+      if (selectedClass) {
+        submissions = submissions.filter((sub) => sub.studentClass === selectedClass.nama);
+      }
+    }
+
+    // Then filter by search
+    return submissions.filter((sub) =>
       sub.studentName.toLowerCase().includes(submissionSearch.toLowerCase()) ||
       (sub.studentClass ?? "").toLowerCase().includes(submissionSearch.toLowerCase())
     );
-  }, [assignment.submissions, submissionSearch]);
+  }, [assignment.submissions, assignment.kelas, activeClassTab, submissionSearch]);
 
   const totalPages = Math.ceil(filteredSubmissions.length / ITEMS_PER_PAGE);
   const paginatedSubmissions = filteredSubmissions.slice(
@@ -42,10 +71,10 @@ export default function AssignmentDetailPage() {
     submissionPage * ITEMS_PER_PAGE
   );
 
-  // Reset page when search changes
+  // Reset page when search or tab changes
   useEffect(() => {
     setSubmissionPage(1);
-  }, [submissionSearch]);
+  }, [submissionSearch, activeClassTab]);
 
   const schedule = useMemo(() => {
     const toReadable = (value?: string | null) =>
@@ -89,9 +118,8 @@ export default function AssignmentDetailPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  window.open(`/guru/tugas/${assignment.id}/export`, "_blank")
-                }
+                className="border-blue-400 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+                onClick={() => setShowExportDialog(true)}
               >
                 <Download className="mr-1.5 h-3.5 w-3.5" />
                 Export Nilai
@@ -233,17 +261,40 @@ export default function AssignmentDetailPage() {
         </div>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-base">Pengumpulan Siswa</CardTitle>
-            <div className="relative w-56">
-              <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                placeholder="Cari siswa..."
-                value={submissionSearch}
-                onChange={(e) => setSubmissionSearch(e.target.value)}
-                className="pl-7 h-8 text-xs"
-              />
+          <CardHeader className="flex flex-col gap-3 space-y-0 pb-3">
+            <div className="flex flex-row items-center justify-between">
+              <CardTitle className="text-base">Pengumpulan Siswa</CardTitle>
+              <div className="relative w-56">
+                <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Cari siswa..."
+                  value={submissionSearch}
+                  onChange={(e) => setSubmissionSearch(e.target.value)}
+                  className="pl-7 h-8 text-xs"
+                />
+              </div>
             </div>
+            {hasMultipleClasses && (
+              <Tabs value={activeClassTab} onValueChange={setActiveClassTab} className="w-full">
+                <TabsList className="h-auto flex-wrap justify-start gap-1 bg-transparent p-0">
+                  <TabsTrigger
+                    value="all"
+                    className="h-7 rounded-full px-3 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    Semua Kelas ({submissionCountsByClass.all})
+                  </TabsTrigger>
+                  {assignment.kelas.map((k) => (
+                    <TabsTrigger
+                      key={k.id}
+                      value={String(k.id)}
+                      className="h-7 rounded-full px-3 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    >
+                      {k.nama} ({submissionCountsByClass[String(k.id)] ?? 0})
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            )}
           </CardHeader>
           <CardContent className="space-y-3">
             {paginatedSubmissions.length === 0 && (
@@ -319,6 +370,14 @@ export default function AssignmentDetailPage() {
         submission={gradingSubmission}
         open={gradingSubmission !== null}
         onOpenChange={(open) => !open && setGradingSubmission(null)}
+      />
+
+      <ExportGradesDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        title={assignment.title}
+        exportUrl={`/guru/tugas/${assignment.id}/export`}
+        classes={assignment.kelas}
       />
     </TeacherLayout>
   );

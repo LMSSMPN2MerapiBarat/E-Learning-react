@@ -4,10 +4,12 @@ import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Separator } from "@/Components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import TeacherLayout from "@/Layouts/TeacherLayout";
 import type { PageProps } from "@/types";
-import { ArrowLeft, Clock, Users, Search, ChevronLeft, ChevronRight, FileText, Calendar, Timer } from "lucide-react";
+import { ArrowLeft, Clock, Users, Search, ChevronLeft, ChevronRight, FileText, Calendar, Timer, Download } from "lucide-react";
 import { Input } from "@/Components/ui/input";
+import ExportGradesDialog from "@/Pages/Guru/components/ExportGradesDialog";
 import {
   Table,
   TableBody,
@@ -26,6 +28,11 @@ interface QuizAttempt {
   submitted_at: string;
 }
 
+interface KelasItem {
+  id: number;
+  nama: string;
+}
+
 interface QuizDetail {
   id: number;
   title: string;
@@ -33,30 +40,66 @@ interface QuizDetail {
   duration: number;
   status: "draft" | "published";
   mapel: string;
-  kelas: string[];
+  kelas: KelasItem[];
   attempts: QuizAttempt[];
 }
 
 export default function QuizDetailPage() {
   const { quiz } = usePage<PageProps<{ quiz: QuizDetail }>>().props;
 
+  // Class Tab State
+  const [activeClassTab, setActiveClassTab] = useState("all");
+  const hasMultipleClasses = quiz.kelas.length > 1;
+
   // Pagination & Search State
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const ITEMS_PER_PAGE = 10;
 
+  // Get attempt counts per class
+  const attemptCountsByClass = useMemo(() => {
+    const counts: Record<string, number> = { all: quiz.attempts.length };
+    quiz.kelas.forEach((k) => {
+      counts[String(k.id)] = quiz.attempts.filter((attempt) => attempt.student_class === k.nama).length;
+    });
+    return counts;
+  }, [quiz.attempts, quiz.kelas]);
+
   const filteredAttempts = useMemo(() => {
-    return quiz.attempts.filter((attempt) =>
+    let attempts = quiz.attempts;
+
+    // Filter by class tab first
+    if (activeClassTab !== "all") {
+      const selectedClass = quiz.kelas.find((k) => String(k.id) === activeClassTab);
+      if (selectedClass) {
+        attempts = attempts.filter((attempt) => attempt.student_class === selectedClass.nama);
+      }
+    }
+
+    // Then filter by search
+    return attempts.filter((attempt) =>
       attempt.student_name.toLowerCase().includes(search.toLowerCase()) ||
       attempt.student_class.toLowerCase().includes(search.toLowerCase())
     );
-  }, [quiz.attempts, search]);
+  }, [quiz.attempts, activeClassTab, search]);
 
   const totalPages = Math.ceil(filteredAttempts.length / ITEMS_PER_PAGE);
   const paginatedAttempts = filteredAttempts.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
+
+  // Reset page when search or tab changes
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveClassTab(value);
+    setPage(1);
+  };
 
   return (
     <TeacherLayout title="Detail Kuis">
@@ -78,9 +121,9 @@ export default function QuizDetailPage() {
               <span>{quiz.mapel}</span>
               <span>•</span>
               <div className="flex flex-wrap gap-0.5">
-                {quiz.kelas.map((k, i) => (
-                  <span key={i} className="bg-secondary px-1.5 py-0.5 rounded text-[10px] text-secondary-foreground">
-                    {k}
+                {quiz.kelas.map((k) => (
+                  <span key={k.id} className="bg-secondary px-1.5 py-0.5 rounded text-[10px] text-secondary-foreground">
+                    {k.nama}
                   </span>
                 ))}
               </div>
@@ -90,6 +133,15 @@ export default function QuizDetailPage() {
               <Badge variant={quiz.status === "published" ? "default" : "secondary"} className="text-[10px]">
                 {quiz.status === "published" ? "Diterbitkan" : "Draft"}
               </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs border-blue-400 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+                onClick={() => setShowExportDialog(true)}
+              >
+                <Download className="mr-1 h-3 w-3" />
+                Export
+              </Button>
             </div>
           </div>
         </div>
@@ -130,24 +182,44 @@ export default function QuizDetailPage() {
         {/* Student Results */}
         <Card>
           <CardHeader className="flex flex-col gap-2 sm:gap-3 space-y-0 pb-2 sm:pb-3 px-3 sm:px-6">
-            <div className="text-center sm:text-left">
-              <CardTitle className="text-sm sm:text-base">Hasil Pengerjaan Siswa</CardTitle>
-              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
-                Daftar nilai dan durasi pengerjaan siswa.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="text-center sm:text-left">
+                <CardTitle className="text-sm sm:text-base">Hasil Pengerjaan Siswa</CardTitle>
+                <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">
+                  Daftar nilai dan durasi pengerjaan siswa.
+                </p>
+              </div>
+              <div className="relative w-full sm:w-56">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Cari nama atau kelas..."
+                  value={search}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="pl-7 h-8 text-xs w-full"
+                />
+              </div>
             </div>
-            <div className="relative w-full">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                placeholder="Cari nama atau kelas..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="pl-7 h-8 text-xs w-full"
-              />
-            </div>
+            {hasMultipleClasses && (
+              <Tabs value={activeClassTab} onValueChange={handleTabChange} className="w-full">
+                <TabsList className="h-auto flex-wrap justify-start gap-1 bg-transparent p-0">
+                  <TabsTrigger
+                    value="all"
+                    className="h-7 rounded-full px-3 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    Semua Kelas ({attemptCountsByClass.all})
+                  </TabsTrigger>
+                  {quiz.kelas.map((k) => (
+                    <TabsTrigger
+                      key={k.id}
+                      value={String(k.id)}
+                      className="h-7 rounded-full px-3 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    >
+                      {k.nama} ({attemptCountsByClass[String(k.id)] ?? 0})
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            )}
           </CardHeader>
           <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
             {/* Desktop Table View */}
@@ -291,6 +363,14 @@ export default function QuizDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      <ExportGradesDialog
+        open={showExportDialog}
+        onOpenChange={setShowExportDialog}
+        title={quiz.title}
+        exportUrl={`/guru/kuis/${quiz.id}/export`}
+        classes={quiz.kelas}
+      />
     </TeacherLayout>
   );
 }

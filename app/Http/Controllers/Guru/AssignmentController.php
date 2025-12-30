@@ -98,13 +98,66 @@ class AssignmentController extends Controller
         ]);
     }
 
-    public function exportGrades(Assignment $assignment)
+    public function exportGrades(Request $request, Assignment $assignment)
     {
         $guru = $this->resolveGuruWithKelas();
 
         abort_if($assignment->guru_id !== $guru->id, 403);
 
-        return Excel::download(new AssignmentSubmissionsExport($assignment->id), 'nilai-tugas-' . $assignment->judul . '.xlsx');
+        // Get class IDs from query parameter
+        $kelasIds = $request->query('kelas_ids', []);
+        if (is_string($kelasIds)) {
+            $kelasIds = explode(',', $kelasIds);
+        }
+        $kelasIds = array_map('intval', array_filter($kelasIds));
+
+        // If no classes selected, export all
+        if (empty($kelasIds)) {
+            $kelasIds = $assignment->kelas->pluck('id')->all();
+        }
+
+        // Single class: return single Excel
+        if (count($kelasIds) === 1) {
+            $kelas = Kelas::find($kelasIds[0]);
+            $kelasLabel = $kelas ? trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? '')) : '';
+            $filename = 'nilai-tugas-' . $assignment->judul . ($kelasLabel ? '-' . $kelasLabel : '') . '.xlsx';
+
+            return Excel::download(
+                new AssignmentSubmissionsExport($assignment->id, $kelasIds),
+                $filename
+            );
+        }
+
+        // Multiple classes: create ZIP with separate Excel files
+        $zipFileName = 'nilai-tugas-' . $assignment->judul . '.zip';
+        $tempDir = storage_path('app/temp');
+        if (!file_exists($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+        $zipPath = $tempDir . '/' . uniqid() . '.zip';
+
+        $zip = new \ZipArchive();
+        $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+        foreach ($kelasIds as $kelasId) {
+            $kelas = Kelas::find($kelasId);
+            if (!$kelas) continue;
+
+            $kelasLabel = trim(($kelas->tingkat ?? '') . ' ' . ($kelas->kelas ?? ''));
+            $excelFileName = 'nilai-tugas-' . $assignment->judul . '-' . $kelasLabel . '.xlsx';
+
+            // Generate Excel content directly and add to ZIP
+            $excelContent = Excel::raw(
+                new AssignmentSubmissionsExport($assignment->id, [$kelasId]),
+                \Maatwebsite\Excel\Excel::XLSX
+            );
+
+            $zip->addFromString($excelFileName, $excelContent);
+        }
+
+        $zip->close();
+
+        return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
     }
 
     public function store(Request $request)
