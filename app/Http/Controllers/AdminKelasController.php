@@ -89,11 +89,17 @@ class AdminKelasController extends Controller
         return redirect()->back()->with('success', 'Beberapa kelas berhasil dihapus.');
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        $fileName = 'data_kelas_' . now()->format('Y_m_d_His') . '.xlsx';
+        $kelasIds = $request->query('kelas_ids', []);
+        if (is_string($kelasIds)) {
+            $kelasIds = explode(',', $kelasIds);
+        }
+        $kelasIds = array_map('intval', array_filter($kelasIds));
 
-        return Excel::download(new KelasExport(), $fileName);
+        $fileName = 'data_kelas_siswa_' . now()->format('Y_m_d_His') . '.xlsx';
+
+        return Excel::download(new \App\Exports\KelasWithStudentsExport($kelasIds), $fileName);
     }
 
     public function detail($id)

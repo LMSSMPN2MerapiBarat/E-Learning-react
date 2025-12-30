@@ -8,6 +8,7 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import KelasHeader from "@/Pages/admin/components/ComponentsKelas/KelasHeader";
 import KelasTable from "@/Pages/admin/components/ComponentsKelas/KelasTable";
 import KelasDialogs from "@/Pages/admin/components/ComponentsKelas/KelasDialogs";
+import ExportKelasDialog from "@/Pages/admin/components/ComponentsKelas/ExportKelasDialog";
 
 const TINGKAT_ORDER: Record<string, number> = {
   "Kelas 7": 0,
@@ -38,6 +39,7 @@ export default function KelasPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [detailData, setDetailData] = useState<any | null>(null);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
   const sortedKelasList = useMemo(() => {
     return [...kelasList].sort((a, b) => {
@@ -76,16 +78,7 @@ export default function KelasPage() {
   };
 
   const handleExport = () => {
-    const toastId = toast.loading("Mengekspor data kelas...");
-    const exportUrl =
-      typeof route === "function"
-        ? route("admin.kelas.export")
-        : "/admin/kelas/export";
-
-    window.location.href = exportUrl;
-    setTimeout(() => {
-      toast.success("File kelas berhasil diekspor!", { id: toastId });
-    }, 1000);
+    setIsExportOpen(true);
   };
 
   const confirmBulkDelete = () => {
@@ -208,6 +201,13 @@ export default function KelasPage() {
         setIsDetailOpen={handleCloseDetail}
         detailData={detailData}
         isDetailLoading={isDetailLoading}
+      />
+
+      <ExportKelasDialog
+        open={isExportOpen}
+        onOpenChange={setIsExportOpen}
+        kelasList={sortedKelasList}
+        exportUrl="/admin/kelas/export"
       />
     </AdminLayout>
   );
