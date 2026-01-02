@@ -1,106 +1,312 @@
-# E-Learning React – Dokumentasi Fitur
+# E-Learning SMPN 2 Merapi Barat
 
-## Ringkasan
-- Platform e-learning berbasis Laravel + Inertia.js + React + TypeScript dengan antarmuka yang dioptimalisasi menggunakan komponen Shadcn UI dan ikon Lucide.
-- Mendukung tiga peran utama (admin, guru, siswa) dengan alur kerja yang terpisah di dalam struktur `resources/js/Pages`.
-- Mengandalkan notifikasi real-time melalui `sonner` toast, dialog konfirmasi, serta pagination dan pencarian sisi-klien untuk menjaga responsivitas.
-- Data utama (pengguna, kelas, materi, kuis) dikelola melalui request Inertia dan endpoint Laravel yang terintegrasi dengan model, seeder, dan ekspor/impor Excel.
+Platform pembelajaran daring (e-learning) berbasis web untuk SMPN 2 Merapi Barat. Aplikasi ini memungkinkan guru untuk mengelola materi dan kuis, siswa untuk mengakses pembelajaran secara interaktif, dan admin untuk mengelola seluruh data master sekolah.
 
-## Peran & Halaman Utama
+---
+
+## Fitur Utama
 
 ### Admin
-
-#### Dashboard Admin (`resources/js/Pages/Admin/Dashboard.tsx` + `Components/DashboardOverview.tsx`)
-- Menyajikan ringkasan total guru, siswa, materi, dan kuis dalam kartu statistik serta tab terpisah untuk melihat daftar siswa, guru, kelas, dan mata pelajaran.
-- Setiap tab menyediakan pencarian instan, tampilan tabel responsif, dan kartu mobile sehingga data tetap mudah dibaca di berbagai ukuran layar.
-- Fitur pagination internal menjaga performa saat menelusuri data panjang, dengan tombol navigasi halaman dan indikator jumlah total halaman.
-- Data yang ditampilkan diambil langsung dari props Inertia sehingga selalu sinkron setelah aksi CRUD di halaman lain.
-
-#### Manajemen Guru (`resources/js/Pages/Admin/Guru/GuruPage.tsx`)
-- Tabel guru interaktif dengan seleksi baris untuk pengeditan cepat, bulk delete, dan penghapusan individual.
-- Dialog `Create/Edit` menampilkan formulir lengkap untuk biodata, pemetaan mata pelajaran, serta memberikan validasi sisi-klien.
-- Tombol import dan export Excel memanfaatkan FormData untuk unggah file dan `window.location.href` untuk unduhan, disertai indikator progres dan hasil di toast.
-- Konfirmasi berlapis (dialog) memastikan tindakan berisiko seperti bulk delete dan import data tidak dilakukan tanpa persetujuan.
-
-#### Manajemen Siswa (`resources/js/Pages/Admin/Siswa/SiswaPage.tsx`)
-- Header aksi menyediakan import/export Excel, hapus semua data, hapus terpilih, dan tambah data baru dengan dialog konfirmasi berbeda untuk tiap jenis tindakan.
-- Fitur pencarian, filter kelas, dan pagination manual memudahkan admin memusatkan perhatian pada subset data yang relevan.
-- Komponen `SiswaTable` mendukung checkbox multi-seleksi dan tombol tindakan baris untuk edit/hapus.
-- Overlay loading dan toast memberi umpan balik selama proses CRUD, import, maupun bulk delete berlangsung.
-
-#### Manajemen Kelas (`resources/js/Pages/Admin/Kelas/KelasPage.tsx`)
-- Daftar kelas dilengkapi checkbox multi-seleksi untuk bulk delete, serta dialog edit per kelas dengan pemilihan wali dan parameter lain.
-- Ekspor data kelas ke Excel hanya membutuhkan satu klik, disertai toast keberhasilan setelah file siap diunduh.
-- Dialog konfirmasi hadir untuk setiap penghapusan (single ataupun bulk) sehingga admin dapat meninjau ulang sebelum mengeksekusi.
-- Refresh data dilakukan via `router.reload` setelah setiap aksi, menjaga tabel tetap mutakhir tanpa reload halaman penuh.
-
-#### Manajemen Mata Pelajaran (`resources/js/Pages/Admin/Mapel/MapelPage.tsx`)
-- Header menyediakan tombol tambah mapel (dialog modal) dan bulk delete ketika ada data terpilih.
-- Tabel mapel menampilkan nama mapel dan guru pengampu dengan tombol edit/hapus di baris, memastikan CRUD berjalan cepat.
-- Dialog `MapelDialogs` mengatur flow edit, konfirmasi hapus, serta aksi bulk delete melalui state yang terpusat.
-- Toast keberhasilan/kesalahan memandu admin melihat hasil operasi tanpa perlu membuka log.
+- Dashboard statistik (guru, siswa, materi, kuis)
+- Manajemen data guru dengan import/export Excel
+- Manajemen data siswa dengan import/export Excel
+- Manajemen kelas dan wali kelas
+- Manajemen mata pelajaran
 
 ### Guru
-
-#### Dashboard Guru (`resources/js/Pages/Guru/Dashboard.tsx`)
-- Kartu statistik (`StatOverview`) menunjukkan ringkasan materi dan kuis yang dikelola guru, lengkap dengan ikon dan tren ringkas.
-- `SubjectsCard` merangkum daftar mata pelajaran yang diajarkan, membantu guru melacak fokus pengajaran dengan cepat.
-- Bagian materi dan kuis terbaru ditampilkan dalam grid dua kolom (`RecentMateriCard`, `RecentQuizzesCard`) untuk melihat aktivitas terkini.
-- Semua konten dipaketkan dalam `TeacherLayout` yang menyertakan navigasi khusus guru dan judul halaman dinamis.
-
-#### Kelola Materi (`resources/js/Pages/Guru/Materi/MateriPage.tsx`)
-- Header list menyediakan pencarian real-time dan tombol `Unggah Materi` yang membuka dialog form terstruktur.
-- Komponen `CreateMateri` dan `EditMateri` mendukung pemilihan kelas/mapel via dropdown, unggah file dengan validasi tipe, dan toast hasil.
-- Daftar materi menampilkan metadata lengkap (mapel, kelas, tanggal unggah, ukuran file) serta tombol unduh, edit, hapus dengan ikon intuitif.
-- Dialog konfirmasi hapus memastikan file tidak terhapus tanpa sengaja, sementara daftar otomatis memfilter berdasarkan kata kunci.
-
-#### Kelola Kuis (`resources/js/Pages/Guru/Kuis/KuisPage.tsx`)
-- Header menyediakan pencarian, tombol tambah kuis, dan membuka dialog manajemen yang menyatukan form metadata, pemilihan kelas, serta editor soal.
-- `QuizMetadataFields` memungkinkan pengaturan status (draft/published), durasi, mata pelajaran, deskripsi, dan jadwal ketersediaan menggunakan toggle checkbox.
-- `ClassSelector` mendukung pemilihan banyak kelas dalam sekali klik, menampilkan badge “Dipilih” untuk kelas aktif.
-- `QuizQuestionsEditor` memfasilitasi penambahan, penghapusan, dan pengeditan soal beserta opsi jawaban serta penandaan jawaban benar via radio button.
+- Dashboard aktivitas terkini
+- Upload dan kelola materi pembelajaran (PDF, Word, PowerPoint, Video)
+- Buat dan kelola kuis interaktif dengan timer
+- Atur jadwal ketersediaan kuis
+- Lihat statistik materi dan kuis
 
 ### Siswa
+- Dashboard progres belajar
+- Akses materi pembelajaran dengan filter pencarian
+- Kerjakan kuis dengan timer otomatis
+- Lihat hasil dan riwayat nilai
+- Statistik performa per mata pelajaran
 
-#### Dashboard Siswa (`resources/js/Pages/Siswa/Dashboard.tsx`)
-- Menampilkan peringatan apabila akun belum terhubung ke kelas, memastikan siswa tahu langkah selanjutnya.
-- `StudentStatsGrid` menunjukkan jumlah materi, kuis, materi baru, dan teman sekelas secara animatif menggunakan Motion untuk pengalaman interaktif.
-- `QuickActionsCard` menyediakan navigasi cepat ke halaman materi, kuis, dan nilai tanpa perlu melalui menu utama.
-- Bagian materi/kuis terbaru menampilkan tiga item teratas dengan tautan langsung ke detail untuk menjaga student engagement.
+---
 
-#### Materi Pembelajaran (`resources/js/Pages/Siswa/Materials.tsx` + `components/StudentMaterialBrowser.tsx`)
-- Siswa dapat mencari materi berdasarkan judul, deskripsi, nama guru, kelas, maupun mata pelajaran melalui input tunggal.
-- Dropdown filter mata pelajaran mengelompokkan materi sesuai kebutuhan siswa (default menampilkan semua).
-- Setiap kartu materi menyajikan badge tipe file, ukuran, kelas, mata pelajaran, nama guru, dan tanggal unggah.
-- Tombol “Buka Materi” dan “Unduh” otomatis menyesuaikan ketersediaan URL preview/download sehingga siswa tidak mengakses file yang belum disiapkan.
+## Tech Stack
 
-#### Kuis Interaktif (`resources/js/Pages/Siswa/Quizzes.tsx` + `components/StudentQuizList.tsx`)
-- Daftar kuis menampilkan status, jumlah soal, durasi, jadwal ketersediaan, dan badge kelas tujuan dalam kartu informatif.
-- Tombol aksi adaptif (Mulai, Kerjakan Lagi, Belum Tersedia, Sudah Berakhir) bergantung pada jadwal dan soal yang tersedia.
-- Informasi percobaan terakhir ditampilkan dalam badge hijau berisi skor dan jumlah jawaban benar untuk motivasi belajar.
-- Toast error muncul ketika kuis belum siap (tidak ada soal atau di luar jadwal), menjaga siswa dari akses yang sia-sia.
+### Backend
+| Teknologi | Versi |
+|-----------|-------|
+| PHP | ^8.3 |
+| Laravel Framework | ^12.0 |
+| Laravel Breeze | ^2.3 |
+| Inertia.js (Laravel) | ^2.0 |
+| Laravel Sanctum | ^4.0 |
+| Maatwebsite Excel | ^3.1 |
 
-#### Halaman Pengerjaan Kuis (`resources/js/Pages/Siswa/QuizExam.tsx`)
-- Timer hitung mundur otomatis mengunci kuis ketika durasi habis dan memicu auto-submit bila siswa belum mengirim jawaban.
-- Navigasi soal didukung animasi slide (`motion`) dengan indikator soal belum/sudah dijawab serta ringkasan jumlah jawaban yang tersisa.
-- Setiap soal menampilkan pilihan jawaban dengan radio button besar, progress bar, dan badge durasi di bagian atas layar.
-- Dialog konfirmasi tersedia untuk keluar kuis, submit manual, maupun menampilkan hasil akhir lengkap (skor, benar/salah, ringkasan jawaban).
+### Frontend
+| Teknologi | Versi |
+|-----------|-------|
+| React | ^18.3.1 |
+| TypeScript | ^5.0.2 |
+| Vite | ^7.0.7 |
+| TailwindCSS | ^3.2.1 |
+| Radix UI Components | Latest |
+| Lucide React (Icons) | ^0.546.0 |
+| Motion (Animasi) | ^12.23.24 |
+| Recharts (Grafik) | ^3.5.1 |
 
-#### Nilai Saya (`resources/js/Pages/Siswa/Grades.tsx`)
-- Ringkasan nilai menampilkan rata-rata keseluruhan, rata-rata kuis, rata-rata tugas, dan total penilaian dengan pilihan semester.
-- Filter mata pelajaran memengaruhi grafik ringkasan dan tab riwayat sehingga siswa dapat fokus pada mata pelajaran tertentu.
-- `SubjectPerformanceList` merangkum jumlah penilaian dan rata-rata per mapel dengan indikator visual yang mudah dipahami.
-- `GradeHistoryTabs` memisahkan daftar penilaian menjadi tab Semua, Kuis, dan Tugas agar siswa dapat melihat detail dengan cepat.
+### Database
+- MySQL
 
-## Catatan Teknis
-- Komponen layout khusus (`AdminLayout`, `TeacherLayout`, `StudentLayout`) menyelaraskan navigasi, judul halaman, dan konten utama tiap peran.
-- Setiap aksi CRUD memanfaatkan `router.post/put/delete` milik Inertia disertai `router.reload({ only: [...] })` untuk menyegarkan data secara selektif.
-- Toast dari `sonner` menjadi kanal utama penyampaian status proses, sementara `AlertDialog` dari Shadcn menangani konfirmasi kritis.
-- Pagination sisi-klien digunakan pada tabel besar untuk mengurangi beban server dan menjaga kelincahan UI, dengan kesiapan untuk dialihkan ke server-side bila diperlukan.
- 
- 
- Ringkasan Per Peran
+### Testing
+| Teknologi | Versi |
+|-----------|-------|
+| Pest PHP | ^4.1 |
+| Vitest | ^4.0.16 |
+| Testing Library React | ^16.3.1 |
 
-- Admin – Tambah/edit/hapus data master: guru, siswa, kelas, mata pelajaran; impor/ekspor Excel; hapus massal; atur hak akses lewat halaman dashboard dengan tabel interaktif.
-- Guru – Kelola materi (unggah file, edit deskripsi, hapus) dan kuis (atur metadata, jadwal, soal, publikasi); pantau statistik dan aktivitas lewat dashboard khusus guru.
-- Siswa – Lihat ringkasan progres di dashboard, akses daftar materi, mengikuti kuis dengan timer dan hasil langsung, serta meninjau riwayat nilai dan performa per mata pelajaran.
+---
+
+## Prasyarat
+
+Pastikan sistem Anda sudah terinstall:
+
+- **PHP** >= 8.3
+- **Composer** >= 2.0
+- **Node.js** >= 20.x
+- **npm** >= 10.x
+- **MySQL** >= 8.0
+- **Git**
+
+---
+
+## Cara Menjalankan Project
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/LMSSMPN2MerapiBarat/E-Learning-react.git
+cd E-Learning-react
+```
+
+### 2. Setup Menggunakan Script Otomatis
+
+Jalankan perintah berikut untuk setup cepat:
+
+```bash
+composer setup
+```
+
+Script ini akan otomatis:
+- Menginstall dependensi Composer
+- Menyalin `.env.example` ke `.env`
+- Generate application key
+- Menjalankan migrasi database
+- Menginstall dependensi npm
+- Build asset frontend
+
+### 3. Setup Manual (Alternatif)
+
+Jika ingin setup secara manual:
+
+```bash
+# Install dependensi PHP
+composer install
+
+# Salin file environment
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+
+# Konfigurasi database di file .env
+# Sesuaikan DB_DATABASE, DB_USERNAME, DB_PASSWORD
+
+# Jalankan migrasi database
+php artisan migrate
+
+# (Opsional) Jalankan seeder untuk data dummy
+php artisan db:seed
+
+# Install dependensi JavaScript
+npm install
+
+# Build asset frontend
+npm run build
+```
+
+### 4. Menjalankan Development Server
+
+Jalankan server development dengan satu perintah:
+
+# Terminal 1: Laravel server
+php artisan serve
+
+# Terminal 2: Vite dev server
+npm run dev
+
+
+### 5. Akses Aplikasi
+
+Buka browser dan akses:
+- **Aplikasi**: http://localhost:8000
+- **Vite HMR**: http://localhost:5173
+
+---
+
+## Menjalankan dengan Docker
+
+Project ini mendukung deployment dengan Docker:
+
+```bash
+# Build image
+docker build -t e-learning-smpn2 .
+
+# Jalankan container
+docker run -p 8080:8080 \
+  -e DB_CONNECTION=mysql \
+  -e DB_HOST=your_db_host \
+  -e DB_DATABASE=your_database \
+  -e DB_USERNAME=your_username \
+  -e DB_PASSWORD=your_password \
+  e-learning-smpn2
+```
+
+---
+
+## Menjalankan Testing
+
+### Backend Testing (Pest PHP)
+
+```bash
+# Jalankan semua test
+composer test
+
+# Atau langsung dengan Pest
+php vendor/bin/pest
+
+# Test dengan coverage
+php vendor/bin/pest --coverage
+```
+
+### Frontend Testing (Vitest)
+
+```bash
+# Jalankan test sekali
+npm run test
+
+# Jalankan test dengan watch mode
+npm run test:watch
+
+# Jalankan test dengan coverage
+npm run test:coverage
+```
+
+---
+
+## Struktur Direktori
+
+```
+E-Learning-react/
+├── app/                    # Logic aplikasi Laravel
+│   ├── Http/Controllers/   # Controller
+│   ├── Models/             # Eloquent Models
+│   └── ...
+├── config/                 # Konfigurasi Laravel
+├── database/
+│   ├── factories/          # Model factories
+│   ├── migrations/         # Database migrations
+│   └── seeders/            # Database seeders
+├── public/                 # Asset publik
+├── resources/
+│   ├── js/
+│   │   ├── Components/     # Komponen React reusable
+│   │   ├── Layouts/        # Layout (Admin, Guru, Siswa)
+│   │   ├── Pages/          # Halaman Inertia
+│   │   │   ├── Admin/      # Halaman Admin
+│   │   │   ├── Guru/       # Halaman Guru
+│   │   │   ├── Siswa/      # Halaman Siswa
+│   │   │   ├── LandingPage/# Landing Page publik
+│   │   │   └── Auth/       # Halaman autentikasi
+│   │   └── lib/            # Utilities & helpers
+│   └── views/              # Blade templates
+├── routes/                 # Route definitions
+├── storage/                # File storage
+├── tests/
+│   ├── Feature/            # Feature tests
+│   └── Unit/               # Unit tests
+├── .env.example            # Template environment
+├── composer.json           # Dependensi PHP
+├── package.json            # Dependensi JavaScript
+├── Dockerfile              # Docker configuration
+├── vite.config.js          # Vite configuration
+└── tailwind.config.js      # TailwindCSS configuration
+```
+
+---
+
+## Konfigurasi Environment
+
+Salin `.env.example` ke `.env` dan sesuaikan konfigurasi berikut:
+
+```env
+APP_NAME="SMPN 2 Merapi Barat"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=e_learning
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
+
+---
+
+## Dokumentasi Fitur
+
+### Peran Pengguna
+
+| Peran | Deskripsi |
+|-------|-----------|
+| **Admin** | Mengelola data master: guru, siswa, kelas, mata pelajaran; import/export Excel; bulk delete |
+| **Guru** | Mengelola materi dan kuis; mengatur jadwal kuis; melihat statistik |
+| **Siswa** | Mengakses materi; mengerjakan kuis dengan timer; melihat riwayat nilai |
+
+### Komponen UI
+
+Aplikasi menggunakan komponen UI modern:
+- **Radix UI** - Komponen aksesibel dan unstyled
+- **Shadcn UI** - Komponen yang sudah di-style dengan TailwindCSS
+- **Lucide Icons** - Ikon SVG yang konsisten
+- **Motion** - Animasi halus untuk UX yang lebih baik
+- **Sonner** - Toast notifications
+- **Recharts** - Visualisasi data grafik
+
+---
+
+## Kontribusi
+
+1. Fork repository ini
+2. Buat branch fitur baru (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
+
+---
+
+## Lisensi
+
+Project ini dilisensikan di bawah [MIT License](LICENSE).
+
+---
+
+## Tim Pengembang
+
+**SMPN 2 Merapi Barat - Capstone Project**
+
+---
+
+<p align="center">
+  <sub>Built with Laravel, React, and TypeScript</sub>
+</p>
