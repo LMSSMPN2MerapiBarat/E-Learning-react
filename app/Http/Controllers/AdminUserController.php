@@ -393,6 +393,12 @@ class AdminUserController extends Controller
         try {
             $summary = null;
 
+            // Debug: Check what headings are read from different rows
+            for ($i = 1; $i <= 7; $i++) {
+                $headings = (new \Maatwebsite\Excel\HeadingRowImport($i))->toArray($request->file('file'));
+                \Log::info("Excel Row {$i}: " . json_encode($headings[0][0] ?? []));
+            }
+
             if ($request->role === 'guru') {
                 $importer = new GuruImport();
                 Excel::import($importer, $request->file('file'));

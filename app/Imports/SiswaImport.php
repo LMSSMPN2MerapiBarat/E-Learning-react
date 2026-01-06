@@ -81,6 +81,13 @@ class SiswaImport implements
 
     public function collection(Collection $rows): void
     {
+        // Debug: Log received rows
+        \Log::info('SiswaImport: Received rows count: ' . $rows->count());
+        if ($rows->isNotEmpty()) {
+            \Log::info('SiswaImport: First row keys: ' . json_encode($rows->first()->keys()->toArray()));
+            \Log::info('SiswaImport: First row data: ' . json_encode($rows->first()->toArray()));
+        }
+
         if ($rows->isEmpty()) {
             return;
         }
@@ -94,11 +101,12 @@ class SiswaImport implements
 
             $nama = $row['nama'] ?? $row['Nama'] ?? 'Tanpa Nama';
             $email = $row['email'] ?? $row['Email'] ?? uniqid('siswa_') . '@example.com';
-            $nis = $row['nis'] ?? $row['NIS'] ?? null;
+            $nis = $row['nis'] ?? $row['NIS'] ?? $row['nisn'] ?? $row['NISN'] ?? null;
             $kelasNama = $row['kelas'] ?? $row['Kelas'] ?? null;
-            $noTelp = $row['no_telepon'] ?? $row['No. Telepon'] ?? null;
+            $noTelp = $row['no_telepon'] ?? $row['No. Telepon'] ?? $row['no_telp'] ?? null;
             $tempatLahir = $this->sanitizeBirthPlace($row['tempat_lahir'] ?? $row['Tempat Lahir'] ?? null);
             $tanggalLahir = $this->normalizeDateValue($row['tanggal_lahir'] ?? $row['Tanggal Lahir'] ?? null);
+            $genderInput = strtolower(trim($row['jenis_kelamin'] ?? $row['Jenis Kelamin'] ?? $row['gender'] ?? ''));
 
             $emailKey = $this->normalizeKey($email);
             if ($emailKey !== null && isset($this->existingEmails[$emailKey])) {
@@ -120,7 +128,6 @@ class SiswaImport implements
             $tingkat = $this->determineTingkat($kelasNama);
             $kelasId = $this->resolveKelasId($kelasNama, $tingkat);
 
-            $genderInput = strtolower(trim($row['jenis_kelamin'] ?? $row['gender'] ?? ''));
             $gender = in_array($genderInput, ['laki-laki', 'perempuan'], true) ? $genderInput : null;
 
             $usersToInsert[] = [

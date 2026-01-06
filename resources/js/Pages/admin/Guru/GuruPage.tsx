@@ -143,11 +143,64 @@ export default function GuruPage() {
       forceFormData: true,
       onSuccess: (page) => {
         const flashError = (page.props as any)?.flash?.error ?? null;
+        const importSummary = (page.props as any)?.flash?.import_summary ?? null;
+
+        // Debug log
+        console.log('Import Summary:', importSummary);
+
         if (flashError) {
           setImportError(flashError);
           toast.error(flashError, { id: toastId });
         } else {
-          toast.success("Data guru berhasil diimpor!", { id: toastId });
+          const created = importSummary?.created ?? 0;
+          const skipped = importSummary?.skipped ?? 0;
+          const notes = importSummary?.notes ?? [];
+
+          // Show toast based on results
+          if (created > 0 && skipped === 0) {
+            // All data imported successfully
+            toast.success(`${created} data guru berhasil diimpor!`, { id: toastId });
+          } else if (created > 0 && skipped > 0) {
+            // Some imported, some skipped
+            toast.success(`${created} data guru berhasil diimpor!`, { id: toastId });
+          } else if (created === 0 && skipped > 0) {
+            // All data skipped
+            toast.dismiss(toastId);
+          } else {
+            // No data processed
+            toast.info('Tidak ada data yang diproses.', { id: toastId });
+          }
+
+          // Show warning toast for skipped data
+          if (skipped > 0) {
+            const skippedNotes = notes as Array<{ row: any; reason: string }>;
+            const duplicateMessages = skippedNotes
+              .map((note) => {
+                const nama = note.row?.nama || note.row?.Nama || 'Tidak diketahui';
+                const reason = note.reason.includes('NIP')
+                  ? 'NIP sudah terdaftar'
+                  : note.reason.includes('Email')
+                    ? 'Email sudah terdaftar'
+                    : note.reason;
+                return `• ${nama}: ${reason}`;
+              });
+
+            if (duplicateMessages.length > 0) {
+              toast.warning(
+                `${skipped} data dilewati`,
+                {
+                  description: duplicateMessages.slice(0, 5).join('\n') +
+                    (duplicateMessages.length > 5 ? `\n... dan ${duplicateMessages.length - 5} lainnya` : ''),
+                  duration: 8000,
+                }
+              );
+            } else {
+              toast.warning(`${skipped} data dilewati karena sudah terdaftar.`, {
+                duration: 5000,
+              });
+            }
+          }
+
           reloadGurus();
         }
       },
